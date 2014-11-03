@@ -7,4 +7,3 @@
 ./build-intygstjanst.sh
 ./build-minaintyg.sh
 ./build-webcert.sh
-./build-proxy.sh
