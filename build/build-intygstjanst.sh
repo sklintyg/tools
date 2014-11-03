@@ -3,4 +3,5 @@
 export INTYG_HOME=`pwd`/../..
 
 cd $INTYG_HOME/intygstjanst
-mvn install
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
