@@ -14,7 +14,7 @@
   <artifactId>anonymisering</artifactId>
   <version>1.0.1</version>
 
-  <name>Intyg Anonymisering</name>
+  <name>Intyg Tools (Anonymisering)</name>
 
   <dependencies>
 
