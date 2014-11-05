@@ -1,9 +1,11 @@
 # Intyg Tools
 Intyg Tools tillhandahåller verktyg för att migrera data, uppdatera och anonymisera databaser och liknande uppgifter.
 
-## Utvecklingssetup
-Intyg Tools innehåller flera olika underprojekt som byggs separat beroende på vilket verktyg man är intresserad av. Alla projekt byggs med hjälp av Maven enligt följande:
+## Kom igång
+Här hittar du grundläggande instruktioner för hur man kommer igång med projektet. Mer detaljerade instruktioner för att sätta upp sin utvecklingsmiljö och liknande hittar du på projektets [Wiki för utveckling](https://github.com/sklintyg/common/wiki).
 
+### Bygg projektet
+Intyg Tools innehåller flera olika underprojekt som byggs separat beroende på vilket verktyg man är intresserad av. Alla projekt byggs med hjälp av Maven enligt följande:
 ```
 $ git clone https://github.com/sklintyg/tools.git
 
@@ -13,9 +15,6 @@ $ mvn install
 $ cd ../liquibase-runner
 $ mvn install
 ```
-
-## Byggverktyg
-Förutom ovanstående verktyg innehåller projektet även en mapp som heter `build`. Om man clonar alla projekt under [SKL Intyg](http://github.com/sklintyg) under en gemensam katalog så kan man använda `tools/buildAll.sh` för att bygga samtliga projekt i korrekt ordning.
 
 ## Licens
 Copyright (C) 2014 Inera AB (http://www.inera.se)
