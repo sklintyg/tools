@@ -1,22 +1,24 @@
 #!/bin/sh
 
-./build-common.sh
+export INTYG_HOME=`pwd`/../..
+
+$INTYG_HOME/common/build/build-common.sh
 if [ $? != 0 ]; then exit; fi
 
-./build-tools.sh
+$INTYG_HOME/tools/build/build-tools.sh
 if [ $? != 0 ]; then exit; fi
 
-./build-schemas.sh
+$INTYG_HOME/schemas/build/build-schemas.sh
 if [ $? != 0 ]; then exit; fi
 
-./build-intygstyper.sh
+$INTYG_HOME/intygstyper/build/build-intygstyper.sh
 if [ $? != 0 ]; then exit; fi
 
-./build-intygstjanst.sh
+$INTYG_HOME/intygstjanst/build/build-intygstjanst.sh
 if [ $? != 0 ]; then exit; fi
 
-./build-minaintyg.sh
+$INTYG_HOME/minaintyg/build/build-minaintyg.sh
 if [ $? != 0 ]; then exit; fi
 
-./build-webcert.sh
+$INTYG_HOME/webcert/build/build-webcert.sh
 if [ $? != 0 ]; then exit; fi
