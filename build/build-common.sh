@@ -3,12 +3,21 @@
 export INTYG_HOME=`pwd`/../..
 
 cd $INTYG_HOME/common/pom
-mvn install
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
+
 cd $INTYG_HOME/common/support
-mvn install
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
+
 cd $INTYG_HOME/common/web
-mvn install
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
+
 cd $INTYG_HOME/common/util/logging-util
-mvn install
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
+
 cd $INTYG_HOME/common/util/integration-util
-mvn install
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi

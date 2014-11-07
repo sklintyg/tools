@@ -7,14 +7,14 @@
   <parent>
     <groupId>se.inera.intyg.common</groupId>
     <artifactId>common-pom</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <groupId>se.inera.intyg.tools</groupId>
   <artifactId>liquibase-runner</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0-SNAPSHOT</version>
 
-  <name>Intyg Liquibase Runner</name>
+  <name>Intyg Tools (Liquibase Runner)</name>
 
   <properties>
     <checkstyle.basedir>${project.basedir}/../..</checkstyle.basedir>
@@ -30,12 +30,13 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <scope>runtime</scope>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
