@@ -2,23 +2,34 @@
 
 export INTYG_HOME=`pwd`/../..
 
-$INTYG_HOME/common/build/build-common.sh
+cd $INTYG_HOME/common-pom
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
+
+cd $INTYG_HOME/common
+mvn clean install
+if [ $? != 0 ]; then exit 1; fi
+
+cd $INTYG_HOME/tools
+mvn clean install
 if [ $? != 0 ]; then exit; fi
 
-$INTYG_HOME/tools/build/build-tools.sh
+cd $INTYG_HOME/schemas
+mvn clean install
 if [ $? != 0 ]; then exit; fi
 
-$INTYG_HOME/schemas/build/build-schemas.sh
+cd $INTYG_HOME/intygstyper
+mvn clean install
 if [ $? != 0 ]; then exit; fi
 
-$INTYG_HOME/intygstyper/build/build-intygstyper.sh
+cd $INTYG_HOME/intygstjanst
+mvn clean install
 if [ $? != 0 ]; then exit; fi
 
-$INTYG_HOME/intygstjanst/build/build-intygstjanst.sh
+cd $INTYG_HOME/minaintyg
+mvn clean install
 if [ $? != 0 ]; then exit; fi
 
-$INTYG_HOME/minaintyg/build/build-minaintyg.sh
-if [ $? != 0 ]; then exit; fi
-
-$INTYG_HOME/webcert/build/build-webcert.sh
+cd $INTYG_HOME/webcert
+mvn clean install
 if [ $? != 0 ]; then exit; fi

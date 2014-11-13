@@ -5,12 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>se.inera.intyg.common</groupId>
-    <artifactId>common-pom</artifactId>
+    <groupId>se.inera.intyg.tools</groupId>
+    <artifactId>tools</artifactId>
     <version>0-SNAPSHOT</version>
   </parent>
 
-  <groupId>se.inera.intyg.tools</groupId>
   <artifactId>anonymisering</artifactId>
   <version>0-SNAPSHOT</version>
 
