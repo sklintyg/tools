@@ -19,7 +19,6 @@
 
   <modules>
     <module>anonymisering</module>
-    <module>liquibase-runner</module>
   </modules>
 
   <scm>
