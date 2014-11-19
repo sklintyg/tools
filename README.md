@@ -9,10 +9,7 @@ Intyg Tools innehåller flera olika underprojekt som byggs separat beroende på 
 ```
 $ git clone https://github.com/sklintyg/tools.git
 
-$ cd tools/anonymisering
-$ mvn install
-
-$ cd ../liquibase-runner
+$ cd tools
 $ mvn install
 ```
 
