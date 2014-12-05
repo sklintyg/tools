@@ -21,9 +21,32 @@
     <module>anonymisering</module>
   </modules>
 
+  <properties>
+    <common.version>0-SNAPSHOT</common.version>
+  </properties>
+
   <scm>
     <connection>scm:git:git@github.com:sklintyg/tools.git</connection>
   </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>se.inera.intyg.common</groupId>
+            <artifactId>common-build-tools</artifactId>
+            <version>${common.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <configLocation>checkstyle/checkstyle.xml</configLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <repositories>
     <repository>
