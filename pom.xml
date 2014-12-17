@@ -21,37 +21,9 @@
     <module>anonymisering</module>
   </modules>
 
-  <properties>
-
-    <!-- Common -->
-    <common.version>0-SNAPSHOT</common.version>
-    <common.version.range>(,2.1.0]</common.version.range>
-
-  </properties>
-
   <scm>
     <connection>scm:git:git@github.com:sklintyg/tools.git</connection>
   </scm>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <configuration>
-          <includeProperties>
-            common.version
-          </includeProperties>
-          <properties>
-            <property>
-              <name>common.version</name>
-              <version>${common.version.range}</version>
-            </property>
-          </properties>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <repositories>
     <repository>
