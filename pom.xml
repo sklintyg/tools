@@ -17,10 +17,6 @@
 
   <name>Intyg Tools</name>
 
-  <modules>
-    <module>anonymisering</module>
-  </modules>
-
   <scm>
     <connection>scm:git:git@github.com:sklintyg/tools.git</connection>
   </scm>
