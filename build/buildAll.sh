@@ -3,7 +3,7 @@
 export INTYG_HOME=`pwd`/../..
 
 cd $INTYG_HOME/common-pom
-mvn clean install
+mvn clean install -Ddependency.unpack-skip=true
 if [ $? != 0 ]; then exit 1; fi
 
 cd $INTYG_HOME/common
