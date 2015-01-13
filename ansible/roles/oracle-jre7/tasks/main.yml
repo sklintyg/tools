@@ -1,0 +1,24 @@
+---
+- name: Create {{ inera_root }} directory
+  file: state=directory dest={{ inera_root }} mode=755
+
+- name: Create {{ archive_dir }} directory
+  file: state=directory dest={{ archive_dir }} mode=755
+
+- name: Create JAVA_HOME directory
+  file: state=directory dest={{ java_home }} mode=755
+
+- name: Download java
+  command: "creates={{ archive_dir }}/{{ jre_tarball }} \
+           curl http://download.oracle.com/otn-pub/java/jdk/{{ java_version }}/{{ jre_tarball }} -o {{ archive_dir }}/{{ jre_tarball }} -L -H 'Cookie: oraclelicense=accept-securebackup-cookie'"
+
+- name: Extract java
+  command: creates={{ java_home }}/bin/java
+           tar zxf {{ archive_dir }}/{{ jre_tarball }} -C {{ java_home }} --strip-components 1
+
+- name: set JAVA_HOME variable
+  lineinfile:
+    dest="/etc/profile"
+    regexp="export JAVA_HOME"
+    insertafter="EOF"
+    line="export JAVA_HOME={{ java_home }}"

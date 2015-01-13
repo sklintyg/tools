@@ -1,0 +1,4 @@
+---
+# file: host_vars/intygstjanst-test
+proxy_name_internet: "intygstjanst.inera.nordicmedtest.se"
+proxy_name_sjunet: "intygstjanst.inera.nordicmedtest.sjunet.se"

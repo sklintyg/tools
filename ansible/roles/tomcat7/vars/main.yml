@@ -1,0 +1,8 @@
+---
+tomcat_version: "{{ tomcat7_version }}"
+tomcat_home: "{{ tomcat7_home }}"
+
+catalina_home: "{{ tomcat_home }}"
+catalina_base: "{{ tomcat_home }}"
+
+tomcat_download_url:  http://apache.mirrors.spacedump.net/tomcat/tomcat-7/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz

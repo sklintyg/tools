@@ -1,0 +1,14 @@
+---
+# file: group_vars/all
+inera_root: /opt/inera
+archive_dir: "{{ inera_root }}/archives"
+java_home: "{{ inera_root }}/jre"
+java_version: 7u71-b14
+jre_tarball: jre-7u71-linux-x64.tar.gz
+tomcat7_version: 7.0.57
+tomcat7_home: "{{ inera_root }}/tomcat7"
+tomcat_user: inera-tomcat
+tomcat_group: inera-tomcat
+admin_username: admin
+admin_password: admin
+tomcat_service: inera-tomcat

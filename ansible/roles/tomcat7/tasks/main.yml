@@ -1,0 +1,92 @@
+---
+
+- name: add group "{{ tomcat_group }}"
+  group: "name={{ tomcat_user }}"
+
+- name: add user "{{ tomcat_user }}"
+  user: "name={{ tomcat_user }} group={{ tomcat_group }} createhome=no"
+
+- name: delete home dir for symlink of tomcat
+  file: "state=absent path={{ tomcat_home }}"
+
+- name: Download tomcat
+  get_url: url={{ tomcat_download_url }}
+           dest={{ archive_dir }}/apache-tomcat-{{ tomcat_version }}.tar.gz
+
+- name: Extract tomcat
+  unarchive: src={{ archive_dir }}/apache-tomcat-{{ tomcat_version }}.tar.gz
+             dest={{ inera_root }} copy=no
+
+- name: Create symlink to tomcat home
+  file: state=link src={{ inera_root }}/apache-tomcat-{{ tomcat_version }} path={{ tomcat_home }} mode=755
+
+- name: Change ownership of Tomcat installation
+  file: path={{ inera_root }}/apache-tomcat-{{ tomcat_version }} owner=inera-tomcat group=inera-tomcat state=directory recurse=yes
+
+
+###########
+
+- name: create etc dir
+  file: state=directory path=/var/lib/{{ tomcat_service }}/etc
+
+- name: create log dir
+  command: mv {{ tomcat_home }}/logs /var/log/{{ tomcat_service }}
+  args:
+    creates: "/var/log/{{ tomcat_service }}/"
+
+- name: create var direcotries
+  command: "mv {{ tomcat_home }}/{{ item }} /var/lib/{{ tomcat_service }}/{{ item }}"
+  args: 
+    creates: "/var/lib/{{ tomcat_service }}/{{ item }}"
+  with_items:
+    - conf
+    - webapps
+
+- name: remove installed wars
+  file: state=absent
+        path=/var/lib/{{ tomcat_service }}/webapps/{{ item }}
+  with_items:
+    - examples
+
+- name: remove installed dirs
+  file: state=absent
+        path={{ tomcat_home }}/{{ item }}
+  with_items:
+    - conf
+    - webapps
+    - logs
+
+- name: redirect log dir
+  file: state=link 
+        src=/var/log/{{ tomcat_service }} 
+        dest={{ tomcat_home }}/logs
+
+- name: create tomcat internal links
+  file: state=link
+        src=/var/lib/{{ tomcat_service }}/{{ item }}
+        dest={{ tomcat_home }}/{{ item }}
+  with_items:
+    - conf
+    - webapps
+    - etc
+
+
+- name: set rights on dirs
+  file: owner={{ tomcat_user }} group={{ tomcat_user }} path={{ item }} state=directory recurse=yes
+  with_items:
+    - /var/log/{{ tomcat_service }}
+    - /var/lib/{{ tomcat_service }}
+
+#####
+
+- name: Add init.d script
+  template: src=tomcat-init.sh dest=/etc/init.d/{{ tomcat_service }} mode=755
+
+- name: Add tomcat-user.xml
+  template: src=tomcat-users.xml dest={{ tomcat_home }}/conf owner={{ tomcat_user }} mode=644
+
+- name: Add server.xml
+  template: src=server.xml dest={{ tomcat_home }}/conf owner={{ tomcat_user }} mode=644
+
+- name: Enable Tomcat
+  service: name={{ tomcat_service }} state=stopped enabled=yes

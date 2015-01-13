@@ -1,0 +1,9 @@
+---
+# This playbook provisions the environment for WebCert 
+
+- hosts: tomcat
+  sudo: yes 
+
+  roles:
+    - oracle-jre7
+    - tomcat7
