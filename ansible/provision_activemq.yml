@@ -1,0 +1,8 @@
+---
+# This playbook provisions activemq
+
+- hosts: activemq
+  sudo: yes 
+
+  roles:
+    - activemq

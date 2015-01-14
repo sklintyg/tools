@@ -1,0 +1,29 @@
+---
+# file: vars/apache
+apache_extra_parameters: |
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8181/
+    ProxyPassReverse / http://127.0.0.1:8181/
+    ProxyRequests On
+    ProxyVia On
+
+apache_vhosts:
+  - {
+    servername: "{{ proxy_name_internet }}",
+    documentroot: "/var/www/"
+  }
+
+apache_vhosts_ssl:
+  - {
+    servername: "{{ proxy_name_internet }}",
+    documentroot: "/var/www/",
+    certificate_file: "{{ inera_root }}/certs/self-signed.crt",
+    certificate_key_file: "{{ inera_root }}/certs/self-signed.key",
+    extra_parameters: "{{ apache_extra_parameters }}"
+  }
+
+apache_mods_enabled:
+  - proxy.load
+  - proxy_http.load
+  - rewrite.load
+  - ssl.load

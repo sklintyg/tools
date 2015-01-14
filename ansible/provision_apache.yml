@@ -1,0 +1,10 @@
+---
+# This playbook provisions apache 
+
+- hosts: apache
+  sudo: yes 
+  vars_files:
+    - vars/apache.yml
+  roles:
+    - self-signed-certificate
+    - { role: geerlingguy.apache }
