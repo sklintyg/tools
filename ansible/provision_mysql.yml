@@ -1,0 +1,10 @@
+---
+# This playbook provisions mysql 
+
+- hosts: mysql
+  sudo: yes 
+  vars_files:
+    - vars/mysql.yml
+  roles:
+    - mysql-rpm-repo
+    - { role: geerlingguy.mysql }
