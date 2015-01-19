@@ -80,20 +80,9 @@
                redirectPort="8443"
                scheme="https"
                proxyPort="443"
-               proxyName="{{ proxy_name_internet }}"
+               proxyName="{{ proxy_name }}"
                secure="true"
     />
-
-    <Connector port="8182" protocol="HTTP/1.1"
-               URIEncoding="UTF-8"
-               connectionTimeout="20000"
-               redirectPort="8443"
-               scheme="https"
-               proxyPort="443"
-               proxyName="{{ proxy_name_sjunet }}"
-               secure="true"
-    />
-
 
     <!-- A "Connector" using the shared thread pool-->
     <!--

@@ -8,3 +8,4 @@
   roles:
     - self-signed-certificate
     - { role: geerlingguy.apache }
+    - apache-vhost

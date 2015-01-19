@@ -1,4 +1,4 @@
 ---
 # file: host_vars/minaintyg-test
-proxy_name_internet: "minaintyg.inera.nordicmedtest.se"
-proxy_name_sjunet: "minaintyg.inera.nordicmedtest.sjunet.se"
+proxy_name: "minaintyg.inera.nordicmedtest.se"
+proxy_pass: "http://127.0.0.1:8181/"

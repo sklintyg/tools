@@ -12,3 +12,4 @@ tomcat_group: inera-tomcat
 admin_username: admin
 admin_password: admin
 tomcat_service: inera-tomcat
+activemq_home: "{{ inera_root }}/activemq"

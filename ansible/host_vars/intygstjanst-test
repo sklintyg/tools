@@ -1,6 +1,4 @@
 ---
 # file: host_vars/intygstjanst-test
-proxy_name_internet: "intygstjanst.inera.nordicmedtest.se"
-proxy_name_sjunet: "intygstjanst.inera.nordicmedtest.sjunet.se"
-proxy_pass_internet: "http://127.0.0.1:8181/"
-proxy_pass_sjunet: "http://127.0.0.1:8182/"
+proxy_name: "intygstjanst.inera.nordicmedtest.se"
+proxy_pass: "http://127.0.0.1:8181/"

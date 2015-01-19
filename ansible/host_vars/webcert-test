@@ -1,4 +1,4 @@
 ---
 # file: host_vars/webcert-test
-proxy_name_internet: "webcert.inera.nordicmedtest.se"
-proxy_name_sjunet: "webcert.inera.nordicmedtest.sjunet.se"
+proxy_name: "webcert.inera.nordicmedtest.se"
+proxy_pass: "http://127.0.0.1:8181/"

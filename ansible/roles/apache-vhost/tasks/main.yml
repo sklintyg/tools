@@ -1,0 +1,8 @@
+---
+
+- name: Fix ssl.conf _default_ vhost
+  when: ansible_os_family == "RedHat"
+  lineinfile:
+    dest="/etc/httpd/conf.d/ssl.conf"
+    regexp="<VirtualHost .*:443>"
+    line="<VirtualHost 127.0.0.1:443>"

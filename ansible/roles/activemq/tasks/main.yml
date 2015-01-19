@@ -1,16 +1,24 @@
 ---
-- name: install activemq from yum
-  when: ansible_os_family == "RedHat"
-  yum: name=activemq state=present
-
-- name: install activemq from apt
-  when: ansible_os_family == "Debian"
-  apt: name=activemq state=present
-
-- name: enable activemq
-  when: ansible_os_family == "Debian"
-  file: src=/etc/activemq/instances-available/main dest=/etc/activemq/instances-enabled/main state=link
+- name: Download activemq
+  get_url: url={{ activemq_download_url }}
+           dest={{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz
   
+- name: Extract activemq
+  unarchive: src={{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz
+             dest={{ inera_root }} copy=no
+
+- name: Create symlink to tomcat home
+  file: state=link src={{ inera_root }}/apache-activemq-{{ activemq_version }} path={{ activemq_home }} mode=755
+
+- name: Make script executable
+  file: path="{{ activemq_home }}/bin/activemq" mode=0755
+
+- name: Make service script executable
+  file: path="{{ activemq_home }}/bin/linux-x86-64/activemq" mode=0755
+
+- name: Make service link
+  file: state=link src="{{ activemq_home }}/bin/linux-x86-64/activemq" path=/etc/init.d/activemq mode=0755
+
 - name: Enable ActiveMQ
   service: name=activemq enabled=yes
 
