@@ -9,7 +9,16 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class ExtractCertificateMetricsFromLogFile {
 
+
     static void main(String[] args) {
+
+        /*
+            Adds a .fromString() method to the Date class that parses
+            just about anything you can throw at it
+         */
+        Date.metaClass.'static'.fromString = { str ->
+            com.mdimension.jchronic.Chronic.parse(str).beginCalendar.time
+        }
 
         // Read configuration
         def props = new Properties()
@@ -31,40 +40,50 @@ class ExtractCertificateMetricsFromLogFile {
         }
         println "${rows.size()} lines in logfile found"
 
+        def dt_from = config.metrics.fromDateTime
+        def dt_to = config.metrics.toDateTime
         final AtomicInteger count = new AtomicInteger(0)
 
         def output
         GParsPool.withPool(numberOfThreads) {
-            output = rows.collectParallel {
-                // Read line and get last item in list
-                String last = it.split(",").last()
-                String intygId = last.split(" ").first()
+            output = rows
+                    .findAllParallel{ r ->
+                        def dt = r.split(",").first()
+                        Date.fromString(dt) > Date.fromString(dt_from) && Date.fromString(dt) < Date.fromString(dt_to)
+                    }
+                    .collectParallel { r ->
+                        // Read line and get last item in list
+                        String intygId = r.split(",").last().split(" ").first()
 
-                // Increment counter
-                count.addAndGet(1)
+                        // Increment counter
+                        count.addAndGet(1)
 
-                // Return certificate id
-                intygId
-            }
+                        // Return certificate id
+                        intygId
+                    }
         }
 
-        // Add headers to output
-        def header = "intyg-id"
-        output.add(0, header)
+        def diff = rows.size() - output.size()
+        if (diff > 0) {
+            println "${diff} certificates identities were outside the specified date range ${dt_from} to ${dt_to}"
+        }
 
         // Groovy goodness: make sure no duplicate values exists
         Set uniqueValues = output.toSet()
 
-        def diff = output.size() - uniqueValues.size()
+        diff = output.size() - uniqueValues.size()
         if (diff > 0) {
             println "${diff} duplicate certificates identities found. Duplicate will not be written to output file."
         }
 
-        // Write content to file
+        // Write to file
         new FileOutputStream(config.wiretap.output.filePath, false).withWriter(config.wiretap.output.encoding) { writer ->
+            // Write header
+            writer << "intyg-id" + "\n"
+
+            // Write content
             uniqueValues.each { line ->
                 if (line) {
-                    // write the line into the output file
                     writer << line + "\n"
                 }
             }
