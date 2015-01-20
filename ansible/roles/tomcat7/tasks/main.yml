@@ -26,9 +26,6 @@
 
 ###########
 
-- name: create etc dir
-  file: state=directory path=/var/lib/{{ tomcat_service }}/etc
-
 - name: create log dir
   command: mv {{ tomcat_home }}/logs /var/log/{{ tomcat_service }}
   args:
