@@ -65,8 +65,6 @@
   with_items:
     - conf
     - webapps
-    - etc
-
 
 - name: set rights on dirs
   file: owner={{ tomcat_user }} group={{ tomcat_user }} path={{ item }} state=directory recurse=yes
