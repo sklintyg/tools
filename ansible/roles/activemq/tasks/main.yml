@@ -1,4 +1,7 @@
 ---
+- name: create archive directory
+  file: path={{ archive_dir }} state=directory mode=0755
+
 - name: Download activemq
   get_url: url={{ activemq_download_url }}
            dest={{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz

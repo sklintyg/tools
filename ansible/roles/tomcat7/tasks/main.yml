@@ -31,7 +31,10 @@
   args:
     creates: "/var/log/{{ tomcat_service }}/"
 
-- name: create var direcotries
+- name: create tomcat directory in lib
+  file: path=/var/lib/{{ tomcat_service }} state=directory mode=0755
+
+- name: create var directories
   command: "mv {{ tomcat_home }}/{{ item }} /var/lib/{{ tomcat_service }}/{{ item }}"
   args: 
     creates: "/var/lib/{{ tomcat_service }}/{{ item }}"
