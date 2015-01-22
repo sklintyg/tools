@@ -1,0 +1,32 @@
+---
+# file: roles/git-crypt/tasks/main.yml
+
+- name: install gcc-c++ from yum
+  when: ansible_os_family == "RedHat"
+  yum: name=gcc-c++ state=present
+
+- name: install openssl-devel from yum
+  when: ansible_os_family == "RedHat"
+  yum: name=openssl-devel state=present
+
+- name: install g++ from apt
+  when: ansible_os_family == "Debian"
+  apt: name=g++ state=present
+
+- name: install libssl-dev from apt
+  when: ansible_os_family == "Debian"
+  apt: name=libssl-dev state=present
+
+- name: Checkout git-crypt from github
+  git: repo=https://github.com/AGWA/git-crypt.git dest="{{ inera_root }}/git-crypt"
+
+- name: Build git-crypt
+  command: make
+  args:
+    chdir: "{{ inera_root }}/git-crypt"
+    creates: "{{ inera_root }}/git-crypt/git-crypt"
+
+- name: Copy git-crypt to /usr/local/bin
+  command: cp {{ inera_root }}/git-crypt/git-crypt /usr/local/bin
+  args:
+    creates: /usr/local/bin/git-crypt
