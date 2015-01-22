@@ -1,4 +1,8 @@
 ---
 # file: host_vars/webcert-test
+
+# Tomcat
 proxy_name: "webcert.inera.nordicmedtest.se"
+
+# Apache
 proxy_pass: "http://127.0.0.1:8181/"

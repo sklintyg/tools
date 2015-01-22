@@ -1,5 +1,5 @@
 ---
-# This playbook provisions apache 
+# This playbook provisions git-crypt 
 
 - hosts: tomcat
   sudo: yes 

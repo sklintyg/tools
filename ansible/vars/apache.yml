@@ -19,8 +19,8 @@ apache_vhosts_ssl:
   - {
     servername: "{{ proxy_name }}",
     documentroot: "/var/www/",
-    certificate_file: "{{ inera_root }}/certs/self-signed.crt",
-    certificate_key_file: "{{ inera_root }}/certs/self-signed.key",
+    certificate_file: "{{ certificate_file }}",
+    certificate_key_file: "{{ certificate_key_file }}",
     extra_parameters: "{{ apache_extra_parameters }}"
   }
 

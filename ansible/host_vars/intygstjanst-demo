@@ -1,4 +1,8 @@
 ---
 # file: host_vars/intygstjanst-demo
+
+# Tomcat
 proxy_name: "10.250.34.20"
+
+# Apache
 proxy_pass: "http://127.0.0.1:8181/"

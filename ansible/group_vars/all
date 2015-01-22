@@ -1,10 +1,16 @@
 ---
 # file: group_vars/all
+
+# General
 inera_root: /opt/inera
 archive_dir: "{{ inera_root }}/archives"
+
+# Java
 java_home: "{{ inera_root }}/jre"
 java_version: 7u71-b14
 jre_tarball: jre-7u71-linux-x64.tar.gz
+
+# Tomcat
 tomcat7_version: 7.0.57
 tomcat7_home: "{{ inera_root }}/tomcat7"
 tomcat_user: inera-tomcat
@@ -12,4 +18,12 @@ tomcat_group: inera-tomcat
 admin_username: admin
 admin_password: admin
 tomcat_service: inera-tomcat
+proxy_name: "localhost"
+
+# ActiveMQ
 activemq_home: "{{ inera_root }}/activemq"
+
+# Apache
+certificate_file: "{{ inera_root }}/certs/self-signed.crt"
+certificate_key_file: "{{ inera_root }}/certs/self-signed.key"
+proxy_pass: "http://127.0.0.1:8181/"

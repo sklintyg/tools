@@ -1,4 +1,6 @@
 ---
+# file: roles/tomcat7/vars/main.yml
+
 tomcat_version: "{{ tomcat7_version }}"
 tomcat_home: "{{ tomcat7_home }}"
 

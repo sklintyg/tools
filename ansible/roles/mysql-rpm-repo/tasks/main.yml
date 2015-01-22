@@ -1,4 +1,6 @@
 ---
+# file: roles/mysql-rpm-repo/tasks/main.yml
+
 - name: ensure MySQL Yum repo is installed
   when: ansible_os_family == "RedHat"
   shell: rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm 

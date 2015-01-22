@@ -1,4 +1,8 @@
 ---
 # file: host_vars/minaintyg-test
+
+# Tomcat
 proxy_name: "minaintyg.inera.nordicmedtest.se"
+
+# Apache
 proxy_pass: "http://127.0.0.1:8181/"

@@ -1,4 +1,6 @@
 ---
+# file: roles/oracle-jre7/tasks/main.yml
+
 - name: Create {{ inera_root }} directory
   file: state=directory dest={{ inera_root }} mode=755
 
