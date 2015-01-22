@@ -79,13 +79,13 @@
 #####
 
 - name: Add init.d script
-  template: src=tomcat-init.sh.j2 dest=/etc/init.d/{{ tomcat_service }}/tomcat-init.sh mode=755
+  template: src=tomcat-init.sh.j2 dest=/etc/init.d/{{ tomcat_service }} mode=755
 
 - name: Add tomcat-user.xml
-  template: src=tomcat-users.xml.jr dest={{ tomcat_home }}/conf owner={{ tomcat_user }}/tomcat-users.xml mode=644
+  template: src=tomcat-users.xml.jr dest={{ tomcat_home }}/conf/tomcat-users.xml owner={{ tomcat_user }} mode=644
 
 - name: Add server.xml
-  template: src=server.xml.jr dest={{ tomcat_home }}/conf owner={{ tomcat_user }}/server.xml mode=644
+  template: src=server.xml.jr dest={{ tomcat_home }}/conf/server.xml owner={{ tomcat_user }} mode=644
 
 - name: Enable Tomcat
   service: name={{ tomcat_service }} state=stopped enabled=yes
