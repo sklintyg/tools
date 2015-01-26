@@ -24,3 +24,6 @@
     regexp="export JAVA_HOME"
     insertafter="EOF"
     line="export JAVA_HOME={{ java_home }}"
+
+- name: Make java link
+  file: state=link src="{{ java_home }}/bin/java" path=/usr/local/bin/java
