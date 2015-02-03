@@ -17,7 +17,7 @@ import org.apache.commons.dbcp2.BasicDataSource
 class UppdateraEnhet {
 
     static void main(String[] args) {
-        int numberOfThreads = args.length > 0 ? args[0] : 5
+        int numberOfThreads = args.length > 0 ? Integer.parseInt(args[0]) : 5
         long start = System.currentTimeMillis()
         def props = new Properties()
         new File("dataSource.properties").withInputStream { stream ->
