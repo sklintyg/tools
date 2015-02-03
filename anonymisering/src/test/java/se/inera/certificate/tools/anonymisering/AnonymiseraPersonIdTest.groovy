@@ -14,6 +14,15 @@ class AnonymiseraPersonIdTest {
     }
 
     @Test
+    void anonymiseringGerEttSlumpmässigtResultat() {
+        anonymiseraPersonId.random = [nextInt: {range->501}] as Random
+        String personId = "19121212-1212"
+        String förväntatAnonymiseratPersonId = "19121213-5022" // +1 dag, 502 som suffix
+        String anonymiseradPersonId = anonymiseraPersonId.anonymisera(personId)
+        assert förväntatAnonymiseratPersonId == anonymiseradPersonId
+    }
+
+    @Test
     void anonymiseringGerSammaResultatFleraGånger() {
         String personId = "19121212-1212"
         String anonymiseradPersonId1 = anonymiseraPersonId.anonymisera(personId)
@@ -49,4 +58,14 @@ class AnonymiseraPersonIdTest {
         assert normaliseradPersonId2 == personId2
     }
 
+
+    @Test
+    void kontrollSiffra() {
+        String personId1 = "101010201"
+        String personId2 = "121212121"
+        int kontrollSiffraPersonId1 = anonymiseraPersonId.kontrollSiffra(personId1)
+        int kontrollSiffraPersonId2 = anonymiseraPersonId.kontrollSiffra(personId2)
+        assert kontrollSiffraPersonId1 == 8
+        assert kontrollSiffraPersonId2 == 2
+    }
 }
