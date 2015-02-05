@@ -1,4 +1,5 @@
-package se.inera.intyg.common.tools
+package se.inera.intyg.tools
+
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool

@@ -1,4 +1,4 @@
-package se.inera.intyg.common.tools
+package se.inera.intyg.tools
 import groovyx.gpars.GParsPool
 
 import java.util.concurrent.atomic.AtomicInteger

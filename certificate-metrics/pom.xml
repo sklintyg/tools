@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>se.inera.intyg.common.tools</groupId>
+  <groupId>se.inera.intyg.tools</groupId>
   <artifactId>certificate-metrics</artifactId>
   <version>1.0.0</version>
   <name>certificate-metrics</name>
@@ -104,16 +104,17 @@
         <version>1.0-beta-2</version>
       </extension>
     </extensions>
+
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
-            <compilerId>groovy-eclipse-compiler</compilerId>
-            <verbose>true</verbose>
-          </configuration>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+          <compilerId>groovy-eclipse-compiler</compilerId>
+          <verbose>true</verbose>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -127,14 +128,23 @@
           </dependency>
         </dependencies>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
+        <version>2.4</version>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -143,17 +153,21 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <finalName>${project.artifactId}-${project.version}</finalName>
-              <archive>
-                <manifest>
-                  <mainClass>se.inera.intyg.common.tools.UpdateMetrics</mainClass>
-                </manifest>
-              </archive>
+              <descriptor>src/main/assembly/manifest.xml</descriptor>
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <appendAssemblyId>true</appendAssemblyId>
+        </configuration>
       </plugin>
+
+
    </plugins>
+
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings
