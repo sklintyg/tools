@@ -63,9 +63,12 @@ class AnonymiseraPersonIdTest {
     void kontrollSiffra() {
         String personId1 = "101010201"
         String personId2 = "121212121"
+        String personId3 = "101010281"
         int kontrollSiffraPersonId1 = anonymiseraPersonId.kontrollSiffra(personId1)
         int kontrollSiffraPersonId2 = anonymiseraPersonId.kontrollSiffra(personId2)
+        int kontrollSiffraPersonId3 = anonymiseraPersonId.kontrollSiffra(personId3)
         assert kontrollSiffraPersonId1 == 8
         assert kontrollSiffraPersonId2 == 2
+        assert kontrollSiffraPersonId3 == 0
     }
 }

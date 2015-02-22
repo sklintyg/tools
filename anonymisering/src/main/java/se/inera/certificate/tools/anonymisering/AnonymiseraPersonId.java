@@ -99,7 +99,7 @@ public class AnonymiseraPersonId {
             int d = (s.charAt(i) - '0') * (i % 2 == 0 ? 2 : 1);
             sum += d / 10 + d % 10;
         }
-        return 10 - (sum % 10);
+        return (10 - (sum % 10)) % 10;
     }
     // CHECKSTYLE:ON MagicNumber
 }
