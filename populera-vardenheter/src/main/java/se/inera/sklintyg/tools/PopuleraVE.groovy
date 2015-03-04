@@ -20,7 +20,7 @@ class PopuleraVE {
     public PopuleraVE() {
 		def properties = new Properties();
 		
-		new File("dataSource.properties").withInputStream { stream ->
+		new File(System.getProperty("dataSourceFile", "dataSource.properties")).withInputStream { stream ->
 			properties.load(stream);
 		}
 		
@@ -38,16 +38,10 @@ class PopuleraVE {
 	}
 	
 	def run(){
-		
-		def veStream = null;
-		
-		try{
-			veStream = getClass().getClassLoader().getResourceAsStream("ve.csv");
-			
-			def parser = new CSVParser(new InputStreamReader(veStream), CSVFormat.DEFAULT.withHeader().withIgnoreSurroundingSpaces());
+
+		new File(System.getProperty("csvFile", "ve.csv")).withInputStream {
+			def parser = new CSVParser(new InputStreamReader(it), CSVFormat.DEFAULT.withHeader().withIgnoreSurroundingSpaces());
 			parser.each { writeRecord(it) }
-		} finally{
-			veStream.close();
 		}
 	}
 	
