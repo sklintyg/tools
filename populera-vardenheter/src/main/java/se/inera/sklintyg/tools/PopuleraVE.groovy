@@ -6,6 +6,7 @@ import groovy.sql.Sql
 import groovy.xml.StreamingMarkupBuilder
 import groovyx.gpars.GParsPool
 
+import java.sql.SQLException;
 import java.sql.Timestamp
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -47,7 +48,12 @@ class PopuleraVE {
 	
 	def writeRecord(def record){
 		def vals = [record.get(0), record.get(1), record.get(2), record.get(3), new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis())];
-		sql.execute('INSERT INTO INTEGRERADE_VARDENHETER (VARDGIVAR_ID, VARDGIVAR_NAMN, ENHETS_ID, ENHETS_NAMN, SKAPAD_DATUM, SENASTE_KONTROLL_DATUM) VALUES (?,?,?,?,?,?)', vals);
+		
+		try{
+			sql.execute('INSERT INTO INTEGRERADE_VARDENHETER (VARDGIVAR_ID, VARDGIVAR_NAMN, ENHETS_ID, ENHETS_NAMN, SKAPAD_DATUM, SENASTE_KONTROLL_DATUM) VALUES (?,?,?,?,?,?)', vals);
+		} catch(SQLException e){
+			println e.message
+		}
 	}
 
 	static void main(String[] args) {
