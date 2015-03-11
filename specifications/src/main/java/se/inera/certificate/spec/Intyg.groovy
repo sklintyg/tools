@@ -96,6 +96,7 @@ public class Intyg extends RestClientFixture {
             validToDate:giltigtTill,
             careUnitId: (enhetsId) ? enhetsId : "1.2.3",
             careUnitName: enhet,
+            careGiverId: vårdgivarId,
             deletedByCareGiver : deletedByCareGiver,
             additionalInfo : additionalInfo,
 			certificateStates: stateList,
