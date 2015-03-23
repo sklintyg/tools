@@ -23,15 +23,18 @@
   <properties>
     <!-- Schemas -->
     <clinicalprocess-healthcond-certificate.version>0-SNAPSHOT</clinicalprocess-healthcond-certificate.version>
-    <clinicalprocess-healthcond-certificate.version.range>
-      (,1.0.0]
-    </clinicalprocess-healthcond-certificate.version.range>
+    <clinicalprocess-healthcond-certificate.version.range>(,1.0.0]</clinicalprocess-healthcond-certificate.version.range>
 
     <insuranceprocess-healthreporting.version>0-SNAPSHOT</insuranceprocess-healthreporting.version>
     <insuranceprocess-healthreporting.version.range>(,1.0.0]</insuranceprocess-healthreporting.version.range>
 
     <itintegration-monitoring.version>0-SNAPSHOT</itintegration-monitoring.version>
     <itintegration-monitoring.version.range>(,1.0.0]</itintegration-monitoring.version.range>
+	
+    <!-- Common -->
+    <common.version>0-SNAPSHOT</common.version>
+    <common.version.range>(,2.1.0]</common.version.range>
+	
   </properties>
 
   <scm>
@@ -56,11 +59,12 @@
         <artifactId>itintegration-monitoring-interactions</artifactId>
         <version>${itintegration-monitoring.version}</version>
       </dependency>
+	  
       <!-- Integration-util -->
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
         <artifactId>integration-util</artifactId>
-        <version>${project.version}</version>
+        <version>${common.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
