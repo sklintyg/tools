@@ -15,6 +15,10 @@
 
   <name>Intyg Tools (FitNesse fixturer)</name>
 
+  <properties>
+    <groovy.httpBuilder.version>0.7.1</groovy.httpBuilder.version>
+  </properties>
+
   <dependencies>
     <!-- Schemas -->
     <dependency>
@@ -29,11 +33,11 @@
       <groupId>se.riv.itintegration.monitoring</groupId>
       <artifactId>itintegration-monitoring-interactions</artifactId>
     </dependency>
+
     <!-- Integration-util -->
     <dependency>
       <groupId>se.inera.intyg.common</groupId>
       <artifactId>integration-util</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -125,6 +129,36 @@
           </dependency>
         </dependencies>
       </plugin>
+	  <plugin>
+	    <groupId>org.codehaus.mojo</groupId>
+	    <artifactId>versions-maven-plugin</artifactId>
+	    <configuration>
+	      <includeProperties>
+	        common.version,
+	        clinicalprocess-healthcond-certificate.version,
+	        insuranceprocess-healthreporting.version, 
+			itintegration-monitoring.version
+	      </includeProperties>
+	      <properties>
+	        <property>
+	          <name>common.version</name>
+	          <version>${common.version.range}</version>
+	        </property>
+	        <property>
+	          <name>clinicalprocess-healthcond-certificate.version</name>
+	          <version>${clinicalprocess-healthcond-certificate.version.range}</version>
+	        </property>
+	        <property>
+	          <name>insuranceprocess-healthreporting.version</name>
+	          <version>${insuranceprocess-healthreporting.version.range}</version>
+	        </property>
+	        <property>
+	          <name>itintegration-monitoring.version</name>
+	          <version>${itintegration-monitoring.version.range}</version>
+	        </property>
+	      </properties>
+	    </configuration>
+	  </plugin>
     </plugins>
   </build>
 
