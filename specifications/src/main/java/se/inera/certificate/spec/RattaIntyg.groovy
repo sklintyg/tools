@@ -36,11 +36,15 @@ class RattaIntyg extends WsClientFixture {
     String meddelande
 
     public RattaIntyg() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
 
     public RattaIntyg(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "revoke-certificate/v1.0"
 		revokeResponder = createClient(RevokeMedicalCertificateResponderInterface.class, url)
     }
