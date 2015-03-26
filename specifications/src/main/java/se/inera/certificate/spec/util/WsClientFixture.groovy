@@ -37,10 +37,19 @@ class WsClientFixture {
 		this(LOGICAL_ADDRESS)
 	}
 
-	public WsClientFixture(String address) {
-		logicalAddress.setValue(address)
-	}
+    public WsClientFixture(String address) {
+        logicalAddress.setValue(address)
+        init()
+    }
 
+    public WsClientFixture(String address, String baseUrl) {
+        logicalAddress.setValue(address)
+        this.baseUrl = baseUrl
+        init()
+    }
+
+    public void init() {}
+    
 	def asJson(def object) {
 		StringWriter sw = new StringWriter()
 		jsonMapper.writeValue(sw, object)
