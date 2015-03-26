@@ -15,6 +15,10 @@
 
   <name>Intyg Tools (FitNesse fixturer)</name>
 
+  <properties>
+    <groovy.httpBuilder.version>0.7.1</groovy.httpBuilder.version>
+  </properties>
+
   <dependencies>
     <!-- Schemas -->
     <dependency>
