@@ -2,42 +2,26 @@
 
 export INTYG_HOME=`pwd`/../..
 
-cd common-pom
-git flow init
+git clone https://github.com/sklintyg/common.git
 cd $INTYG_HOME
 if [ $? != 0 ]; then exit 1; fi
 
-cd common
-git flow init
-cd $INTYG_HOME
-if [ $? != 0 ]; then exit 1; fi
-
-cd intygstyper
-git flow init
+git clone https://github.com/sklintyg/intygstyper.git
 cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd intygstjanst
-git flow init
+git clone https://github.com/sklintyg/intygstjanst.git
 cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd minaintyg
-git flow init
-cd $INTYG_HOME
-if [ $? != 0 ]; then exit; fi
-	
-cd schemas
-git flow init
+git clone https://github.com/sklintyg/minaintyg.git
 cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd tools
-git flow init
+git clone https://github.com/sklintyg/schemas.git
 cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
-		
-cd webcert
-git flow init
+
+git clone https://github.com/sklintyg/webcert.git
 cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
