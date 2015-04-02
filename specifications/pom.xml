@@ -23,7 +23,7 @@
     <!-- Schemas -->
     <dependency>
       <groupId>se.inera.intyg.schemas.clinicalprocess.healthcond.certificate.v1</groupId>
-      <artifactId>clinicalprocess-healthcond-certificate-interactions</artifactId>
+      <artifactId>clinicalprocess_healthcond_certificate</artifactId>
     </dependency>
     <dependency>
       <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
@@ -135,7 +135,7 @@
 	    <configuration>
 	      <includeProperties>
 	        common.version,
-	        clinicalprocess-healthcond-certificate.version,
+	        clinicalprocess_healthcond_certificate.version,
 	        insuranceprocess-healthreporting.version, 
 			itintegration-monitoring.version
 	      </includeProperties>
@@ -145,8 +145,8 @@
 	          <version>${common.version.range}</version>
 	        </property>
 	        <property>
-	          <name>clinicalprocess-healthcond-certificate.version</name>
-	          <version>${clinicalprocess-healthcond-certificate.version.range}</version>
+	          <name>clinicalprocess_healthcond_certificate.version</name>
+	          <version>${clinicalprocess_healthcond_certificate.version.range}</version>
 	        </property>
 	        <property>
 	          <name>insuranceprocess-healthreporting.version</name>
