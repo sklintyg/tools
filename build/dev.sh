@@ -2,42 +2,35 @@
 
 export INTYG_HOME=`pwd`/../..
 
-cd common-pom
+cd $INTYG_HOME/common-pom
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit 1; fi
 
-cd common
+cd $INTYG_HOME/common
 git checkout develop
-cd $INTYG_HOME
+
 if [ $? != 0 ]; then exit 1; fi
 
-cd intygstyper
+cd $INTYG_HOME/intygstyper
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd intygstjanst
+cd $INTYG_HOME/intygstjanst
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd minaintyg
+cd $INTYG_HOME/minaintyg
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 	
-cd schemas
+cd $INTYG_HOME/schemas
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd tools
+cd $INTYG_HOME/tools
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 		
-cd webcert
+cd $INTYG_HOME/webcert
 git checkout develop
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
