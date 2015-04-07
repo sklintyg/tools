@@ -12,11 +12,15 @@ public class Samtycke extends WsClientFixture {
 	static String serviceUrl = System.getProperty("service.setConsentUrl")
 
 	public Samtycke() {
-        this(WsClientFixture.LOGICAL_ADDRESS)
+        super()
     }
 
     public Samtycke(String logiskAddress) {
         super(logiskAddress)
+    }
+
+    @Override
+    public void init() {
 		String url = serviceUrl ? serviceUrl : baseUrl + "set-consent/v1.0"
 		setConsentResponder = createClient(SetConsentResponderInterface.class, url)
 	}

@@ -18,13 +18,18 @@ import org.apache.cxf.message.Message
 import org.apache.cxf.transport.http.HTTPConduit
 import org.w3.wsaddressing10.AttributedURIType
 
+import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.integration.json.CustomObjectMapper
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 
 class WsClientFixture {
 
-	final static String LOGICAL_ADDRESS = "FKORG"
+	private final static String LOGICAL_ADDRESS = "FKORG"
 
+    String baseUrl = System.getProperty("certificate.baseUrl")
+    
+    boolean nyaKontraktet = false
+    
 	private CustomObjectMapper jsonMapper = new CustomObjectMapper();
 	protected AttributedURIType logicalAddress = new AttributedURIType()
 
@@ -32,10 +37,19 @@ class WsClientFixture {
 		this(LOGICAL_ADDRESS)
 	}
 
-	public WsClientFixture(String address) {
-		logicalAddress.setValue(address)
-	}
+    public WsClientFixture(String address) {
+        logicalAddress.setValue(address)
+        init()
+    }
 
+    public WsClientFixture(String address, String baseUrl) {
+        logicalAddress.setValue(address)
+        this.baseUrl = baseUrl
+        init()
+    }
+
+    public void init() {}
+    
 	def asJson(def object) {
 		StringWriter sw = new StringWriter()
 		jsonMapper.writeValue(sw, object)
@@ -45,8 +59,6 @@ class WsClientFixture {
 	def asErrorMessage(String s) {
 		throw new Exception("message:<<${s.replace(System.getProperty('line.separator'), ' ')}>>")
 	}
-
-    static String baseUrl = System.getProperty("certificate.baseUrl", "http://localhost:8080/inera-certificate/")
 
 	def setEndpoint(def responder, String serviceName, String url = baseUrl + serviceName) {
 		if (!url) url = baseUrl + serviceName
@@ -68,17 +80,31 @@ class WsClientFixture {
 	def resultAsString(response) {
         String result = null
 		if (response) {
-	        switch (response.result.resultCode) {
-	            case ResultCodeEnum.OK:
-	                result = response.result.resultCode.toString()
-                    break
-	            case ResultCodeEnum.INFO:
-	                result = "[${response.result.resultCode.toString()}] - ${response.result.infoText}"
-                    break
-                case ResultCodeEnum.ERROR:
-					result = "[${response.result.errorId.toString()}] - ${response.result.errorText}"
-                    break
-	        }
+            if (nyaKontraktet) {
+                switch (response.result.resultCode) {
+                    case ResultCodeType.OK:
+                        result = response.result.resultCode.toString()
+                        break
+                    case ResultCodeType.INFO:
+                        result = "[${response.result.resultCode.toString()}] - ${response.result.resultText}"
+                        break
+                    case ResultCodeType.ERROR:
+                        result = "[${response.result.errorId.toString()}] - ${response.result.resultText}"
+                        break
+                }
+            } else {
+    	        switch (response.result.resultCode) {
+    	            case ResultCodeEnum.OK:
+    	                result = response.result.resultCode.toString()
+                        break
+    	            case ResultCodeEnum.INFO:
+    	                result = "[${response.result.resultCode.toString()}] - ${response.result.infoText}"
+                        break
+                    case ResultCodeEnum.ERROR:
+    					result = "[${response.result.errorId.toString()}] - ${response.result.errorText}"
+                        break
+    	        }
+            }
 		}
 		return result
 	}
