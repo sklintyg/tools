@@ -46,8 +46,8 @@ class UppdateraEnhet {
                 Sql sql = new Sql(dataSource)
                 def row = sql.firstRow( 'select DOCUMENT from CERTIFICATE where ID = :id' , [id : id])
                 def jsonDocument = new JsonSlurper().parseText(new String(row.DOCUMENT, 'UTF-8'))
-                jsonDocument.skapadAv.vardenhet.id.extension = config.uppdateradEnhet
-                jsonDocument.skapadAv.vardenhet.vardgivare.id.extension = config.uppdateradVardgivare
+                jsonDocument.grundData.skapadAv.vardenhet.enhetsid = config.uppdateradEnhet
+                jsonDocument.grundData.skapadAv.vardenhet.vardgivare.vardgivarid = config.uppdateradVardgivare
                 def updatedJson = new JsonBuilder(jsonDocument).toString()
                 sql.execute('update CERTIFICATE set DOCUMENT = :document, CARE_UNIT_ID = :enhet where ID = :id' , [document: updatedJson.getBytes('UTF-8'), enhet: config.uppdateradEnhet, id : id])
                 row = sql.firstRow( 'select DOCUMENT from ORIGINAL_CERTIFICATE where CERTIFICATE_ID = :id' , [id : id])
