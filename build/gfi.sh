@@ -2,44 +2,37 @@
 
 export INTYG_HOME=`pwd`/../..
 
-cd common
+cd $INTYG_HOME/common
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit 1; fi
 
-cd intygstyper
+cd $INTYG_HOME/intygstyper
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd intygstjanst
+cd $INTYG_HOME/intygstjanst
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd minaintyg
+cd $INTYG_HOME/minaintyg
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 	
-cd schemas
+cd $INTYG_HOME/schemas
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 
-cd tools
+cd $INTYG_HOME/tools
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
 		
-cd webcert
+cd $INTYG_HOME/webcert
 git checkout --track origin/master
 git flow init
-cd $INTYG_HOME
 if [ $? != 0 ]; then exit; fi
