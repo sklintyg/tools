@@ -24,7 +24,7 @@
 	  
     <!-- Schemas -->
     <clinicalprocess_healthcond_certificate.version>0-SNAPSHOT</clinicalprocess_healthcond_certificate.version>
-    <clinicalprocess_healthcond_certificate.version.range>(,1.0.0]</clinicalprocess_healthcond_certificate.version.range>
+    <clinicalprocess_healthcond_certificate.version.range>(,1.1.0]</clinicalprocess_healthcond_certificate.version.range>
 
     <insuranceprocess-healthreporting.version>0-SNAPSHOT</insuranceprocess-healthreporting.version>
     <insuranceprocess-healthreporting.version.range>(,1.0.0]</insuranceprocess-healthreporting.version.range>
@@ -33,7 +33,7 @@
     <itintegration-monitoring.version.range>(,1.0.0]</itintegration-monitoring.version.range>
 	
     <common.version>0-SNAPSHOT</common.version>
-    <common.version.range>(,2.1.0]</common.version.range>
+    <common.version.range>(,2.2.0]</common.version.range>
 	
   </properties>
 
