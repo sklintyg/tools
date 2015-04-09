@@ -23,8 +23,8 @@
   <properties>
 	  
     <!-- Schemas -->
-    <clinicalprocess_healthcond_certificate.version>0-SNAPSHOT</clinicalprocess_healthcond_certificate.version>
-    <clinicalprocess_healthcond_certificate.version.range>(,1.1.0]</clinicalprocess_healthcond_certificate.version.range>
+    <clinicalprocess-healthcond-certificate.version>0-SNAPSHOT</clinicalprocess-healthcond-certificate.version>
+    <clinicalprocess-healthcond-certificate.version.range>(,1.1.0]</clinicalprocess-healthcond-certificate.version.range>
 
     <insuranceprocess-healthreporting.version>0-SNAPSHOT</insuranceprocess-healthreporting.version>
     <insuranceprocess-healthreporting.version.range>(,1.0.0]</insuranceprocess-healthreporting.version.range>
@@ -46,8 +46,8 @@
       <!-- Schemas -->
       <dependency>
         <groupId>se.inera.intyg.schemas.clinicalprocess.healthcond.certificate.v1</groupId>
-        <artifactId>clinicalprocess_healthcond_certificate</artifactId>
-        <version>${clinicalprocess_healthcond_certificate.version}</version>
+        <artifactId>clinicalprocess-healthcond-certificate</artifactId>
+        <version>${clinicalprocess-healthcond-certificate.version}</version>
       </dependency>
       <dependency>
         <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
@@ -118,7 +118,7 @@
 	    <configuration>
 	      <includeProperties>
 	        common.version,
-	        clinicalprocess_healthcond_certificate.version,
+	        clinicalprocess-healthcond-certificate.version,
 	        insuranceprocess-healthreporting.version, 
 			itintegration-monitoring.version
 	      </includeProperties>
@@ -128,8 +128,8 @@
 	          <version>${common.version.range}</version>
 	        </property>
 	        <property>
-	          <name>clinicalprocess_healthcond_certificate.version</name>
-	          <version>${clinicalprocess_healthcond_certificate.version.range}</version>
+	          <name>clinicalprocess-healthcond-certificate.version</name>
+	          <version>${clinicalprocess-healthcond-certificate.version.range}</version>
 	        </property>
 	        <property>
 	          <name>insuranceprocess-healthreporting.version</name>
