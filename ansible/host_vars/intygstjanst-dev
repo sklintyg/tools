@@ -1,0 +1,8 @@
+---
+# file: host_vars/intygstjanst-dev
+
+# Tomcat
+proxy_name: "%%%DEV-IP%%%"
+
+# Apache
+proxy_pass: "http://127.0.0.1:8181/"

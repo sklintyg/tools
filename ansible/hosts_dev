@@ -1,0 +1,21 @@
+[apache]
+intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+minaintyg-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+
+[tomcat]
+intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+minaintyg-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+
+[activemq]
+intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+
+[mysql]
+intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
