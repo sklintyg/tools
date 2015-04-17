@@ -1,21 +1,17 @@
-[apache]
-intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-minaintyg-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+        [apache]
+        intygstjanst-dev ansible_ssh_host={{intygstjanstUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+        minaintyg-dev ansible_ssh_host={{minaintygUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+        webcert-dev ansible_ssh_host={{webcertUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
-[tomcat]
-intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-minaintyg-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+        [tomcat]
+        intygstjanst-dev ansible_ssh_host={{intygstjanstUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+        minaintyg-dev ansible_ssh_host={{minaintygUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+        webcert-dev ansible_ssh_host={{webcertUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
-[activemq]
-intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+        [activemq]
+        intygstjanst-dev ansible_ssh_host={{intygstjanstUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+        webcert-dev ansible_ssh_host={{webcertUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
-[mysql]
-intygstjanst-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-webcert-test ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
-statistik-fitnesse ansible_ssh_host=%%%DEV-IP%%% ansible_ssh_user=%%%DEV-USERNAME%%% ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/%%%DEV-PRIV-KEY%%%
+        [mysql]
+        intygstjanst-dev ansible_ssh_host={{intygstjanstUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa
+        webcert-dev ansible_ssh_host={{webcertUrl}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file=~/.ssh/id_rsa

@@ -2,7 +2,7 @@
 # file: host_vars/minaintyg-dev
 
 # Tomcat
-proxy_name: "%%%DEV-IP%%%"
+proxy_name: "{{minaintygUrl}}"
 
 # Apache
 proxy_pass: "http://127.0.0.1:8181/"

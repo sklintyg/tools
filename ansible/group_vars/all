@@ -13,6 +13,7 @@ jre_tarball: jre-7u71-linux-x64.tar.gz
 # Tomcat
 tomcat7_version: 7.0.57
 tomcat7_home: "{{ inera_root }}/tomcat7"
+tomcat7_bin: "{{ tomcat7_home }}/bin"
 tomcat_user: inera-tomcat
 tomcat_group: inera-tomcat
 admin_username: admin

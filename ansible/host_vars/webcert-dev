@@ -2,7 +2,7 @@
 # file: host_vars/webcert-dev
 
 # Tomcat
-proxy_name: "%%%DEV-IP%%%"
+proxy_name: "{{webcertUrl}}"
 
 # Apache
 proxy_pass: "http://127.0.0.1:8181/"
