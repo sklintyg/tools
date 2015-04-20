@@ -5,7 +5,7 @@ import org.joda.time.LocalDateTime
 import se.inera.certificate.spec.util.WsClientFixture
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.LakarutlatandeEnkelType
 import se.inera.ifv.insuranceprocess.healthreporting.medcertqa.v1.VardAdresseringsType
-import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtab20.v1.RevokeMedicalCertificateResponderInterface
+import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificate.rivtabp20.v1.RevokeMedicalCertificateResponderInterface
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateRequestType
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeMedicalCertificateResponseType
 import se.inera.ifv.insuranceprocess.healthreporting.revokemedicalcertificateresponder.v1.RevokeType
