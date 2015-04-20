@@ -1,4 +1,5 @@
 package se.inera.certificate.spec.util
+
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 
@@ -18,7 +19,7 @@ import org.apache.cxf.message.Message
 import org.apache.cxf.transport.http.HTTPConduit
 import org.w3.wsaddressing10.AttributedURIType
 
-import se.inera.certificate.clinicalprocess.healthcond.certificate.v1.ResultCodeType
+import se.riv.clinicalprocess.healthcond.certificate.v1.ResultCodeType
 import se.inera.certificate.integration.json.CustomObjectMapper
 import se.inera.ifv.insuranceprocess.healthreporting.v2.ResultCodeEnum
 

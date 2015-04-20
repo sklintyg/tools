@@ -22,16 +22,20 @@
 
   <properties>
 	  
-    <!-- Schemas -->
+    <!-- RIVTA Schemas -->
     <clinicalprocess-healthcond-certificate.version>0-SNAPSHOT</clinicalprocess-healthcond-certificate.version>
     <clinicalprocess-healthcond-certificate.version.range>(,1.1.0]</clinicalprocess-healthcond-certificate.version.range>
 
     <insuranceprocess-healthreporting.version>0-SNAPSHOT</insuranceprocess-healthreporting.version>
-    <insuranceprocess-healthreporting.version.range>(,1.0.0]</insuranceprocess-healthreporting.version.range>
+    <insuranceprocess-healthreporting.version.range>(,1.1.0]</insuranceprocess-healthreporting.version.range>
 
     <itintegration-monitoring.version>0-SNAPSHOT</itintegration-monitoring.version>
     <itintegration-monitoring.version.range>(,1.0.0]</itintegration-monitoring.version.range>
-	
+
+    <!-- Intyg Schemas -->
+    <intygstjansten-insuranceprocess-healthreporting.version>0-SNAPSHOT</intygstjansten-insuranceprocess-healthreporting.version>
+    <intygstjansten-insuranceprocess-healthreporting.version.range>(,1.1.0]</intygstjansten-insuranceprocess-healthreporting.version.range>
+
     <common.version>0-SNAPSHOT</common.version>
     <common.version.range>(,2.2.0]</common.version.range>
 	
@@ -45,21 +49,26 @@
     <dependencies>
       <!-- Schemas -->
       <dependency>
-        <groupId>se.inera.intyg.schemas.clinicalprocess.healthcond.certificate.v1</groupId>
-        <artifactId>clinicalprocess-healthcond-certificate</artifactId>
+        <groupId>se.riv.clinicalprocess.healthcond.certificate</groupId>
+        <artifactId>clinicalprocess-healthcond-certificate-schemas</artifactId>
         <version>${clinicalprocess-healthcond-certificate.version}</version>
       </dependency>
       <dependency>
-        <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
-        <artifactId>insuranceprocess-healthreporting-interactions</artifactId>
+        <groupId>se.riv.insuranceprocess.healthreporting</groupId>
+        <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
         <version>${insuranceprocess-healthreporting.version}</version>
       </dependency>
       <dependency>
         <groupId>se.riv.itintegration.monitoring</groupId>
-        <artifactId>itintegration-monitoring-interactions</artifactId>
+        <artifactId>itintegration-monitoring-schemas</artifactId>
         <version>${itintegration-monitoring.version}</version>
       </dependency>
-	  
+      <dependency>
+        <groupId>se.inera.intyg.insuranceprocess.healthreporting</groupId>
+        <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
+        <version>${intygstjansten-insuranceprocess-healthreporting.version}</version>
+      </dependency>
+
       <!-- Integration-util -->
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
@@ -120,8 +129,9 @@
 	        common.version,
 	        clinicalprocess-healthcond-certificate.version,
 	        insuranceprocess-healthreporting.version, 
-			itintegration-monitoring.version
-	      </includeProperties>
+			    itintegration-monitoring.version
+          intygstjansten-insuranceprocess-healthreporting.version,
+        </includeProperties>
 	      <properties>
 	        <property>
 	          <name>common.version</name>
@@ -139,6 +149,10 @@
 	          <name>itintegration-monitoring.version</name>
 	          <version>${itintegration-monitoring.version.range}</version>
 	        </property>
+          <property>
+            <name>intygstjansten-insuranceprocess-healthreporting.version</name>
+            <version>${intygstjansten-insuranceprocess-healthreporting.version.range}</version>
+          </property>
 	      </properties>
 	    </configuration>
 	  </plugin>

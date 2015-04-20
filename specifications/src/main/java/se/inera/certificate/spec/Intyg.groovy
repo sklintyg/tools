@@ -1,4 +1,5 @@
 package se.inera.certificate.spec
+
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.springframework.core.io.ClassPathResource
