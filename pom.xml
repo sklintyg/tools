@@ -12,7 +12,7 @@
 
   <groupId>se.inera.intyg.tools</groupId>
   <artifactId>tools</artifactId>
-  <version>0-SNAPSHOT</version>
+  <version>2.2.0-b14</version>
   <packaging>pom</packaging>
 
   <name>Intyg Tools</name>
@@ -23,20 +23,20 @@
   <properties>
 	  
     <!-- RIVTA Schemas -->
-    <rivta-clinicalprocess.version>0-SNAPSHOT</rivta-clinicalprocess.version>
+    <rivta-clinicalprocess.version>1.1.0-b26</rivta-clinicalprocess.version>
     <rivta-clinicalprocess.version.range>(,1.1.0]</rivta-clinicalprocess.version.range>
 
-    <rivta-insuranceprocess.version>0-SNAPSHOT</rivta-insuranceprocess.version>
+    <rivta-insuranceprocess.version>1.1.0-b17</rivta-insuranceprocess.version>
     <rivta-insuranceprocess.version.range>(,1.1.0]</rivta-insuranceprocess.version.range>
 
-    <rivta-itintegration-monitoring.version>0-SNAPSHOT</rivta-itintegration-monitoring.version>
+    <rivta-itintegration-monitoring.version>1.1.0-b15</rivta-itintegration-monitoring.version>
     <rivta-itintegration-monitoring.version.range>(,1.1.0]</rivta-itintegration-monitoring.version.range>
 
     <!-- Intyg Schemas -->
-    <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
+    <intyg-insuranceprocess.version>1.1.0-b1</intyg-insuranceprocess.version>
     <intyg-insuranceprocess.version.range>(,1.1.0]</intyg-insuranceprocess.version.range>
 
-    <common.version>0-SNAPSHOT</common.version>
+    <common.version>2.2.0-b38</common.version>
     <common.version.range>(,2.2.0]</common.version.range>
 	
   </properties>
