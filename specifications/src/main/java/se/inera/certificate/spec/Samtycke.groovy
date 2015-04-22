@@ -1,9 +1,9 @@
-package se.inera.certificate.spec;
+package se.inera.certificate.spec
 
 import se.inera.certificate.spec.util.WsClientFixture
-import se.inera.ifv.insuranceprocess.healthreporting.setconsent.v1.rivtabp20.SetConsentResponderInterface
-import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType
-import se.inera.ifv.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentResponseType
+import se.inera.intyg.insuranceprocess.healthreporting.setconsent.rivtabp20.v1.SetConsentResponderInterface
+import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentRequestType
+import se.inera.intyg.insuranceprocess.healthreporting.setconsentresponder.v1.SetConsentResponseType
 
 public class Samtycke extends WsClientFixture {
 

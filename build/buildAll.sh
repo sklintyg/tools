@@ -6,15 +6,15 @@ cd $INTYG_HOME/common-pom
 mvn clean install -Ddependency.unpack-skip=true
 if [ $? != 0 ]; then exit 1; fi
 
+cd $INTYG_HOME/schemas
+mvn clean install
+if [ $? != 0 ]; then exit; fi
+
 cd $INTYG_HOME/common
 mvn clean install
 if [ $? != 0 ]; then exit 1; fi
 
 cd $INTYG_HOME/tools
-mvn clean install
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/schemas
 mvn clean install
 if [ $? != 0 ]; then exit; fi
 

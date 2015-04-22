@@ -1,4 +1,5 @@
 package se.inera.certificate.spec
+
 import static groovyx.net.http.ContentType.JSON
 import se.inera.certificate.spec.util.RestClientFixture
 

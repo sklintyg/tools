@@ -22,16 +22,20 @@
 
   <properties>
 	  
-    <!-- Schemas -->
-    <clinicalprocess-healthcond-certificate.version>0-SNAPSHOT</clinicalprocess-healthcond-certificate.version>
-    <clinicalprocess-healthcond-certificate.version.range>(,1.1.0]</clinicalprocess-healthcond-certificate.version.range>
+    <!-- RIVTA Schemas -->
+    <rivta-clinicalprocess.version>0-SNAPSHOT</rivta-clinicalprocess.version>
+    <rivta-clinicalprocess.version.range>(,1.1.0]</rivta-clinicalprocess.version.range>
 
-    <insuranceprocess-healthreporting.version>0-SNAPSHOT</insuranceprocess-healthreporting.version>
-    <insuranceprocess-healthreporting.version.range>(,1.0.0]</insuranceprocess-healthreporting.version.range>
+    <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
+    <intyg-insuranceprocess.version.range>(,1.1.0]</intyg-insuranceprocess.version.range>
 
-    <itintegration-monitoring.version>0-SNAPSHOT</itintegration-monitoring.version>
-    <itintegration-monitoring.version.range>(,1.0.0]</itintegration-monitoring.version.range>
-	
+    <rivta-itintegration-monitoring.version>0-SNAPSHOT</rivta-itintegration-monitoring.version>
+    <rivta-itintegration-monitoring.version.range>(,1.0.0]</rivta-itintegration-monitoring.version.range>
+
+    <!-- Intyg Schemas -->
+    <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
+    <intyg-insuranceprocess.version.range>(,1.1.0]</intyg-insuranceprocess.version.range>
+
     <common.version>0-SNAPSHOT</common.version>
     <common.version.range>(,2.2.0]</common.version.range>
 	
@@ -45,21 +49,26 @@
     <dependencies>
       <!-- Schemas -->
       <dependency>
-        <groupId>se.inera.intyg.schemas.clinicalprocess.healthcond.certificate.v1</groupId>
-        <artifactId>clinicalprocess-healthcond-certificate</artifactId>
-        <version>${clinicalprocess-healthcond-certificate.version}</version>
+        <groupId>se.riv.clinicalprocess.healthcond.certificate</groupId>
+        <artifactId>clinicalprocess-healthcond-certificate-schemas</artifactId>
+        <version>${rivta-clinicalprocess.version}</version>
       </dependency>
       <dependency>
-        <groupId>se.inera.intyg.schemas.insuranceprocess.healthreporting.v1</groupId>
-        <artifactId>insuranceprocess-healthreporting-interactions</artifactId>
-        <version>${insuranceprocess-healthreporting.version}</version>
+        <groupId>se.riv.insuranceprocess.healthreporting</groupId>
+        <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
+        <version>${intyg-insuranceprocess.version}</version>
       </dependency>
       <dependency>
         <groupId>se.riv.itintegration.monitoring</groupId>
-        <artifactId>itintegration-monitoring-interactions</artifactId>
-        <version>${itintegration-monitoring.version}</version>
+        <artifactId>itintegration-monitoring-schemas</artifactId>
+        <version>${rivta-itintegration-monitoring.version}</version>
       </dependency>
-	  
+      <dependency>
+        <groupId>se.inera.intyg.insuranceprocess.healthreporting</groupId>
+        <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
+        <version>${intyg-insuranceprocess.version}</version>
+      </dependency>
+
       <!-- Integration-util -->
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
@@ -118,27 +127,32 @@
 	    <configuration>
 	      <includeProperties>
 	        common.version,
-	        clinicalprocess-healthcond-certificate.version,
-	        insuranceprocess-healthreporting.version, 
-			itintegration-monitoring.version
-	      </includeProperties>
+	        rivta-clinicalprocess.version,
+	        intyg-insuranceprocess.version,
+			    rivta-itintegration-monitoring.version
+          intyg-insuranceprocess.version,
+        </includeProperties>
 	      <properties>
 	        <property>
 	          <name>common.version</name>
 	          <version>${common.version.range}</version>
 	        </property>
 	        <property>
-	          <name>clinicalprocess-healthcond-certificate.version</name>
-	          <version>${clinicalprocess-healthcond-certificate.version.range}</version>
+	          <name>rivta-clinicalprocess.version</name>
+	          <version>${rivta-clinicalprocess.version.range}</version>
 	        </property>
 	        <property>
-	          <name>insuranceprocess-healthreporting.version</name>
-	          <version>${insuranceprocess-healthreporting.version.range}</version>
+	          <name>intyg-insuranceprocess.version</name>
+	          <version>${intyg-insuranceprocess.version.range}</version>
 	        </property>
 	        <property>
-	          <name>itintegration-monitoring.version</name>
-	          <version>${itintegration-monitoring.version.range}</version>
+	          <name>rivta-itintegration-monitoring.version</name>
+	          <version>${rivta-itintegration-monitoring.version.range}</version>
 	        </property>
+          <property>
+            <name>intyg-insuranceprocess.version</name>
+            <version>${intyg-insuranceprocess.version.range}</version>
+          </property>
 	      </properties>
 	    </configuration>
 	  </plugin>
