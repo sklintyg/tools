@@ -26,11 +26,11 @@
     <rivta-clinicalprocess.version>0-SNAPSHOT</rivta-clinicalprocess.version>
     <rivta-clinicalprocess.version.range>(,1.1.0]</rivta-clinicalprocess.version.range>
 
-    <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
-    <intyg-insuranceprocess.version.range>(,1.1.0]</intyg-insuranceprocess.version.range>
+    <rivta-insuranceprocess.version>0-SNAPSHOT</rivta-insuranceprocess.version>
+    <rivta-insuranceprocess.version.range>(,1.1.0]</rivta-insuranceprocess.version.range>
 
     <rivta-itintegration-monitoring.version>0-SNAPSHOT</rivta-itintegration-monitoring.version>
-    <rivta-itintegration-monitoring.version.range>(,1.0.0]</rivta-itintegration-monitoring.version.range>
+    <rivta-itintegration-monitoring.version.range>(,1.1.0]</rivta-itintegration-monitoring.version.range>
 
     <!-- Intyg Schemas -->
     <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
@@ -56,7 +56,7 @@
       <dependency>
         <groupId>se.riv.insuranceprocess.healthreporting</groupId>
         <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
-        <version>${intyg-insuranceprocess.version}</version>
+        <version>${rivta-insuranceprocess.version}</version>
       </dependency>
       <dependency>
         <groupId>se.riv.itintegration.monitoring</groupId>
@@ -128,7 +128,7 @@
 	      <includeProperties>
 	        common.version,
 	        rivta-clinicalprocess.version,
-	        intyg-insuranceprocess.version,
+	        rivta-insuranceprocess.version,
 			    rivta-itintegration-monitoring.version
           intyg-insuranceprocess.version,
         </includeProperties>
@@ -142,8 +142,8 @@
 	          <version>${rivta-clinicalprocess.version.range}</version>
 	        </property>
 	        <property>
-	          <name>intyg-insuranceprocess.version</name>
-	          <version>${intyg-insuranceprocess.version.range}</version>
+	          <name>rivta-insuranceprocess.version</name>
+	          <version>${rivta-insuranceprocess.version.range}</version>
 	        </property>
 	        <property>
 	          <name>rivta-itintegration-monitoring.version</name>
