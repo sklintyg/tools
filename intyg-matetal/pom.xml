@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>se.inera.intyg.tools</groupId>
-  <artifactId>certificate-metrics</artifactId>
+  <artifactId>intyg-matetal</artifactId>
   <version>1.0.0</version>
   <name>certificate-metrics</name>
   <packaging>jar</packaging>
