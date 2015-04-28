@@ -5,8 +5,9 @@
   <groupId>se.inera.intyg.tools</groupId>
   <artifactId>intyg-matetal</artifactId>
   <version>1.0.0</version>
-  <name>certificate-metrics</name>
   <packaging>jar</packaging>
+
+  <name>Intyg Mätetal</name>
 
   <properties>
     <groovy.version>2.3.7</groovy.version>

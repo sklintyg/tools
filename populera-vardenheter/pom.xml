@@ -12,6 +12,7 @@
 	<properties>
 		<groovy.version>2.3.7</groovy.version>
 	</properties>
+
 	<distributionManagement>
 		<repository>
 			<id>cloudbees-private-release-repository</id>
