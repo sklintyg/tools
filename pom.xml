@@ -16,24 +16,20 @@
   <packaging>pom</packaging>
 
   <name>Intyg Tools</name>
-  <modules>
-    <module>specifications</module>
-  </modules>
 
   <properties>
-	  
-    <!-- RIVTA Schemas -->
+    <!-- Common -->
+    <common.version>0-SNAPSHOT</common.version>
+    <common.version.range>(,2.2.0]</common.version.range>
+
+    <!-- Schemas -->
     <rivta-clinicalprocess.version>1.0.RC3.0</rivta-clinicalprocess.version>
     <rivta-insuranceprocess.version>3.1.0.0</rivta-insuranceprocess.version>
     <rivta-itintegration-monitoring.version>1.0.0.0</rivta-itintegration-monitoring.version>
 
-    <!-- Intyg Schemas -->
     <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
-    <intyg-insuranceprocess.version.range>(,1.1.0]</intyg-insuranceprocess.version.range>
+    <intyg-insuranceprocess.version.range>(,1.0.0]</intyg-insuranceprocess.version.range>
 
-    <common.version>0-SNAPSHOT</common.version>
-    <common.version.range>(,2.2.0]</common.version.range>
-	
   </properties>
 
   <scm>
@@ -43,6 +39,7 @@
   <dependencyManagement>
     <dependencies>
       <!-- Schemas -->
+<!--
       <dependency>
         <groupId>se.riv.clinicalprocess.healthcond.certificate</groupId>
         <artifactId>clinicalprocess-healthcond-certificate-schemas</artifactId>
@@ -63,6 +60,7 @@
         <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
         <version>${intyg-insuranceprocess.version}</version>
       </dependency>
+-->
 
       <!-- Integration-util -->
       <dependency>
@@ -122,7 +120,7 @@
 	    <configuration>
 	      <includeProperties>
 	        common.version,
-            intyg-insuranceprocess.version
+          intyg-insuranceprocess.version
         </includeProperties>
 	      <properties>
 	        <property>
