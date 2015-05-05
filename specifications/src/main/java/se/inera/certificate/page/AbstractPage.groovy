@@ -17,4 +17,12 @@ abstract class AbstractPage extends Page {
             js.exec(jqScrollToVisible)
         }
     }
+
+    def elementForId(elementId){
+        return $("#" + elementId);
+    }
+
+    def elementForClass(classId){
+        return $("." + classId);
+    }
 }
