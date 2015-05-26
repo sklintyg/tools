@@ -83,5 +83,6 @@
         "tom" :"2011-02-13"
     },
     "arbetsloshet" : true,
-    "foraldrarledighet" : true
+    "foraldrarledighet" : true,
+    "namnfortydligandeOchAdress" : "En Läkare\nKir mott\nLasarettsvägen 13\n85150 Sundsvall\n060-1818000"
 }

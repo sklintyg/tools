@@ -83,5 +83,6 @@
         "tom" :"2011-02-13"
     },
     "arbetsloshet" : true,
-    "foraldrarledighet" : true
+    "foraldrarledighet" : true,
+    "namnfortydligandeOchAdress" : "xx xxxxxx\nxxx xxxx\nxxxxxxxxxxxxxx 99\n99999 xxxxxxxxx\n999x9999999"
 }

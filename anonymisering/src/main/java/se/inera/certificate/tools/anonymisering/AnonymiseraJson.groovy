@@ -65,6 +65,7 @@ class AnonymiseraJson {
         intyg.anonymize('funktionsnedsattning')
         intyg.anonymize('aktivitetsbegransning')
         intyg.anonymize('arbetsformagaPrognos')
+        intyg.anonymize('namnfortydligandeOchAdress')
     }
     
 }
