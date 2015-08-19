@@ -15,10 +15,9 @@
 
   <distributionManagement>
     <repository>
-      <id>cloudbees-private-release-repository</id>
-      <name>Callista Software Release Respository</name>
-      <url>dav:https://repository-callistasoftware.forge.cloudbees.com/release</url>
-      <layout>default</layout>
+      <id>inera-release-repository</id>
+      <name>inera-release-repository</name>
+      <url>https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/</url>
     </repository>
   </distributionManagement>
 
@@ -205,20 +204,30 @@
   </build>
   <repositories>
     <repository>
-      <id>callista-release</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/release/</url>
+      <id>inera-release</id>
+      <url>https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
       <snapshots>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
       </snapshots>
     </repository>
     <repository>
-      <id>callista-snapshot</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/snapshot/</url>
+      <id>inera-nightly</id>
+      <url>https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/</url>
       <releases>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>inera-snapshot</id>
+      <url>https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>true</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
@@ -226,7 +235,7 @@
     </repository>
     <repository>
       <id>thirdparty</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
+      <url>https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -238,7 +247,7 @@
   <pluginRepositories>
     <pluginRepository>
       <id>thirdparty-plugin</id>
-      <url>https://repository-callistasoftware.forge.cloudbees.com/3rdparty</url>
+      <url>https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
