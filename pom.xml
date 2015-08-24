@@ -21,15 +21,6 @@
     <!-- Common -->
     <common.version>0-SNAPSHOT</common.version>
     <common.version.range>(,2.4.0]</common.version.range>
-
-    <!-- Schemas -->
-    <rivta-clinicalprocess.version>1.0.RC3.0</rivta-clinicalprocess.version>
-    <rivta-insuranceprocess.version>3.1.0.0</rivta-insuranceprocess.version>
-    <rivta-itintegration-monitoring.version>1.0.0.0</rivta-itintegration-monitoring.version>
-
-    <intyg-insuranceprocess.version>0-SNAPSHOT</intyg-insuranceprocess.version>
-    <intyg-insuranceprocess.version.range>(,1.0.0]</intyg-insuranceprocess.version.range>
-
   </properties>
 
   <scm>
@@ -38,29 +29,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Schemas -->
-<!--
-      <dependency>
-        <groupId>se.riv.clinicalprocess.healthcond.certificate</groupId>
-        <artifactId>clinicalprocess-healthcond-certificate-schemas</artifactId>
-        <version>${rivta-clinicalprocess.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.riv.insuranceprocess.healthreporting</groupId>
-        <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
-        <version>${rivta-insuranceprocess.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.riv.itintegration.monitoring</groupId>
-        <artifactId>itintegration-monitoring-schemas</artifactId>
-        <version>${rivta-itintegration-monitoring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>se.inera.intyg.insuranceprocess.healthreporting</groupId>
-        <artifactId>insuranceprocess-healthreporting-schemas</artifactId>
-        <version>${intyg-insuranceprocess.version}</version>
-      </dependency>
--->
 
       <!-- Integration-util -->
       <dependency>
@@ -119,18 +87,13 @@
 	    <artifactId>versions-maven-plugin</artifactId>
 	    <configuration>
 	      <includeProperties>
-	        common.version,
-          intyg-insuranceprocess.version
+	        common.version
         </includeProperties>
 	      <properties>
 	        <property>
 	          <name>common.version</name>
 	          <version>${common.version.range}</version>
 	        </property>
-            <property>
-              <name>intyg-insuranceprocess.version</name>
-              <version>${intyg-insuranceprocess.version.range}</version>
-            </property>
 	      </properties>
 	    </configuration>
 	  </plugin>
