@@ -7,4 +7,4 @@
     - vars/mysql.yml
   roles:
     - mysql-rpm-repo
-    - { role: geerlingguy.mysql }
+    - { role: geerlingguy.mysql}

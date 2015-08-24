@@ -5,7 +5,15 @@
   sudo: yes 
   vars_files:
     - vars/apache.yml
+  vars:
+    apache_root: /etc/apache2
   roles:
     - self-signed-certificate
-    - { role: geerlingguy.apache }
+    - { role: geerlingguy.apache, when: inventory_hostname != "privatlakarportal-demo"}
+    - apache-ports
+    - apache-templated-vhosts
     - apache-vhost
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
+

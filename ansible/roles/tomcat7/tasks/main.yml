@@ -53,7 +53,7 @@
   file: state=absent
         path={{ tomcat_home }}/{{ item }}
   with_items:
-    - conf
+    - conf 
     - webapps
     - logs
 

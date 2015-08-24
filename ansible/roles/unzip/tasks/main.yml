@@ -4,5 +4,5 @@
   yum: name=unzip state=present
 
 - name: install unzip from apt
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and inventory_hostname != "privatlakarportal-demo" 
   apt: name=unzip state=present

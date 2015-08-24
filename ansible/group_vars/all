@@ -12,15 +12,23 @@ jre_tarball: jre-7u71-linux-x64.tar.gz
 
 # Tomcat
 tomcat7_version: 7.0.57
-tomcat7_home: "{{ inera_root }}/tomcat7"
-tomcat7_bin: "{{ tomcat7_home }}/bin"
 tomcat_user: inera-tomcat
 tomcat_group: inera-tomcat
 admin_username: admin
 admin_password: admin
+proxy_name: "localhost"
+
+#Tomcat7
+tomcat7_home: "{{ inera_root }}/tomcat7"
+tomcat7_bin: "{{ tomcat7_home }}/bin"
 tomcat_service: inera-tomcat
 inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
-proxy_name: "localhost"
+
+#tomcat_priv
+tomcat_priv_home: "{{ inera_root }}/tomcat-priv"
+tomcat_bin: "{{ tomcat_priv_home }}/bin"
+tomcat_priv_service: privatlakarportal-tomcat
+privatlakarportal_tomcat_folder: "/var/lib/{{ tomcat_priv_service }}"
 
 # ActiveMQ
 activemq_home: "{{ inera_root }}/activemq"

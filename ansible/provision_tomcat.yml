@@ -7,5 +7,6 @@
   roles:
     - git
     - oracle-jre7
-    - tomcat7
+    - {role: tomcat7, when: inventory_hostname != "privatlakarportal-demo"}
+    - {role: tomcat-priv, when: inventory_hostname == "privatlakarportal-demo"}
     - global-systemvariabler

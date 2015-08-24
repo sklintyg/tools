@@ -1,0 +1,4 @@
+- name: setup ports.conf
+  template: 
+    src=ports.conf 
+    dest={{ apache_root }}/ports.conf

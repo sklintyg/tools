@@ -1,0 +1,9 @@
+- name: create virtual host file
+  template: src=virtualhost.conf dest={{ apache_root }}/sites-available/{{ domain }}.conf
+
+- name: a2ensite {{ domain }}
+  command: a2ensite {{ domain }}
+  args:
+    creates: /etc/apache2/sites-enabled/{{ domain }}.conf
+  notify:
+    - restart apache2
