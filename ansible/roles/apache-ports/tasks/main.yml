@@ -1,4 +1,5 @@
 - name: setup ports.conf
+  when: ansible_os_family == "Debian"
   template: 
     src=ports.conf 
     dest={{ apache_root }}/ports.conf

@@ -1,0 +1,5 @@
+---
+# file: host_vars/intygstjanst-demo
+
+# Environment name
+environment_name: "fitnesse"

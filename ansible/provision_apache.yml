@@ -9,11 +9,13 @@
     apache_root: /etc/apache2
   roles:
     - self-signed-certificate
-    - { role: geerlingguy.apache }
+    - { role: geerlingguy.apache, when: "'{{inventory_hostname}}' != 'privatlakarportal-{{environment_name}}'"}
     - apache-ports
     - apache-templated-vhosts
     - apache-vhost
   handlers:
     - name: restart apache2
       service: name=apache2 state=restarted
+    - name: restart httpd
+      service: name=httpd state=restarted
 
