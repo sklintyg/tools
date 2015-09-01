@@ -1,10 +1,4 @@
 ---
 # file: roles/tomcat7/vars/main.yml
 
-tomcat_version: "{{ tomcat7_version }}"
-tomcat_home: "{{ tomcat7_home }}"
-
-catalina_home: "{{ tomcat_home }}"
-catalina_base: "{{ tomcat_home }}"
-
-tomcat_download_url: http://archive.apache.org/dist/tomcat/tomcat-7/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+tomcat_download_url: http://archive.apache.org/dist/tomcat/tomcat-7/v{{ tomcat7_version }}/bin/apache-tomcat-{{ tomcat7_version }}.tar.gz

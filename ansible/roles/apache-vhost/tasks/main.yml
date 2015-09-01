@@ -9,5 +9,5 @@
     line="<VirtualHost 127.0.0.1:443>"
 
 - name: Allow httpd to initiate network connection to tomcat
-  when: ansible_os_family == "RedHat" and '{{inventory_hostname}}' != 'privatlakarportal-{{environment_name}}'
+  when: ansible_os_family == "RedHat"
   command: "/usr/sbin/setsebool -P httpd_can_network_connect 1"

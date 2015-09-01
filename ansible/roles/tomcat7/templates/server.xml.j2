@@ -19,7 +19,7 @@
      define subcomponents such as "Valves" at this level.
      Documentation at /docs/config/server.html
  -->
-<Server port="8005" shutdown="SHUTDOWN">
+<Server port="{{ tomcat_server_port }}" shutdown="SHUTDOWN">
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
@@ -67,14 +67,14 @@
          APR (HTTP/AJP) Connector: /docs/apr.html
          Define a non-SSL HTTP/1.1 Connector on port 8080
     -->
-    <Connector port="8080" protocol="HTTP/1.1"
+    <Connector port="{{ tomcat_http_port }}" protocol="HTTP/1.1"
                URIEncoding="UTF-8"
                connectionTimeout="20000"
                redirectPort="8443" />
 
     <!-- Define an ssl-like connector that an ssl-terminating server should use.
     -->
-    <Connector port="8181" protocol="HTTP/1.1"
+    <Connector port="{{ tomcat_https_port }}" protocol="HTTP/1.1"
                URIEncoding="UTF-8"
                connectionTimeout="20000"
                redirectPort="8443"

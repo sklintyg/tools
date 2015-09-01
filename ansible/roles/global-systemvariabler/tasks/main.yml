@@ -8,7 +8,7 @@
 - name: configure setenv.sh
   when: environment_name == "dev"
   lineinfile:
-    dest="{{ tomcat7_bin }}/setenv.sh"
+    dest="{{ tomcat7_home }}/bin/setenv.sh"
     create=yes
     mode=755
     regexp="global-env\.sh"

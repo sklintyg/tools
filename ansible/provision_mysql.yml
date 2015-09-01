@@ -7,4 +7,4 @@
     - vars/mysql.yml
   roles:
     - mysql-rpm-repo
-    - { role: geerlingguy.mysql, when: "'{{inventory_hostname}}' != 'privatlakarportal-{{environment_name}}'"}
+    - geerlingguy.mysql

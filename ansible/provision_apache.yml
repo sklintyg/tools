@@ -9,7 +9,7 @@
     apache_root: /etc/apache2
   roles:
     - self-signed-certificate
-    - { role: geerlingguy.apache, when: "'{{inventory_hostname}}' != 'privatlakarportal-{{environment_name}}'"}
+    - geerlingguy.apache
     - apache-ports
     - apache-templated-vhosts
     - apache-vhost
