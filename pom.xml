@@ -7,7 +7,7 @@
   <parent>
     <groupId>se.inera.intyg.common</groupId>
     <artifactId>common-pom</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.9.1</version>
   </parent>
 
   <groupId>se.inera.intyg.tools</groupId>
@@ -20,7 +20,7 @@
   <properties>
     <!-- Common -->
     <common.version>0-SNAPSHOT</common.version>
-    <common.version.range>(,2.4.0]</common.version.range>
+    <common.version.range>(,2.3.0]</common.version.range>
 
     <!-- Schemas -->
     <rivta-clinicalprocess.version>1.0.RC3.0</rivta-clinicalprocess.version>
