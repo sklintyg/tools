@@ -33,4 +33,4 @@ activemq_home: "{{ inera_root }}/activemq"
 # Apache
 certificate_file: "{{ inera_root }}/certs/self-signed.crt"
 certificate_key_file: "{{ inera_root }}/certs/self-signed.key"
-proxy_pass: "http://127.0.0.1:8181/"
+proxy_pass: "http://127.0.0.1:{{ tomcat_https_port }}/"

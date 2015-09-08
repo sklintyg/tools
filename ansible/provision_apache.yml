@@ -10,6 +10,7 @@
   roles:
     - self-signed-certificate
     - geerlingguy.apache
+    - apache-remove-vhosts
     - apache-ports
     - apache-templated-vhosts
     - apache-vhost

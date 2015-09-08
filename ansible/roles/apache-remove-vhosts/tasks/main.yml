@@ -1,0 +1,10 @@
+---
+# file: roles/apache-remove-vhosts/tasks/main.yml
+
+- name: remove standard sites
+  when: ansible_os_family == "Debian"
+  file: state=absent
+        path=/etc/apache2/sites-enabled/{{ item }}
+  with_items:
+    - 000-default.conf
+    - vhosts.conf
