@@ -1,19 +1,13 @@
----
-# file: host_vars/intygstjanst-dev
-
 # Tomcat
-proxy_name: "{{privatlakarportalIp}}"
-
-# Environment name
-environment_name: "dev"
-
-tomcat_suffix: "-priv"
-tomcat7_home: "{{ inera_root }}/tomcat7{{ tomcat_suffix }}"
-tomcat_service: inera-tomcat{{ tomcat_suffix }}
+proxy_name: "vm.privatlakarportal"
+tomcat_service: pp-tomcat
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
 tomcat_server_port: 8006
 tomcat_http_port: 8081
 tomcat_https_port: 8182
 
+# Environment name
+environment_name: "dev"
+
 # Apache
 domain: "privatlakarportal"
-proxy_pass: "http://127.0.0.1:{{ tomcat_https_port }}/"

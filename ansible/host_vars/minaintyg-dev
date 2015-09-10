@@ -1,11 +1,12 @@
----
-# file: host_vars/minaintyg-dev
-
-# Tomcat
-proxy_name: "{{minaintygUrl}}"
-
-# Apache
-proxy_pass: "http://127.0.0.1:8181/"
+proxy_name: "vm.minaintyg"
+tomcat_service: mi-tomcat
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat_server_port: 8008
+tomcat_http_port: 8083
+tomcat_https_port: 8184
 
 # Environment name
 environment_name: "dev"
+
+# Apache
+domain: "minaintyg"

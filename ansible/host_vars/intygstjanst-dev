@@ -1,12 +1,13 @@
----
-# file: host_vars/intygstjanst-dev
-
 # Tomcat
-proxy_name: "{{intygstjanstIp}}"
-
-# Apache
-proxy_pass: "http://127.0.0.1:8181/"
-domain: "intygstjanst"
+proxy_name: "vm.intygstjanst"
+tomcat_service: it-tomcat
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat_server_port: 8007
+tomcat_http_port: 8082
+tomcat_https_port: 8183
 
 # Environment name
 environment_name: "dev"
+
+# Apache
+domain: "intygstjanst"

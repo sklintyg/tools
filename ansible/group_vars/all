@@ -19,12 +19,12 @@ admin_password: admin
 proxy_name: "localhost"
 
 #Tomcat7
-tomcat7_home: "{{ inera_root }}/tomcat7"
 tomcat_service: inera-tomcat
+tomcat7_home: "{{ inera_root }}/tomcat7"
+tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ tomcat_service }}"
 tomcat_server_port: 8005
 tomcat_http_port: 8080
 tomcat_https_port: 8181
-tomcat_suffix: ""
 inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
 
 # ActiveMQ

@@ -15,16 +15,16 @@
            dest={{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz
 
 - name: make dir
-  file: "state=directory path={{ inera_root }}/apache-tomcat-{{ tomcat7_version }}{{ tomcat_suffix }}"
+  file: "state=directory path={{ tomcat7_install_dir}}"
 
 - name: Extract tomcat
-  command: tar -zxf {{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz -C {{ inera_root }}/apache-tomcat-{{ tomcat7_version }}{{ tomcat_suffix }} --strip-components 1
+  command: tar -zxf {{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz -C {{ tomcat7_install_dir}} --strip-components 1
 
 - name: Create symlink to tomcat home
-  file: state=link src={{ inera_root }}/apache-tomcat-{{ tomcat7_version }}{{ tomcat_suffix }} path={{ tomcat7_home }} mode=755
+  file: state=link src={{ tomcat7_install_dir}} path={{ tomcat7_home }} mode=755
 
 - name: Change ownership of Tomcat installation
-  file: path={{ inera_root }}/apache-tomcat-{{ tomcat7_version }}{{ tomcat_suffix }} owner=inera-tomcat group=inera-tomcat state=directory recurse=yes
+  file: path={{ tomcat7_install_dir}} owner=inera-tomcat group=inera-tomcat state=directory recurse=yes
 
 
 ###########
