@@ -10,13 +10,9 @@
   roles:
     - self-signed-certificate
     - geerlingguy.apache
-    - apache-remove-vhosts
     - apache-ports
-    - apache-templated-vhosts
-    - apache-vhost
   handlers:
     - name: restart apache2
       service: name=apache2 state=restarted
     - name: restart httpd
       service: name=httpd state=restarted
-

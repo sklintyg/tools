@@ -3,3 +3,57 @@
   template: 
     src=ports.conf 
     dest={{ apache_root }}/ports.conf
+
+- name: Fix ssl.conf _default_ vhost
+  when: ansible_os_family == "RedHat"
+  lineinfile:
+    dest="/etc/httpd/conf.d/ssl.conf"
+    regexp="<VirtualHost .*:443>"
+    line="<VirtualHost 127.0.0.1:443>"
+
+- name: Make apache logs accessible to wheel group
+  when: ansible_os_family == "RedHat"
+  file: path=/var/log/httpd mode=0750 group=wheel
+
+- name: Allow httpd to initiate network connection to tomcat
+  when: ansible_os_family == "RedHat" and environment_name != "dev"
+  command: "/usr/sbin/setsebool -P httpd_can_network_connect 1"
+
+- name: enable connections through firewall (iptables)
+  when: ansible_os_family == "RedHat" and environment_name == "dev"
+  command: iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
+  with_items:
+    - 80
+    - 443
+
+- name: remove standard sites
+  when: ansible_os_family == "Debian"
+  file: state=absent
+        path=/etc/apache2/sites-enabled/{{ item }}
+  with_items:
+    - 000-default.conf
+    - vhosts.conf
+
+- name: remove standard sites
+  when: ansible_os_family == "RedHat"
+  file: state=absent
+        path=/etc/httpd/conf.d/vhosts.conf
+
+- name: create virtual host file
+  when: ansible_os_family == "Debian"
+  template: src=virtualhost.conf dest={{ apache_root }}/sites-available/{{ domain }}.conf
+
+- name: a2ensite {{ domain }}
+  when: ansible_os_family == "Debian"
+  command: a2ensite {{ domain }}
+  args:
+    creates: /etc/apache2/sites-enabled/{{ domain }}.conf
+  notify:
+    - restart apache2
+
+- name: create virtual host file
+  when: ansible_os_family == "RedHat"
+  template: src=virtualhost.conf dest=/etc/httpd/conf.d/{{ domain }}.conf
+  notify:
+    - restart httpd
+
