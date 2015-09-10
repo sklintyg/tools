@@ -10,12 +10,8 @@
   notify:
     - restart apache2
 
-- name: create vhost.d-dir for virtual host files
-  when: ansible_os_family == "RedHat"
-  file: path=/etc/httpd/vhost.d state=directory mode=0755
-
 - name: create virtual host file
   when: ansible_os_family == "RedHat"
-  template: src=virtualhost.conf dest=/etc/httpd/vhost.d/{{ domain }}.conf
+  template: src=virtualhost.conf dest=/etc/httpd/conf.d/{{ domain }}.conf
   notify:
     - restart httpd

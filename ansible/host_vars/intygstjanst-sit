@@ -1,0 +1,13 @@
+# Tomcat
+proxy_name: "sit-it.inera.nordicmedtest.se"
+tomcat_service: it-tomcat
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat_server_port: 8007
+tomcat_http_port: 8082
+tomcat_https_port: 8183
+
+# Environment name
+environment_name: "sit"
+
+# Apache
+domain: "intygstjanst"
