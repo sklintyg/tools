@@ -3,7 +3,7 @@
 
 - name: ensure MySQL Yum repo is installed
   when: ansible_os_family == "RedHat"
-  shell: rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm 
+  shell: rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
            creates=/etc/yum.repos.d/mysql-community.repo
 
 - name: install libselinux-python from yum

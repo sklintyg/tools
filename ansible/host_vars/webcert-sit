@@ -1,5 +1,5 @@
 # Tomcat
-proxy_name: "fitnesse.inera.nordicmedtest.se"
+proxy_name: "sit-wc.inera.nordicmedtest.se"
 
 # Environment name
 environment_name: "sit"
