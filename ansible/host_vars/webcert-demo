@@ -6,6 +6,8 @@ proxy_name: "test.webcert.intygstjanster.se"
 
 # Apache
 proxy_pass: "http://127.0.0.1:8181/"
+domain: "webcert"
+http_port: "8080"
 
 # Environment name
 environment_name: "demo"
