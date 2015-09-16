@@ -1,12 +1,13 @@
----
-# file: host_vars/privatlakarportal-demo
-
 # Tomcat
 proxy_name: "test.privatlakarportal.intygstjanster.se"
-
-# Apache
-proxy_pass: "http://127.0.0.1:8182/"
-domain: "privatlakarportal"
+tomcat_service: tomcat-priv
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat_server_port: 8006
+tomcat_http_port: 8081
+tomcat_https_port: 8182
 
 # Environment name
 environment_name: "demo"
+
+# Apache
+domain: "privatlakarportal"

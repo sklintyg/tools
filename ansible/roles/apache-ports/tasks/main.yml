@@ -40,14 +40,18 @@
         path=/etc/httpd/conf.d/vhosts.conf
 
 - name: create virtual host file
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and environment_name != "dev"
+  template: src=virtualhost.conf dest={{ apache_root }}/sites-available/{{ domain }}
+
+- name: create virtual host file
+  when: ansible_os_family == "Debian" and environment_name == "dev"
   template: src=virtualhost.conf dest={{ apache_root }}/sites-available/{{ domain }}.conf
 
 - name: a2ensite {{ domain }}
   when: ansible_os_family == "Debian"
   command: a2ensite {{ domain }}
   args:
-    creates: /etc/apache2/sites-enabled/{{ domain }}.conf
+    creates: /etc/apache2/sites-enabled/{{ domain }}
   notify:
     - restart apache2
 
@@ -56,4 +60,3 @@
   template: src=virtualhost.conf dest=/etc/httpd/conf.d/{{ domain }}.conf
   notify:
     - restart httpd
-
