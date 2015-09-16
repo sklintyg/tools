@@ -2,20 +2,24 @@
 intygstjanst-demo ansible_ssh_host=10.250.34.20 ansible_ssh_user=miservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 minaintyg-demo ansible_ssh_host=10.250.35.50 ansible_ssh_user=miwebapp1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
+privatlakarportal-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
 statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [tomcat]
 intygstjanst-demo ansible_ssh_host=10.250.34.20 ansible_ssh_user=miservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 minaintyg-demo ansible_ssh_host=10.250.35.50 ansible_ssh_user=miwebapp1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
+privatlakarportal-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
 statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [activemq]
 intygstjanst-demo ansible_ssh_host=10.250.34.20 ansible_ssh_user=miservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
+privatlakarportal-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
 statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [mysql]
 intygstjanst-demo ansible_ssh_host=10.250.34.20 ansible_ssh_user=miservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
+privatlakarportal-demo ansible_ssh_host=10.250.35.51 ansible_ssh_user=intygadmin ansible_ssh_private_key_file=~/.ssh/inera_rsa
 statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
