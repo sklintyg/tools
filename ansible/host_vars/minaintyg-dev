@@ -1,3 +1,4 @@
+# Tomcat
 proxy_name: "vm.minaintyg"
 tomcat_service: mi-tomcat
 tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"

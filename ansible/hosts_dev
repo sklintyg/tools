@@ -1,11 +1,13 @@
 [apache]
 intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 minaintyg-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 webcert-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 
 [tomcat]
 intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 minaintyg-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 webcert-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 
 [activemq]
@@ -14,4 +16,5 @@ webcert-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_
 
 [mysql]
 intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
 webcert-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=22 ansible_ssh_private_key_file={{keyFile}}
