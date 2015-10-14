@@ -1,0 +1,12 @@
+.demo-en-title span {
+  display: none;
+}
+.demo-en-title:after {
+  content: 'English title';
+}
+.demo-sv-title span {
+  display: none;
+}
+.demo-sv-title:after {
+  content: 'Svensk titel';
+}

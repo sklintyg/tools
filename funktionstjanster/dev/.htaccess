@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /
+RewriteRule ^process\.php$ - [L]
+RewriteRule (.*\.html) process.php?p=$1
