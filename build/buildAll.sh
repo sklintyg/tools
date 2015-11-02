@@ -7,7 +7,7 @@ mvn clean install -Ddependency.unpack-skip=true $@
 if [ $? != 0 ]; then exit 1; fi
 
 cd $INTYG_HOME/schemas
-mvn clean install checkstyle:check $@
+mvn clean install $@
 if [ $? != 0 ]; then exit; fi
 
 cd $INTYG_HOME/common
