@@ -7,7 +7,7 @@
   <parent>
     <groupId>se.inera.intyg.common</groupId>
     <artifactId>common-pom</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
   </parent>
 
   <groupId>se.inera.intyg.tools</groupId>
@@ -31,6 +31,11 @@
     <dependencies>
 
       <!-- Integration-util -->
+      <dependency>
+        <groupId>se.inera.intyg.common</groupId>
+        <artifactId>common-build-tools</artifactId>
+        <version>${common.version}</version>
+      </dependency>
       <dependency>
         <groupId>se.inera.intyg.common</groupId>
         <artifactId>integration-util</artifactId>
