@@ -7,8 +7,8 @@ archive_dir: "{{ inera_root }}/archives"
 
 # Java
 java_home: "{{ inera_root }}/jre"
-java_version: 7u71-b14
-jre_tarball: jre-7u71-linux-x64.tar.gz
+java_version: 8u65-b17
+jre_tarball: jre-8u65-linux-x64.tar.gz
 
 # Tomcat
 tomcat7_version: 7.0.57

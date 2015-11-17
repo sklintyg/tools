@@ -6,5 +6,5 @@
 
   roles:
     - git
-    - oracle-jre7
+    - oracle-jre8
     - tomcat7
