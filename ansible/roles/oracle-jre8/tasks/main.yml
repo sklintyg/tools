@@ -25,5 +25,11 @@
     insertafter="EOF"
     line="export JAVA_HOME={{ java_home }}"
 
+- name: Remove unused java softlink, if exists
+  file: state=absent path=/usr/local/bin/java
+
+- name: Remove previous link, if exists
+  file: state=absent path=/usr/bin/java
+
 - name: Make java link
   file: state=link src="{{ java_home }}/bin/java" path=/usr/bin/java

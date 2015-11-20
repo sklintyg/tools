@@ -6,7 +6,7 @@ inera_root: /opt/inera
 archive_dir: "{{ inera_root }}/archives"
 
 # Java
-java_home: "{{ inera_root }}/jre"
+java_home: "{{ inera_root }}/jre8"
 java_version: 8u65-b17
 jre_tarball: jre-8u65-linux-x64.tar.gz
 
