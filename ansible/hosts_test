@@ -5,6 +5,7 @@ webcert-test ansible_ssh_host=webcert.inera.nordicmedtest.se ansible_ssh_user=in
 privatlakarportal-test ansible_ssh_host=webcert.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=21022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-sit ansible_ssh_host=fitnesse.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 intygstjanst-sit ansible_ssh_host=fitnesse.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+rehabstod-test ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=27022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [tomcat]
 intygstjanst-test ansible_ssh_host=intygstjanst.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=23022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
@@ -13,6 +14,7 @@ webcert-test ansible_ssh_host=webcert.inera.nordicmedtest.se ansible_ssh_user=in
 privatlakarportal-test ansible_ssh_host=webcert.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=21022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-sit ansible_ssh_host=fitnesse.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 intygstjanst-sit ansible_ssh_host=fitnesse.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+rehabstod-test ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=27022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [activemq]
 intygstjanst-test ansible_ssh_host=intygstjanst.inera.nordicmedtest.se ansible_ssh_user=inera ansible_ssh_port=23022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
