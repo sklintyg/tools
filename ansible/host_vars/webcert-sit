@@ -1,8 +1,0 @@
-# Tomcat
-proxy_name: "sit-wc.inera.nordicmedtest.se"
-
-# Environment name
-environment_name: "sit"
-
-# Apache
-domain: "webcert"
