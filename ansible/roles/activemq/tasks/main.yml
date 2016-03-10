@@ -1,6 +1,11 @@
 ---
 # file: roles/activemq/tasks/main.yml
 
+- name: If ActiveMQ is already present, stop it first
+  service: name=activemq state=stopped pattern=activemq
+  register: command_result
+  failed_when: "command_result|failed and 'no service or tool found' not in command_result.msg"
+
 - name: create archive directory
   file: path={{ archive_dir }} state=directory mode=0755
 
