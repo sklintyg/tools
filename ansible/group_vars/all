@@ -14,8 +14,6 @@ jre_tarball: jre-8u65-linux-x64.tar.gz
 tomcat7_version: 7.0.57
 tomcat_user: inera-tomcat
 tomcat_group: inera-tomcat
-admin_username: admin
-admin_password: admin
 proxy_name: "localhost"
 
 #Tomcat7
