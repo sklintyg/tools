@@ -2,9 +2,4 @@
 # file: roles/git/tasks/main.yml
 
 - name: install git from yum
-  when: ansible_os_family == "RedHat"
   yum: name=git state=present
-
-- name: install git from apt
-  when: ansible_os_family == "Debian"
-  apt: name=git state=present

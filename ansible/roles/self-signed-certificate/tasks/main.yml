@@ -2,12 +2,7 @@
 # file: roles/self-signed-certificate/tasks/main.yml
 
 - name: Make sure openssl is installed
-  when: ansible_os_family == "RedHat"
   yum: name=openssl state=present
-
-- name: Make sure openssl is installed
-  when: ansible_os_family == "Debian"
-  apt: name=openssl state=present
 
 - name: create certs dir
   file: state=directory path={{ inera_root }}/certs
