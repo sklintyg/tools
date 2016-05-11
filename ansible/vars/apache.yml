@@ -5,8 +5,8 @@ apache_extra_parameters: |
     ProxyPreserveHost On
     ProxyPass / {{ proxy_pass }}
     ProxyPassReverse / {{ proxy_pass }}
-    ProxyRequests On
-    ProxyVia On
+    ProxyRequests Off
+    ProxyVia Off
 
 apache_vhosts:
   - {
