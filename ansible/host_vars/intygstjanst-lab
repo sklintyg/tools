@@ -1,0 +1,17 @@
+---
+# file: host_vars/intygstjanst-lab
+
+# Tomcat
+proxy_name: "10.5.0.12"
+tomcat_service: tomcat-intygstjanst
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat_server_port: 8006
+tomcat_http_port: 8081
+tomcat_https_port: 8182
+
+
+# Apache
+domain: "intygstjanst"
+
+# Environment name
+environment_name: "lab"
