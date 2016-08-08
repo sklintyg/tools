@@ -6,3 +6,5 @@
 .classpath
 target
 certificate-metrics/*.csv
+build
+.gradle
