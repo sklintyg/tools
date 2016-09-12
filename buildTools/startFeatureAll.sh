@@ -11,9 +11,9 @@ if [ "$RESP" = "y" ]; then
 	git flow feature start $featureBranch
 	if [ $? != 0 ]; then exit 1; fi
 
-	cd $INTYG_HOME/tools
-	git flow feature start $featureBranch
-	if [ $? != 0 ]; then exit; fi
+	#cd $INTYG_HOME/tools
+	#git flow feature start $featureBranch
+	#if [ $? != 0 ]; then exit; fi
 
 	cd $INTYG_HOME/schemas
 	git flow feature start $featureBranch
