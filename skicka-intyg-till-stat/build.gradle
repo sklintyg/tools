@@ -1,0 +1,25 @@
+description = "skicka-intyg-till-stat"
+
+group = 'se.inera.intyg.tools'
+version = '1.0.0'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.7'
+    compile 'mysql:mysql-connector-java:5.1.32'
+    compile 'org.apache.commons:commons-dbcp2:2.0'
+    compile 'org.apache.activemq:activemq-all:5.10.0'
+}
+
+repositories {
+     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/" }
+     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/" }
+     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
+     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
