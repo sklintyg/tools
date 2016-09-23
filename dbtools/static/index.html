@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="sv" id="ng-app" ng-app="dbtoolIndexApp">
+<head>
+<meta charset="UTF-8" />
+<title>DB snapshot utility</title>
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+<link rel="stylesheet" href="inera-webcert.css">
+<link rel="stylesheet" href="inera-certificate.css">
+<style>
+  .fade {
+    opacity: 0;
+    -webkit-transition: opacity 0.15s linear;
+    -moz-transition: opacity 0.15s linear;
+    -o-transition: opacity 0.15s linear;
+    transition: opacity 0.15s linear;
+  }
+  .fade.in {
+    opacity: 1;
+    -webkit-transition: opacity 3.0s linear;
+    -moz-transition: opacity 3.0s linear;
+    -o-transition: opacity 3.0s linear;
+    transition: opacity 3.0s linear;
+  }
+</style>
+</head>
+<body class="index-page" ng-controller="IndexController">
+
+  <div class="index-content-container">
+
+    <!-- header part -->
+    <div class="index-header-section">
+
+      <table id="intygTable" class="col-md-12 table table-striped table-qa" ng-if="snapshots.length > 0">
+        <tr>
+          <th>Namn</th>
+          <th>Datum</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="snapshot in snapshots | orderBy : 'created' : true">
+          <td>{{ snapshot.name }}</td>
+          <td>{{ snapshot.created }}</td>
+
+          <td>
+            <button type="button" ng-disabled="isDisabled" class="btn btn-success" ng-click="restoreSnapshot(snapshot)">Återställ till</button>
+          </td>
+          <td>
+            <button type="button" ng-disabled="isDisabled" class="btn btn-danger" ng-click="deleteSnapshot(snapshot)">Radera</button>
+          </td>
+        </tr>
+      </table>
+
+      <div>
+        <button type="button" ng-disabled="isDisabled" class="btn btn-info" ng-click="createSnapshot()">Skapa snapshot</button>
+      </div>
+
+        <div id="statusMessage" ng-if="statusMessage != ''" class="alert alert-success">{{ statusMessage }}</div>
+
+
+    </div>
+
+
+  </div>
+
+  <!-- bower:js -->
+  <script type="text/javascript" src="bower_components/jquery/jquery.js"></script>
+  <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <!-- endbower -->
+
+  <script type="text/javascript" src="index-app.main.js"></script>
+</body>
+</html>
+
+
