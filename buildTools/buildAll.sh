@@ -16,4 +16,4 @@ for project in common intygstyper intygstjanst minaintyg webcert; do
 done
 
 duration=$(expr `date +%s` - $start_time)
-echo Build completed at `date +%T` after a total of  $(($duration / 60)) min $(($duration % 60)) sec
+echo Build using script `basename "$0"` completed at `date +%T` after a total of  $(($duration / 60)) min $(($duration % 60)) sec
