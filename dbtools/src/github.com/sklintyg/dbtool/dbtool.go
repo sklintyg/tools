@@ -9,6 +9,7 @@ import (
     "os"
     "io/ioutil"
     "gopkg.in/yaml.v2"
+    "strings"
 )
 
 var DEFAULT_VERSION_FILE = "/opt/inera/tomcat7/webapps/version.txt"
@@ -25,12 +26,13 @@ func main() {
     var prefs model.Prefs
     yaml.Unmarshal([]byte(dat), &prefs)
 
-    version, err := ioutil.ReadFile(prefs.VersionFile)
+    versionBytes, err := ioutil.ReadFile(prefs.VersionFile)
+    var version = strings.Trim(string(versionBytes), "\n")
     if err != nil {
         log.Fatal("Unable to read version.txt file with Webcert version from path " + prefs.VersionFile)
     }
 
-    fmt.Printf("Webcert version at DB tool startup is " + string(version) + "\n")
+    fmt.Printf("Webcert version at DB tool startup is " + version + "\n")
 
     go service.StartWebServer(prefs)
 

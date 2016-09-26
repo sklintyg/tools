@@ -40,5 +40,17 @@ var routes = Routes{
 		"/snapshot/{snapshotName}",
 		DeleteSnapshot,
 	},
+	Route{
+		"WebcertVersion",
+		"GET",
+		"/webcert/version",
+		WebcertVersion,
+	},
+	Route{
+		"Auth",
+		"GET",
+		"/auth",
+		Auth,
+	},
 
 }

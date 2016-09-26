@@ -8,6 +8,8 @@ import (
 
 var DumpsDir string
 var VersionFile string
+var DbUsername string
+var DbPassword string
 
 func StartWebServer(prefs model.Prefs) {
 
@@ -20,6 +22,8 @@ func StartWebServer(prefs model.Prefs) {
         s := http.StripPrefix("/static/", http.FileServer(http.Dir("./static/")))
         r.PathPrefix("/static/").Handler(s)
         http.Handle("/", r)
+        http.Handle("/dbtool", r)
+
         err := http.ListenAndServe(":"+ port, nil)
 
         log.Println("Starting HTTP service at " + port)

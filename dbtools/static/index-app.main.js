@@ -26,15 +26,17 @@ angular.module('dbtoolIndexApp')
     .controller('IndexController', ['$scope', '$http', function($scope, $http) {
         'use strict';
 
+        $scope.versionMessage = '';
         $scope.statusMessage = '';
         $scope.isDisabled = false;
 
         $scope.listSnapshots = function() {
             $http({
                 method: 'GET',
-                url: '/snapshots'
+                url: '/dbtool/snapshots'
             }).then(function successCallback(response) {
                 $scope.snapshots = response.data;
+                $scope.getVersion();
             });
         };
 
@@ -44,13 +46,14 @@ angular.module('dbtoolIndexApp')
             if (window.confirm('Är du verkligen helt säker på att du vill återställa databasen till denna snapshot?')) {
                 $http({
                     method: 'GET',
-                    url: '/snapshot/' + snapshot.name
+                    url: '/dbtool/snapshot/' + snapshot.name
                 }).then(function successCallback(response) {
                     $scope.listSnapshots();
                     $scope.statusMessage = "Databas återställd till " + snapshot.name;
                     $scope.isDisabled = false;
                 });
             }
+            $scope.isDisabled = false;
 
         };
 
@@ -59,24 +62,35 @@ angular.module('dbtoolIndexApp')
                 $scope.isDisabled = true;
                 $http({
                     method: 'DELETE',
-                    url: '/snapshot/' + snapshot.name
+                    url: '/dbtool/snapshot/' + snapshot.name
                 }).then(function successCallback(response) {
                     $scope.listSnapshots();
                     $scope.statusMessage = "Snapshot raderad!";
                     $scope.isDisabled = false;
                 });
             }
+            $scope.isDisabled = false;
         };
 
         $scope.createSnapshot = function() {
             $scope.isDisabled = true;
             $http({
                 method: 'POST',
-                url: '/snapshot'
+                url: '/dbtool/snapshot'
             }).then(function successCallback(response) {
                 $scope.listSnapshots();
                 $scope.statusMessage = "Snapshot skapad!";
                 $scope.isDisabled = false;
+            });
+            $scope.isDisabled = false;
+        };
+
+        $scope.getVersion = function() {
+            $http({
+                method: 'GET',
+                url: '/dbtool/webcert/version'
+            }).then(function successCallback(response) {
+                $scope.versionMessage = response.data.version;
             });
         };
 

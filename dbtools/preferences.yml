@@ -1,6 +1,8 @@
 ---
 port: 7171
-snapshots_dir: /Users/eriklupander/intyg/dumps
-version_file: /Users/eriklupander/intyg/version.txt
+snapshots_dir: /opt/inera/dbtool/dumps
+version_file: /opt/inera/tomcat7/webapps/version.txt
 username: username
 password: password
+db_username: webcert-dbusername
+db_password: webcert-dbpassword
