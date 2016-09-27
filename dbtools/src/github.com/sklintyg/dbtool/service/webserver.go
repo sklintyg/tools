@@ -10,6 +10,8 @@ var DumpsDir string
 var VersionFile string
 var DbUsername string
 var DbPassword string
+var Db2Username string
+var Db2Password string
 
 func StartWebServer(prefs model.Prefs) {
 
@@ -17,6 +19,8 @@ func StartWebServer(prefs model.Prefs) {
         VersionFile = prefs.VersionFile
         DbUsername = prefs.DbUsername
         DbPassword = prefs.DbPassword
+        Db2Username = prefs.Db2Username
+        Db2Password = prefs.Db2Password
 
         port := prefs.Port
 

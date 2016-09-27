@@ -30,7 +30,7 @@
     <!-- header part -->
     <div class="header-section">
     <h2>Databasverktyget</h2>
-      <p>Med databasverktyget kan du när som helst ta en ögonblicksbild av Webcert-databasens tillstånd att senare kunna återgå till.</p><p><i>Notera att vi inte kan garantera att en ögonblicksbild fungerar på annan Webcert-version än den som gällde när ögonblicksbilden togs. Var också medveten om att Intygstjänstens databas inte påverkas vilket kan göra att att diskrepanser uppstår.</i></p>
+      <p>Med databasverktyget kan du när som helst ta en ögonblicksbild av Webcert-databasens tillstånd att senare kunna återgå till.</p><p><i>Notera att vi inte kan garantera att en ögonblicksbild fungerar på annan Webcert-version än den som gällde när ögonblicksbilden togs.</i></p>
     </div>
     <div>Aktuell webcertversion: <b>{{ versionMessage }}</b></div>
    </div>
@@ -58,6 +58,7 @@
           </td>
         </tr>
       </table>
+    <div ng-if="snapshots.length == 0">Det finns ännu inga sparade ögonblicksbilder.</div>
 
       <div>
         <button type="button" ng-disabled="isDisabled" class="btn btn-info" ng-click="createSnapshot()">Skapa snapshot</button>

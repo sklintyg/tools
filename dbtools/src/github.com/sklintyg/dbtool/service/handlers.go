@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"net/http"
 
 	"io/ioutil"
@@ -11,10 +9,7 @@ import (
 	"strconv"
 	"log"
 	"github.com/gorilla/mux"
-	"os/exec"
 	"os"
-	"bufio"
-	"io"
 	"time"
 	"strings"
 )
@@ -40,13 +35,14 @@ func List(w http.ResponseWriter, r *http.Request) {
 	files, _ := ioutil.ReadDir(DumpsDir)
 	snapshots := make([]model.Snapshot, 0, 2)
 	for _, f := range files {
-		// TODO filter out any non .sql files
-		snapshots = append(snapshots, model.Snapshot{ Name : f.Name(), Created : f.ModTime().String(), Size: strconv.Itoa(int(f.Size()))})
+		if strings.HasSuffix(f.Name(), ".sql") {
+			snapshots = append(snapshots, model.Snapshot{ Name : f.Name(), Created : f.ModTime().String(), Size: strconv.Itoa(int(f.Size()))})
+		}
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(snapshots); err != nil {
-		panic(err)
+		log.Println("Error encoding List response: " + err.Error())
 	}
 }
 
@@ -54,44 +50,25 @@ func Restore(w http.ResponseWriter, r *http.Request) {
 	log.Println("ENTER - Restore")
 	vars := mux.Vars(r)
 	var snapshotName = vars["snapshotName"]
-	if !validateSnapshotName(snapshotName) {
-		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Invalid snapshotName parameter, must not contain any of ../$#_'`´<>!@£%&(){}[]+*\\\""))
-		return
-	}
-	if snapshotName == "" {
-		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Missing snapshotName parameter"))
+
+	if !validateRequest(w, snapshotName) {
 		return
 	}
 
-	data, err := ioutil.ReadFile(DumpsDir + "/" + snapshotName)
-
+	err := RestoreDb(snapshotName, DbUsername, DbPassword)
 	if err != nil {
-		panic(err)
+		writeServerError(w, "Error when restoring database: " + err.Error())
+		return
 	}
-
-	cmd := exec.Command("mysql", "-u", DbUsername, "--password=" + DbPassword)
-	stdInPipe, err := cmd.StdinPipe()
-
+	err = RestoreDb("intyg-" + snapshotName + ".intyg", Db2Username, Db2Password)
 	if err != nil {
-		panic(err)
+		writeServerError(w, "Error when restoring database: " + err.Error())
+		return
 	}
-
-	cmd.Start()
-
-	len, err := stdInPipe.Write(data)
-	if err != nil {
-		panic(err)
-	}
-	stdInPipe.Close()
-	cmd.Wait()
 
 	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(strconv.Itoa(len) + " bytes read into DB"))
+	w.Write([]byte(snapshotName + " bytes read into DB"))
 
 }
 
@@ -101,69 +78,69 @@ func Store(w http.ResponseWriter, r *http.Request) {
 	versionBytes, err := ioutil.ReadFile(VersionFile)
 	var version = strings.Trim(string(versionBytes), "\n")
 	if err != nil {
-		log.Println("Unable to read version.txt file with Webcert version from path " + VersionFile)
+		log.Println("Unable to read version.txt file with Webcert version from path: " + VersionFile)
+		return
 	}
 
 	// Create a semi-ugly date string without - and :
 	var dateStr = strings.Replace(strings.Replace(time.Now().Format(time.RFC3339), ":", "", -1), "-", "", -1)[0:15]
+	var wcDbFileName = "webcert-" + dateStr + "-" + version + ".sql"
+	var intygDbFileName = "intyg-" + wcDbFileName + ".intyg"
 
-	// open the out file for writing
-	outfile, err := os.Create(DumpsDir + "/webcert-" + dateStr + "-" + version + ".sql")
-	if err != nil {
-		panic(err)
-	}
-	defer outfile.Close()
-
-	cmd := exec.Command("mysqldump", "-u", DbUsername, "--password=" + DbPassword, "--databases","webcert")
-
-	stdoutPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		panic(err)
-	}
-
-	writer := bufio.NewWriter(outfile)
-	defer writer.Flush()
-	cmd.Start()
-	fmt.Println("Starting taking snapshot to file: " + DumpsDir + "/webcert-latest-" + version + ".sql")
-	go io.Copy(writer, stdoutPipe)
-	cmd.Wait()
-	fmt.Println("Backup finished!")
+	BackupDb(wcDbFileName, "webcert", DbUsername, DbPassword)
+	BackupDb(intygDbFileName, "intyg", Db2Username, Db2Password)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	health := make(map[string]interface{})
 	health["result"] = "OK"
 	if err := json.NewEncoder(w).Encode(health); err != nil {
-		panic(err)
+		log.Println("Error encoding Store response: " + err.Error())
 	}
 }
 
 func DeleteSnapshot(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	var snapshotName = vars["snapshotName"]
-	if !validateSnapshotName(snapshotName) {
-		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Invalid snapshotName parameter, must not contain any of ../$#_'`´<>!@£%&(){}[]+*\\\""))
-		return
-	}
-	if snapshotName == "" {
-		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Missing snapshotName parameter"))
+	if !validateRequest(w, snapshotName) {
 		return
 	}
 
 	err := os.Remove(DumpsDir + "/" + snapshotName)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Failed to delete webcert DB file: " + err.Error())
+		writeServerError(w, "Failed to delete webcert DB file: " + err.Error())
+		return
+	}
+	err = os.Remove(DumpsDir + "/intyg-" + snapshotName + ".intyg")
+	if err != nil {
+		log.Println("Failed to delete intyg DB file: " + err.Error())
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Snapshot deleted OK"))
 }
 
-func validateSnapshotName(snapshotName string) bool {
+
+// - Private scope -
+
+func validateRequest(w http.ResponseWriter, snapshotName string) bool {
+	if !validateSnapshotNameSyntax(snapshotName) {
+		writeBadRequest(w, "Invalid snapshotName parameter, must not contain any of ../$#_'`´<>!@£%&(){}[]+*\\\"")
+		return false
+	}
+	if snapshotName == "" {
+		writeBadRequest(w, "Missing snapshotName parameter")
+		return false
+	}
+	if !strings.HasSuffix(snapshotName, ".sql") {
+		writeBadRequest(w, "snapshotName must end in .sql")
+		return false
+	}
+	return true
+}
+
+func validateSnapshotNameSyntax(snapshotName string) bool {
 	if (strings.ContainsAny(snapshotName, "/$#_'`´<>!@£%&(){}[]+*\\\"")) {
 		return false
 	}
@@ -171,4 +148,16 @@ func validateSnapshotName(snapshotName string) bool {
 		return false
 	}
 	return true
+}
+
+func writeBadRequest(w http.ResponseWriter, msg string) {
+	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte(msg))
+}
+
+func writeServerError(w http.ResponseWriter, msg string) {
+	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write([]byte(msg))
 }

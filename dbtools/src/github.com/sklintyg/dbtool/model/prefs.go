@@ -8,4 +8,6 @@ type Prefs struct {
         Password         string `yaml:"password"`
         DbUsername       string `yaml:"db_username"`
         DbPassword       string `yaml:"db_password"`
+        Db2Username      string `yaml:"db2_username"`
+        Db2Password      string `yaml:"db2_password"`
 }
