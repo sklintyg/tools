@@ -6,6 +6,6 @@ type Prefs struct {
         VersionFile      string `yaml:"version_file"`
         Username         string `yaml:"username"`
         Password         string `yaml:"password"`
-        DbUsername       string `yaml:"dbUsername"`
-        DbPassword       string `yaml:"dbPassword"`
+        DbUsername       string `yaml:"db_username"`
+        DbPassword       string `yaml:"db_password"`
 }

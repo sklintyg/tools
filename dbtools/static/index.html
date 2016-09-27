@@ -41,12 +41,14 @@
         <tr>
           <th>Namn</th>
           <th>Datum</th>
+          <th>Size</th>
           <th></th>
           <th></th>
         </tr>
         <tr ng-repeat="snapshot in snapshots | orderBy : 'created' : true">
           <td>{{ snapshot.name }}</td>
           <td>{{ snapshot.created }}</td>
+          <td>{{ snapshot.size }} bytes</td>
 
           <td>
             <button type="button" ng-disabled="isDisabled" class="btn btn-success" ng-click="restoreSnapshot(snapshot)">Återställ till</button>

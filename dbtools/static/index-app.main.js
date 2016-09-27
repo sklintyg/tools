@@ -23,17 +23,23 @@ angular.module('dbtoolIndexApp', [
 ]);
 
 angular.module('dbtoolIndexApp')
-    .controller('IndexController', ['$scope', '$http', function($scope, $http) {
+    .controller('IndexController', ['$scope', '$http', '$location', function($scope, $http, $location) {
         'use strict';
 
         $scope.versionMessage = '';
         $scope.statusMessage = '';
         $scope.isDisabled = false;
 
+        var urlPrefix = '/dbtool';
+
+        if ($location.host() === 'localhost') {
+            urlPrefix = '';
+        }
+
         $scope.listSnapshots = function() {
             $http({
                 method: 'GET',
-                url: '/dbtool/snapshots'
+                url: urlPrefix + '/snapshots'
             }).then(function successCallback(response) {
                 $scope.snapshots = response.data;
                 $scope.getVersion();
@@ -46,7 +52,7 @@ angular.module('dbtoolIndexApp')
             if (window.confirm('Är du verkligen helt säker på att du vill återställa databasen till denna snapshot?')) {
                 $http({
                     method: 'GET',
-                    url: '/dbtool/snapshot/' + snapshot.name
+                    url: urlPrefix + '/snapshot/' + snapshot.name
                 }).then(function successCallback(response) {
                     $scope.listSnapshots();
                     $scope.statusMessage = "Databas återställd till " + snapshot.name;
@@ -62,7 +68,7 @@ angular.module('dbtoolIndexApp')
                 $scope.isDisabled = true;
                 $http({
                     method: 'DELETE',
-                    url: '/dbtool/snapshot/' + snapshot.name
+                    url: urlPrefix + '/snapshot/' + snapshot.name
                 }).then(function successCallback(response) {
                     $scope.listSnapshots();
                     $scope.statusMessage = "Snapshot raderad!";
@@ -76,7 +82,7 @@ angular.module('dbtoolIndexApp')
             $scope.isDisabled = true;
             $http({
                 method: 'POST',
-                url: '/dbtool/snapshot'
+                url: urlPrefix + '/snapshot'
             }).then(function successCallback(response) {
                 $scope.listSnapshots();
                 $scope.statusMessage = "Snapshot skapad!";
@@ -88,7 +94,7 @@ angular.module('dbtoolIndexApp')
         $scope.getVersion = function() {
             $http({
                 method: 'GET',
-                url: '/dbtool/webcert/version'
+                url: urlPrefix + '/webcert/version'
             }).then(function successCallback(response) {
                 $scope.versionMessage = response.data.version;
             });

@@ -12,9 +12,6 @@ import (
     "strings"
 )
 
-var DEFAULT_VERSION_FILE = "/opt/inera/tomcat7/webapps/version.txt"
-var DEFAULT_DUMPS_DIR = "/opt/inera/dbtool/dumps"
-
 func main() {
     fmt.Printf("Starting Webcert DB tool...\n")
 

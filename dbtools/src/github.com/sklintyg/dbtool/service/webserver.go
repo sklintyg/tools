@@ -15,6 +15,8 @@ func StartWebServer(prefs model.Prefs) {
 
         DumpsDir = prefs.SnapshotsDir
         VersionFile = prefs.VersionFile
+        DbUsername = prefs.DbUsername
+        DbPassword = prefs.DbPassword
 
         port := prefs.Port
 
@@ -22,7 +24,7 @@ func StartWebServer(prefs model.Prefs) {
         s := http.StripPrefix("/static/", http.FileServer(http.Dir("./static/")))
         r.PathPrefix("/static/").Handler(s)
         http.Handle("/", r)
-        http.Handle("/dbtool", r)
+
 
         err := http.ListenAndServe(":"+ port, nil)
 

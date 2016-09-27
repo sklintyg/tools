@@ -46,11 +46,5 @@ var routes = Routes{
 		"/webcert/version",
 		WebcertVersion,
 	},
-	Route{
-		"Auth",
-		"GET",
-		"/auth",
-		Auth,
-	},
 
 }

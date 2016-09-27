@@ -19,11 +19,6 @@ import (
 	"strings"
 )
 
-func Auth(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-}
-
 func WebcertVersion(w http.ResponseWriter, r *http.Request) {
 	version, err := ioutil.ReadFile(VersionFile)
 	if err != nil {
@@ -46,7 +41,7 @@ func List(w http.ResponseWriter, r *http.Request) {
 	snapshots := make([]model.Snapshot, 0, 2)
 	for _, f := range files {
 		// TODO filter out any non .sql files
-		snapshots = append(snapshots, model.Snapshot{ Name : f.Name(), Created : f.ModTime().String()})
+		snapshots = append(snapshots, model.Snapshot{ Name : f.Name(), Created : f.ModTime().String(), Size: strconv.Itoa(int(f.Size()))})
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
