@@ -2,7 +2,7 @@
 
 CMD="./gradlew --parallel build install -PcodeQuality"
 
-read -e -p "Use checkstyle:check [y/n]? [y]: " PROCEED
+read -e -p "Use checkstyle [y/n]? [y]: " PROCEED
 
 [[ $PROCEED =~ [nN] ]] && CMD="./gradlew --parallel build install"
 
