@@ -12,6 +12,7 @@ import (
 	"os"
 	"time"
 	"strings"
+	"fmt"
 )
 
 func WebcertVersion(w http.ResponseWriter, r *http.Request) {
@@ -122,11 +123,38 @@ func DeleteSnapshot(w http.ResponseWriter, r *http.Request) {
 }
 
 
+
+func UpdateSnapshotName(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	var snapshotName = vars["snapshotName"]
+	if !validateRequest(w, snapshotName) {
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	var updateBody model.UpdateBody
+	err := decoder.Decode(&updateBody)
+
+	fmt.Println("Got old: " + snapshotName + " and new: " + updateBody.Name)
+	if err != nil {
+		panic(err.Error())
+	}
+	if !validateRequest(w, updateBody.Name) {
+		return
+	}
+
+	os.Rename(DumpsDir + "/" + snapshotName, DumpsDir + "/" + updateBody.Name)
+	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Snapshot name updated to " + updateBody.Name + " OK"))
+
+}
+
+
 // - Private scope -
 
 func validateRequest(w http.ResponseWriter, snapshotName string) bool {
 	if !validateSnapshotNameSyntax(snapshotName) {
-		writeBadRequest(w, "Invalid snapshotName parameter, must not contain any of ../$#_'`´<>!@£%&(){}[]+*\\\"")
+		writeBadRequest(w, "Invalid snapshotName parameter, must not contain any of ../$#_'`´<>;:!@£%&(){}[]+*\\\"")
 		return false
 	}
 	if snapshotName == "" {
@@ -141,7 +169,7 @@ func validateRequest(w http.ResponseWriter, snapshotName string) bool {
 }
 
 func validateSnapshotNameSyntax(snapshotName string) bool {
-	if (strings.ContainsAny(snapshotName, "/$#_'`´<>!@£%&(){}[]+*\\\"")) {
+	if (strings.ContainsAny(snapshotName, "/$#_'`´<>;:!@£%&(){}[]+*\\\"")) {
 		return false
 	}
 	if (strings.Contains(snapshotName, "..")) {

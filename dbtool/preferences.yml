@@ -1,0 +1,10 @@
+---
+port: 7171
+snapshots_dir: /Users/eriklupander/intyg/dumps
+version_file: /Users/eriklupander/intyg/version.txt
+username: username
+password: password
+db_username: webcert
+db_password: webcert
+db2_username: intyg
+db2_password: intyg

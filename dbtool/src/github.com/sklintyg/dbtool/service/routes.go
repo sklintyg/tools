@@ -41,6 +41,12 @@ var routes = Routes{
 		DeleteSnapshot,
 	},
 	Route{
+		"UpdateSnapshotName",
+		"PUT",
+		"/snapshot/{snapshotName}",
+		UpdateSnapshotName,
+	},
+	Route{
 		"WebcertVersion",
 		"GET",
 		"/webcert/version",

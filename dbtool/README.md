@@ -32,6 +32,8 @@ I exemplet ovan byter jag mål-OS till "linux", bygger och ändrar sedan tillbak
 Samtliga målarkitekturer och operativsystem finns listade här: https://github.com/golang/go/blob/master/src/go/build/syslist.go
 
 (Jag ser det som osannolikt att vi kommer köra mot annat än amd64)
+
+Binären finns nu i /bin
     
 4. Klart!
 
@@ -50,7 +52,9 @@ På målmiljön, öppna _preferences.yml_ som skall ligga bredvid binären (elle
     password: password        # change!
     db_username: webcert-db-username
     db_password: webcert-db-password
-
+    db2_username: intyg-db-username
+    db2_password: intyg-db-password
+      
 - Port för tjänsten
 - Korrigera om nödvändigt sökvägarna till /dumps-mappen samt version.txt.
 - Username / password är för HTTP Basic skydd av verktygets GUI samt API:er.

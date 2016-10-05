@@ -39,15 +39,20 @@
     <h2>Tillgängliga ögonblicksbilder</h2>
       <table id="intygTable" class="col-md-12 table table-striped table-qa" ng-if="snapshots.length > 0">
         <tr>
-          <th>Namn</th>
+          <th style="min-width: 340px;">Namn</th>
           <th>Datum</th>
           <th>Size</th>
           <th></th>
           <th></th>
         </tr>
         <tr ng-repeat="snapshot in snapshots | orderBy : 'created' : true">
-          <td>{{ snapshot.name }}</td>
-          <td>{{ snapshot.created }}</td>
+          <td ng-show="currentlyEditing != snapshot.name">{{ snapshot.name }} <span class="glyphicon glyphicon-pencil" style="cursor:pointer;" ng-click="rename(snapshot);" aria-hidden="true" title="Ändra namn"></span></td>
+          <td ng-show="currentlyEditing == snapshot.name">
+            <input class="input-sm" style="width:280px;max-width:340px;" type="text" ng-model="form.name"/>
+            <span class="glyphicon glyphicon-ok" style="cursor:pointer;" ng-click="savename();" aria-hidden="true" title="Spara"></span>
+            <span class="glyphicon glyphicon-remove" style="cursor:pointer;" ng-click="abortNameChange();" aria-hidden="true" title="Avbryt"></span>
+          </td>
+          <td>{{ format(snapshot.created) }}</td>
           <td>{{ snapshot.size }} bytes</td>
 
           <td>
@@ -75,6 +80,7 @@
   <script type="text/javascript" src="bower_components/jquery/jquery.js"></script>
   <script type="text/javascript" src="bower_components/angular/angular.js"></script>
   <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script type="text/javascript" src="bower_components/moment/moment.js"></script>
   <!-- endbower -->
 
   <script type="text/javascript" src="index-app.main.js"></script>
