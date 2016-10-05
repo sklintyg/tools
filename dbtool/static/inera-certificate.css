@@ -1,0 +1,570 @@
+@charset "UTF-8";
+/*
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistrbute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@media screen {
+  /* Here we import partial scss files that contain logical related chunks of styles */
+  /*
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+  /* All common inera-certificate css rules are placed here */
+  /* Commonly used */
+  a.backlink-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background: transparent url(/img/tillbaka.png) center left no-repeat;
+    float: left;
+    margin: 2px 20px 0 0; }
+  a:hover.backlink-icon {
+    background: transparent url(/img/tillbaka_hoover.png) center left no-repeat; }
+  /* Generally applicable helper classes*/
+  /* Only used in fk7263. Move it there. */
+  .bottom-padding-small {
+    padding-bottom: 5px; }
+  /* Only used in fk7263. Move it there. */
+  .bottom-padding-tiny {
+    padding-bottom: 2px; }
+  /* Only used in fk7263. Move it there. */
+  .pad10 {
+    padding: 10px; }
+  /* Only used in fk7263. Move it there. */
+  .bold {
+    font-weight: bold !important; }
+  /* End helper classes */
+  /* Only used in fk7263, move it ther */
+  .counter {
+    font-style: italic;
+    font-size: 11px; }
+  /* Only used in fk7263, move it ther */
+  .info-transfer {
+    font-size: 12px;
+    color: #777; }
+  /* Only used in fk7263, move it ther */
+  .banner-margin {
+    margin-top: 60px;
+    max-width: 800px; }
+  /* Commonly used for all intygsmodules */
+  .edit-form {
+    max-width: 800px; }
+  /* Commonly used */
+  .collapsed {
+    margin-top: 150px; }
+  /* Commonly used */
+  .certificate {
+    max-width: 800px; }
+  /* Modifier of certificate. Only used in fk7263 right now. A larger width certificate*/
+  .certificate--lg {
+    max-width: 1600px; }
+  /* Commonly used */
+  .revoked-certificate {
+    color: #aaaaaa; }
+    .revoked-certificate .qa-block {
+      background-color: #f5f5f5;
+      color: #aaaaaa; }
+    .revoked-certificate .qa-block-head {
+      background-color: #f5f5f5;
+      color: #aaaaaa; }
+    .revoked-certificate div.infobox {
+      background-color: #e5e5e5;
+      color: #aaaaaa; }
+      .revoked-certificate div.infobox h3 {
+        background-color: #e5e5e5;
+        color: #aaaaaa; }
+      .revoked-certificate div.infobox h4 {
+        background-color: #e5e5e5;
+        color: #aaaaaa; }
+    .revoked-certificate .cert-body .intyg-block .title {
+      color: #aaaaaa; }
+    .revoked-certificate .intyg-block h4.cert-field-number {
+      color: #aaaaaa; }
+  /* Used by webcert. Leave here for now */
+  .webcert-multicol .certificate {
+    max-width: 600px; }
+  /* Commonly used */
+  .cert-body .alert-info {
+    margin: 0 20px 20px 0; }
+  /* Common for intygstyper */
+  .intyg-block-single {
+    padding-left: 20px;
+    background-color: #e5e5e5;
+    border: 1px solid #d8d8d8; }
+  .intyg-block {
+    margin: 0 30px 40px 0;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px; }
+    .intyg-block input[wc-maxlength] {
+      margin: 0; }
+    .intyg-block h4 {
+      font-size: 14px;
+      padding-bottom: 10px; }
+      .intyg-block h4.cert-field-number {
+        float: right;
+        padding: 0 0 0 10px;
+        color: #008391;
+        font-size: 15px; }
+    .intyg-block a {
+      color: #008391; }
+    .intyg-block label {
+      max-width: 600px;
+      vertical-align: baseline;
+      font-weight: normal; }
+    .intyg-block .checkbox {
+      padding-left: 20px; }
+    .intyg-block .checkbox-columns {
+      margin-left: 0; }
+    .intyg-block .cert-field-blank {
+      color: #008391; }
+    .intyg-block__heading {
+      margin: 0;
+      color: #008391;
+      font-size: 18px;
+      font-weight: bold;
+      padding-bottom: 0px;
+      -webkit-border-radius: 4px 4px 4px 4px;
+      -moz-border-radius: 4px 4px 4px 4px;
+      border-radius: 4px 4px 4px 4px;
+      position: relative;
+      display: inline;
+      vertical-align: sub; }
+    .intyg-block__titlerow {
+      padding-bottom: 10px;
+      padding-left: 20px; }
+    .intyg-block .title-single {
+      background: none;
+      -webkit-border-radius: 0 0 0 0;
+      -moz-border-radius: 0 0 0 0;
+      border-radius: 0 0 0 0;
+      border: 0;
+      display: inline-block;
+      padding: 10px 10px;
+      vertical-align: middle;
+      margin: 0;
+      cursor: pointer; }
+    .intyg-block__content {
+      display: block;
+      padding: 15px 20px 15px 20px;
+      background-color: #e5e5e5;
+      -webkit-border-radius: 4px 4px 4px 4px;
+      -moz-border-radius: 4px 4px 4px 4px;
+      border-radius: 4px 4px 4px 4px; }
+      .intyg-block__content .divider {
+        border-bottom: 1px solid #999; }
+      .intyg-block__content.unfilled {
+        background-color: #fff;
+        border: 2px solid #e5e5e5; }
+    .intyg-block .unfilled {
+      color: #888;
+      -webkit-border-radius: 4px 4px 4px 4px;
+      -moz-border-radius: 4px 4px 4px 4px;
+      border-radius: 4px 4px 4px 4px; }
+  /* Only used in fk7263. Lets move it there */
+  ul.padded-list {
+    padding-left: 16px; }
+    ul.padded-list > li {
+      padding-bottom: 5px; }
+  /* Unused. Remove */
+  .intyg-block-single h4.cert-field-number {
+    padding: 10px 20px 0 20px; }
+  /* Commonly used */
+  .indent {
+    padding-left: 20px !important; }
+  /* Only used in fk7263. Move it there */
+  .block {
+    display: block !important; }
+  /* Commonly used */
+  .inline-block {
+    display: inline-block !important;
+    vertical-align: middle; }
+  /* Commonly used */
+  .maxwidth {
+    max-width: 100% !important;
+    width: 100% !important; }
+  /* Commonly used */
+  div.infobox {
+    background-color: #008391;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px;
+    color: #fff;
+    padding: 20px;
+    margin-right: 30px; }
+    div.infobox h3 {
+      font-size: 16px;
+      padding: 0;
+      color: #fff; }
+    div.infobox h4 {
+      padding: 10px 0 5px 0;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold; }
+  /* ------------------------------------- */
+  /* ng-animate animations */
+  /* ------------------------------------- */
+  .fold-slide-fade-animation {
+    overflow: hidden;
+    margin-left: 20px;
+    opacity: 1; }
+  .fold-slide-fade-animation-hidden {
+    overflow: hidden;
+    margin-left: 0px;
+    opacity: 0;
+    height: 0; }
+  .slide-fade-animation {
+    margin-left: 20px;
+    opacity: 1; }
+  .slide-fade-animation-hidden {
+    margin-left: 0px;
+    opacity: 0; }
+  /* Intyg-edit menu header collapse animation */
+  .field-fade, .field-fade.ng-hide-add, .fade.ng-hide-remove {
+    -webkit-transition: all ease-out 0.5s;
+    -moz-transition: all ease-out 0.5s;
+    -o-transition: all ease-out 0.5s;
+    transition: all ease-out 0.5s;
+    position: relative; }
+  /* Only used in fk7263. Move it there. */
+  /*Fade out fields not desired when smittskydd is checked */
+  .field-fade {
+    opacity: 1;
+    left: 0; }
+    .field-fade.ng-hide-add {
+      display: block !important; }
+    .field-fade.ng-hide {
+      opacity: 0;
+      left: -10px; }
+  /* Used in common wcModal.window.html only */
+  .fade.ng-hide-remove {
+    display: block !important; }
+  /* Commonly used */
+  .radio {
+    cursor: pointer; }
+  /* Commonly used */
+  .checkbox {
+    cursor: pointer; }
+  /* Commonly used */
+  label.checkbox {
+    font-weight: normal;
+    margin-top: 0; }
+    label.checkbox + label.checkbox {
+      font-weight: normal;
+      margin-top: 0; }
+  label.radio {
+    font-weight: normal;
+    margin-top: 0; }
+    label.radio + label.radio {
+      font-weight: normal;
+      margin-top: 0; }
+  /* Commonly used */
+  .edit-form .alert-danger {
+    border: 1px solid #a94442; }
+  .edit-form .form-inline input[type=checkbox] {
+    margin: -1px 0 0;
+    vertical-align: middle; }
+  /* Commonly used */
+  .edit-form h4 {
+    font-size: 14px; }
+  .edit-form .intyg-block .checkbox input[type=checkbox] {
+    margin-left: -20px; }
+  /* Only used in wcField.directive.html */
+  .fielderror {
+    border: 2px solid #a94442; }
+  /* Common for ts-bas and ts-diabetes */
+  .cert-answer {
+    font-weight: bold;
+    white-space: pre-line; }
+  /* Common for ts-bas and ts-diabetes */
+  input[type=text].small-decimal {
+    width: 38px; }
+  /*Override of bootstrap navbar styling */
+  .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background: #24a1af !important;
+    color: #fff !important;
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(enabled=false)" !important; }
+  .disabled {
+    color: grey;
+    cursor: not-allowed; }
+  /* Formly underlag styles */
+  .deleteUnderlag {
+    cursor: pointer; }
+  .whitebg {
+    background: white; }
+  .underlagRow > td, .underlagRow > th {
+    padding-right: 5px;
+    padding-bottom: 2px; }
+  .indent-underlag {
+    padding-left: 1em; }
+  .no-space-left {
+    margin-left: 0;
+    padding-left: 0; }
+  .diagnos-question-divider {
+    border-top: 1px solid #ccc;
+    margin-top: 15px;
+    padding-top: 15px; }
+  .funktionsnedsattning, .behandling {
+    padding-bottom: 20px; }
+  .question-divider {
+    border-top: 1px solid #ccc;
+    padding-top: 15px; }
+  input.ng-invalid-date {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
+    border-color: #ff6600; }
+  .not-entered {
+    font-style: italic; }
+  .intyg-field {
+    margin-bottom: 10px; }
+  .intyg-field label {
+    margin-bottom: 0px;
+    font-weight: bold; } }
+
+@media screen and (min-width: 768px) {
+  .form-inline .radio input[type=radio], .form-inline .checkbox input[type=checkbox] {
+    vertical-align: middle; } }
+
+@media screen and (min-width: 768px) {
+  .form-inline .radio input[type=radio] .big-radio, .form-inline .checkbox input[type=checkbox] .big-checkbox {
+    vertical-align: bottom; } }
+
+@media screen {
+  /*
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+  /* These styles belong to the utkastHeader component and are imported into the inera-certificate.css*/
+  .header-fix-top {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 500; }
+    .header-fix-top h1 {
+      margin: 0 20px 0 0;
+      line-height: 29px; }
+  .header-fix-top-expand {
+    position: relative;
+    top: -20px;
+    right: 30px; }
+  .header-fix-top-expand-wrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #74777f;
+    text-align: center;
+    -webkit-border-radius: 0 0 5px 5px;
+    -moz-border-radius: 0 0 5px 5px;
+    -ms-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px; }
+    .header-fix-top-expand-wrapper .btn-link {
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75); }
+      .header-fix-top-expand-wrapper .btn-link:hover {
+        color: #fff;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75); }
+  .header-fix-panel {
+    padding: 20px 0 10px 30px;
+    border-bottom: 1px solid #999;
+    background-color: #fff;
+    -ms-box-shadow: 0 -5px 25px #323232;
+    -webkit-box-shadow: 0 -5px 25px #323232;
+    -moz-box-shadow: 0 -5px 25px #323232;
+    box-shadow: 0 -5px 25px #323232; }
+  .header-wrapper {
+    /*  max-height: 110px; does commenting out this break anything? */
+    overflow: hidden; }
+  .menucollapse.ng-hide-add, .menucollapse.ng-hide-remove {
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    position: relative;
+    display: block !important; }
+  .menucollapse.ng-hide {
+    margin-top: -100px; }
+  .cert-error-panel {
+    margin-top: 100px;
+    max-width: 800px; }
+    .cert-error-panel .alert-danger {
+      border: 1px solid #a94442; }
+  /*Import styles related to fråga svar*/
+  /*
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+  /**
+Table styles pertaining to fråga svar.
+ */
+  /**
+QA list item animation
+ */
+  .qa-item.ng-enter, .qa-item.ng-move {
+    -webkit-animation: fadeIn 1s;
+    -moz-animation: fadeIn 1s;
+    -ms-animation: fadeIn 1s;
+    animation: fadeIn 1s; }
+  .qa-item {
+    -webkit-transition: color 0.6s, background-color 0.3s, all 0.6s;
+    -moz-transition: color 0.6s, background-color 0.3s, all 0.6s;
+    -ms-transition: color 0.6s, background-color 0.3s, all 0.6s;
+    transition: color 0.6s, background-color 0.3s, all 0.6s; }
+    .qa-item.ng-leave {
+      -webkit-animation: fadeOut 1s;
+      -moz-animation: fadeOut 1s;
+      -ms-animation: fadeOut 1s;
+      animation: fadeOut 1s; }
+  .qa-column {
+    max-width: 600px;
+    padding-right: 20px; }
+  .panel-container {
+    /* IE8 doesn't understand margin-bottom on elements added by scripting so place this around and use padding instead */
+    padding-bottom: 20px; }
+  .qa-panel {
+    background-color: #eaeaea;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    border-radius: 8px 8px 8px 8px;
+    padding: 20px;
+    max-width: 600px; }
+    .qa-panel p {
+      margin-bottom: 5px;
+      font-size: 13px; }
+    .qa-panel label {
+      margin-bottom: 5px;
+      font-size: 13px; }
+    .qa-panel h3 {
+      font-size: 13px;
+      margin: 0;
+      padding: 0 0 5px 0;
+      font-weight: normal; }
+  .qa-block {
+    background-color: #fff;
+    border: 1px solid #d8d8d8;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    border-radius: 8px 8px 8px 8px; }
+  .qa-block-fk {
+    margin-left: 20px; }
+  .qa-block-wc {
+    margin-right: 20px; }
+  .qa-block-handled {
+    background-color: #f5f5f5; }
+  .qa-block-head {
+    margin: 0;
+    color: #000;
+    font-size: 13px;
+    display: block;
+    padding: 10px 20px;
+    border-bottom: 1px solid #d8d8d8;
+    -webkit-border-radius: 8px 8px 0 0;
+    -moz-border-radius: 8px 8px 0 0;
+    border-radius: 8px 8px 0 0; }
+    .qa-block-head h3 {
+      font-size: 13px;
+      margin: 0;
+      font-weight: normal; }
+  .qa-block-body {
+    display: block;
+    padding: 20px 20px;
+    white-space: pre-line; }
+  .qa-sender {
+    font-weight: bold; }
+  .qa-date {
+    font-weight: bold; }
+  .qa-panel__vidarebefordra-placement {
+    margin-top: -62px; }
+  .komplettera-block {
+    padding-top: 10px; }
+  /*Import the things that are common for the ts certificates pertaining to layout*/
+  /*
+ * Copyright (C) 2016 Inera AB (http://www.inera.se)
+ *
+ * This file is part of sklintyg (https://github.com/sklintyg).
+ *
+ * sklintyg is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * sklintyg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+  /**
+Table styles pertaining to layout. Shared between the ts certificate modules.
+ */
+  .table-form > thead > tr > td, .table-form > thead > tr > th, .table-form > tbody > tr > td, .table-form > tbody > tr > th {
+    padding: 0 5px 5px 0;
+    text-align: left;
+    vertical-align: top; }
+  .table-padding-top {
+    padding-top: 15px; }
+  .table-form {
+    margin: 0; }
+    .table-form > tbody > tr > td > input[type=radio] {
+      margin-top: 0; }
+  .table .table-form {
+    background-color: transparent; }
+  .table-form-radio > tbody > tr > td:last-child {
+    width: 100%; } }

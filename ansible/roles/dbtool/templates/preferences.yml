@@ -1,0 +1,10 @@
+---
+port: 7171
+snapshots_dir: {{ dbtool_root_dir }}/dumps
+version_file: {{ inera_root }}}/tomcat7/webapps/version.txt
+username: {{ dbtool_username }}
+password: {{ dbtool_password }}
+db_username: {{ webcert_db_username }}
+db_password: {{ webcert_db_password }}
+db2_username: {{ it_db_username }}
+db2_password: {{ it_db_password }}

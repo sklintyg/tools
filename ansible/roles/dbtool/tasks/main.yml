@@ -1,0 +1,31 @@
+- name: create dbtool directory in /opt/inera
+  file: path={{ dbtool_root_dir }} state=directory owner=inera group=inera mode=0755
+
+- name: create dbtool/dumps directory
+  file: path={{ dbtool_root_dir }}/dumps state=directory owner=inera group=inera mode=0755
+
+- name: copy install artifact
+  copy: src=roles/dbtool/templates/dbtool-1.0.zip dest={{ dbtool_root_dir }}/dbtool-1.0.zip owner=inera group=inera mode=0755
+
+- name: Unzip it
+  command: unzip -od {{ dbtool_root_dir }} {{ dbtool_root_dir }}/dbtool-1.0.zip
+  args:
+    creates: "{{ dbtool_root_dir }} {{ dbtool_root_dir }}/dbtool"
+
+- name: create preferences.yml file from template
+  template: src=preferences.yml dest={{ dbtool_root_dir }}/preferences.yml
+
+- name: Chown entire dir to inera:inera
+  file: dest={{ dbtool_root_dir }} owner=inera group=inera mode=0775 recurse=yes
+
+- name: Add init.d script
+  template: src=dbtool-init.sh.j2 dest=/etc/init.d/dbTool mode=755
+
+- name: Enable DB tool service
+  service: name=dbTool state=stopped enabled=yes
+
+- name: Stop dbTool if running
+  service: name=dbTool state=stopped pattern=dbTool
+
+- name: Start dbTool
+  service: name=dbTool state=started pattern=dbTool

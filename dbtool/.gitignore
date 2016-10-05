@@ -1,0 +1,6 @@
+bin
+pkg
+.idea
+src/github.com/gorilla
+src/gopkg.in
+release
