@@ -1,0 +1,6 @@
+dbtool_username: inera
+dbtool_password: changeme
+webcert_db_username: webcert
+webcert_db_password: changeme
+it_db_username: intyg
+it_db_password: changeme

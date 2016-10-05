@@ -1,0 +1,9 @@
+---
+# This playbook provisions mysql 
+
+- hosts: dbtool
+  sudo: yes
+  vars_files:
+    - vars/dbtool.yml
+  roles:
+    - dbtool
