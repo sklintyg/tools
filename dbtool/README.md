@@ -34,6 +34,12 @@ Samtliga målarkitekturer och operativsystem finns listade här: https://github.
 (Jag ser det som osannolikt att vi kommer köra mot annat än amd64)
 
 Binären finns nu i /bin
+
+Det finns även ett bash-script som bygger för amd64/linux, paketerar en release-zip och kopierar den till ../ansible/roles/dbtool/templates
+
+    ./buildanddeploy.sh
+   
+Scriptet ändrar tillbaka till 'darwin' så om man kör linux får man justera lite lokalt.
     
 4. Klart!
 
