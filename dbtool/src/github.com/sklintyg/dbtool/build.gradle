@@ -1,0 +1,18 @@
+plugins {
+    id "org.echocat.golang" version "0.1.11"
+}
+
+group 'github.com/sklintyg/dbtool'
+
+golang {
+    // Set default platforms to build but make it overwritable via -Dplatforms=<..>   linux-amd64,windows-amd64,
+    platforms = System.getProperty("platforms", "darwin-amd64")
+    dependencies {
+        build 'github.com/gorilla/mux'
+        build 'gopkg.in/yaml.v2'
+    }
+    build {
+        // Use temporary GOPATH to build everthing in
+        useTemporaryGopath = true
+    }
+}
