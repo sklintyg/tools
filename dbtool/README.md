@@ -6,46 +6,24 @@ Webcert DB tool (wdt) är ett enkelt verktyg för att mha _mysqldump_ och _mysql
 ### Bygga
 wdt är byggt i golang(https://golang.org/) och dess källkod återfinns under /tools/dbtool.
 
-#### Bygga binär
-_(Instruktioner för Linux/OS X nedan)_
-För att bygga wdt från källkod eller köra lokalt så behöver man installera Go SDK 1.7+ och sedan bygga enligt följande mönster:
+Vi bygger wdt mha gradle:
 
-1. Gå till /tools/dbtool (detta är rotbiblioteket för wdt) och sätt som GOPATH
-    
-    export GOPATH=[absolut sökväg till aktuell katalog]    
-
-2. Hämta dependencies
-    
+    export GOPATH=[din sökväg till /tools/dbtool]
     cd src/github.com/sklintyg/dbtool
-    go get
-    cd ../../../..
-
-3. Sätt miljövariabler för vilken miljö du vill bygga till, bygg och återställ:
-
-    export GOARCH=amd64
-    export GOOS=linux
-    go build -o bin/dbtool src/github.com/sklintyg/dbtool/*.go
-    export GOARCH=amd64
-    export GOOS=darwin
+    ./gradlew build
     
-I exemplet ovan byter jag mål-OS till "linux", bygger och ändrar sedan tillbaka till "darwin" (OS X). För Windowsanvändare, ändra till "windows" istället för "darwin".
-Samtliga målarkitekturer och operativsystem finns listade här: https://github.com/golang/go/blob/master/src/go/build/syslist.go
+Ovanstående rader kommer i en helt ren miljö hämta Go SDK för din miljö, hämta dependencies samt bygga go-binärer för Linux, Windows och OS X till katalogen /src/github.com/sklintyg/dbtool/build/bin
 
-(Jag ser det som osannolikt att vi kommer köra mot annat än amd64)
-
-Binären finns nu i /bin
-
-Det finns även ett bash-script som bygger för amd64/linux, paketerar en release-zip och kopierar den till ../ansible/roles/dbtool/templates
+Det finns även ett bash-script som bygger och paketerar en release-zip för linux/amd64 och kopierar den till /tools/ansible/roles/dbtool/templates
 
     ./buildanddeploy.sh
-   
-Scriptet ändrar tillbaka till 'darwin' så om man kör linux får man justera lite lokalt.
-    
-4. Klart!
+       
+Vill man köra lokalt kan man göra följande:
 
-Vill man köra lokalt räcker steg 1. och steg 2. ovan. Efter detta kan man köra:
-
-    go run src/github.com/skilintyg/dbtool/*.go
+    export GOPATH=[din sökväg till /tools/dbtool]
+    cd src/github.com/sklintyg/dbtool
+    go get
+    go run *.go
 
 ### Konfiguration
 På målmiljön, öppna _preferences.yml_ som skall ligga bredvid binären (eller i rotbiblioteket för dbtool om man kör lokalt):
@@ -91,4 +69,3 @@ wdt kör genom ett minimalistiskt GUI lokalt på default: http://localhost:7171/
 Labbmiljön (intygspoc): https://intygspoc.inera.nordicmedtest.se/dbtool/static/
 
 ![alt text](dbtool.png))
-

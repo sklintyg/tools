@@ -5,8 +5,8 @@ plugins {
 group 'github.com/sklintyg/dbtool'
 
 golang {
-    // Set default platforms to build but make it overwritable via -Dplatforms=<..>   linux-amd64,windows-amd64,
-    platforms = System.getProperty("platforms", "darwin-amd64")
+    // Set default platforms to build but make it overwritable via -Dplatforms=<..>
+    platforms = System.getProperty("platforms", "darwin-amd64,linux-amd64,windows-amd64")
     dependencies {
         build 'github.com/gorilla/mux'
         build 'gopkg.in/yaml.v2'
