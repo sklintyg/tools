@@ -23,7 +23,8 @@ Vill man köra lokalt kan man göra följande:
     export GOPATH=[din sökväg till /tools/dbtool]
     cd src/github.com/sklintyg/dbtool
     go get
-    go run *.go
+    cd ../../../../
+    go run src/github.com/sklintyg/dbtool/*.go
 
 ### Konfiguration
 På målmiljön, öppna _preferences.yml_ som skall ligga bredvid binären (eller i rotbiblioteket för dbtool om man kör lokalt):
@@ -43,6 +44,7 @@ På målmiljön, öppna _preferences.yml_ som skall ligga bredvid binären (elle
 - Korrigera om nödvändigt sökvägarna till /dumps-mappen samt version.txt.
 - Username / password är för HTTP Basic skydd av verktygets GUI samt API:er.
 - db_username / db_password är användarnamn och lösenord till Webcert-databasen
+- db2_username / db2_password är användarnamn och lösenord till Intygstjänst-databasen
 
 ### Apache-konfiguration
 För att köra på en typisk testmiljö för Webcert behöver man korrigera /etc/httpd/conf.d/webcert.conf
