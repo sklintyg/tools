@@ -17,11 +17,9 @@ dependencies {
   compile 'mysql:mysql-connector-java:5.1.39'
 
   compile 'se.riv.insuranceprocess.healthreporting:insuranceprocess-healthreporting-schemas:3.1.0.3'
-  compile 'se.inera.intyg.intygstyper:fk7263:3.0.68'
 }
 
 jar {
   from configurations.runtime.asFileTree.files.collect { zipTree(it) }
-  exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
   manifest.attributes('Main-Class' : mainClassName)
 }

@@ -23,11 +23,19 @@ import groovy.sql.Sql
 import groovyx.gpars.GParsPool
 
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
+import java.io.StringReader
+
+import javax.xml.bind.JAXB
 
 import org.apache.commons.dbcp2.BasicDataSource
 
-import se.inera.intyg.intygstyper.fk7263.model.internal.Utlatande
+import se.inera.ifv.insuranceprocess.healthreporting.registermedicalcertificateresponder.v3.RegisterMedicalCertificateType
+import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.ArbetsformagaNedsattningType
+import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.FunktionstillstandType
+import se.inera.ifv.insuranceprocess.healthreporting.mu7263.v3.Nedsattningsgrad
 
 /**
  * Skapa Sjukfall av intyg.
@@ -68,8 +76,6 @@ class SkapaSjukfall {
 
         def results
 
-        se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper objectMapper = new  se.inera.intyg.common.util.integration.integration.json.CustomObjectMapper()
-
         GParsPool.withPool(numberOfThreads) {
 
             results = certificateIds.collectParallel {
@@ -78,35 +84,33 @@ class SkapaSjukfall {
                 def cancelled = it.STATE
                 Sql sql = new Sql(dataSource)
                 try {
-                    def row = sql.firstRow( 'SELECT DOCUMENT FROM CERTIFICATE c WHERE c.ID=:id'
+                    def row = sql.firstRow( 'SELECT DOCUMENT FROM ORIGINAL_CERTIFICATE c WHERE c.CERTIFICATE_ID=:id'
                             , [id : id])
                     if (row == null || row.DOCUMENT == null) {
                         println "Intyg ${id} has no DOCUMENT, skipping."
                         throw new Exception("Intyg ${id} has no DOCUMENT, skipping.")
                     }
                     def originalDocument = new String(row.DOCUMENT, 'UTF-8')
-                    Utlatande utlatande = objectMapper.readValue(originalDocument, Utlatande.class)
+                    RegisterMedicalCertificateType registerMedicalCertificate = JAXB.unmarshal(new StringReader(originalDocument), RegisterMedicalCertificateType.class)
 
-                    String diagnosKod = utlatande.diagnosKod
+                    String diagnosKod = registerMedicalCertificate.lakarutlatande.medicinsktTillstand?.tillstandskod?.code
                     if (diagnosKod == null) {
                         println "Intyg ${id} has no diagnosKod, skipping."
                         throw new Exception("Intyg ${id} has no diagnosKod, skipping.")
                     }
 
-                    String personnummer = utlatande.grundData.patient.personId.personnummer
-                    String firstName = utlatande.grundData.patient.fornamn
-                    String lastName = utlatande.grundData.patient.efternamn
-                    String patientName = (firstName != null ? firstName : '') + ' ' + (lastName != null ? lastName : '')
-                    String careUnitId = utlatande.grundData.skapadAv.vardenhet.enhetsid
-                    String careUnitName = utlatande.grundData.skapadAv.vardenhet.enhetsnamn
-                    String careGiverId = utlatande.grundData.skapadAv.vardenhet.vardgivare.vardgivarid
-                    String doctorId = utlatande.grundData.skapadAv.personId
-                    String doctorName = utlatande.grundData.skapadAv.fullstandigtNamn
+                    String personnummer = registerMedicalCertificate.lakarutlatande.patient.personId.extension
+                    String patientName = registerMedicalCertificate.lakarutlatande.patient.fullstandigtNamn
+                    String careUnitId = registerMedicalCertificate.lakarutlatande.skapadAvHosPersonal.enhet.enhetsId.extension
+                    String careUnitName = registerMedicalCertificate.lakarutlatande.skapadAvHosPersonal.enhet.enhetsnamn
+                    String careGiverId = registerMedicalCertificate.lakarutlatande.skapadAvHosPersonal.enhet.vardgivare.vardgivareId.extension
+                    String doctorId = registerMedicalCertificate.lakarutlatande.skapadAvHosPersonal.personalId.extension
+                    String doctorName = registerMedicalCertificate.lakarutlatande.skapadAvHosPersonal.fullstandigtNamn
 
                     Boolean deleted = cancelled != null
 
-                    LocalDateTime signingDateTime = utlatande.grundData.signeringsdatum
-                    java.sql.Date sqlSigningDateTime = new java.sql.Date(signingDateTime.toDate().getTime())
+                    LocalDateTime signingDateTime = registerMedicalCertificate.lakarutlatande.signeringsdatum
+                    java.sql.Date sqlSigningDateTime = new java.sql.Date(signingDateTime.atZone(ZoneId.of("Europe/Stockholm")).toEpochSecond())
 
                     def sjukfallRow = sql.firstRow( 'SELECT id FROM SJUKFALL_CERT sc WHERE sc.id = :id', [id : id])
 
@@ -117,36 +121,38 @@ class SkapaSjukfall {
                         sql.execute("INSERT INTO SJUKFALL_CERT "
                                 + "(ID,CERTIFICATE_TYPE,CIVIC_REGISTRATION_NUMBER,PATIENT_NAME,CARE_UNIT_ID,CARE_UNIT_NAME,CARE_GIVER_ID,SIGNING_DOCTOR_ID,SIGNING_DOCTOR_NAME,DIAGNOSE_CODE,DELETED,SIGNING_DATETIME)"
                                 + "VALUES (:id,:type,:personnummer,:patientName,:careUnitId,:careUnitName,:careGiverId,:doctorId,:doctorName,:diagnosKod,:deleted,:signingDateTime)"
-                                , [id: id, type : utlatande.typ, personnummer: personnummer, patientName : patientName.trim(),
+                                , [id: id, type : registerMedicalCertificate.lakarutlatande.typAvUtlatande, personnummer: personnummer, patientName : patientName.trim(),
                                    careUnitId : careUnitId, careUnitName : careUnitName, careGiverId : careGiverId, doctorId : doctorId,
                                    doctorName : doctorName, diagnosKod : diagnosKod, deleted : deleted, signingDateTime : sqlSigningDateTime
                         ])
 
                         // Insert one item per nedsattning
                         String insertSql = "INSERT INTO SJUKFALL_CERT_WORK_CAPACITY (CERTIFICATE_ID,CAPACITY_PERCENTAGE,FROM_DATE,TO_DATE) VALUES(:id,:nedsattningProcent,:fromDate,:toDate)";
-                        if (utlatande.nedsattMed25 != null) {
-                            sql.execute(insertSql, [id:id,
-                                                    nedsattningProcent: 25,
-                                                    fromDate: utlatande.nedsattMed25.fromAsLocalDate().toString("yyyy-MM-dd"),
-                                                    toDate: utlatande.nedsattMed25.tomAsLocalDate().toString("yyyy-MM-dd")])
-                        }
-                        if (utlatande.nedsattMed50 != null) {
-                            sql.execute(insertSql, [id:id,
-                                                    nedsattningProcent: 50,
-                                                    fromDate: utlatande.nedsattMed50.fromAsLocalDate().toString("yyyy-MM-dd"),
-                                                    toDate: utlatande.nedsattMed50.tomAsLocalDate().toString("yyyy-MM-dd")])
-                        }
-                        if (utlatande.nedsattMed75 != null) {
-                            sql.execute(insertSql, [id:id,
-                                                    nedsattningProcent: 75,
-                                                    fromDate: utlatande.nedsattMed75.fromAsLocalDate().toString("yyyy-MM-dd"),
-                                                    toDate: utlatande.nedsattMed75.tomAsLocalDate().toString("yyyy-MM-dd")])
-                        }
-                        if (utlatande.nedsattMed100 != null) {
-                            sql.execute(insertSql, [id:id,
-                                                    nedsattningProcent: 100,
-                                                    fromDate: utlatande.nedsattMed100.fromAsLocalDate().toString("yyyy-MM-dd"),
-                                                    toDate: utlatande.nedsattMed100.tomAsLocalDate().toString("yyyy-MM-dd")])
+
+                        for (FunktionstillstandType funktionstillstand : registerMedicalCertificate.lakarutlatande.funktionstillstand) {
+                            if (funktionstillstand.arbetsformaga == null) {
+                                continue;
+                            }
+                            for (ArbetsformagaNedsattningType nedsattning : funktionstillstand.arbetsformaga.arbetsformagaNedsattning) {
+                                if (nedsattning.nedsattningsgrad != null && (nedsattning.varaktighetFrom != null && nedsattning.varaktighetTom != null)) {
+                                    def nedsattningProcent
+                                    if (nedsattning.nedsattningsgrad == Nedsattningsgrad.HELT_NEDSATT) {
+                                        nedsattningProcent = 100
+                                    } else if (nedsattning.nedsattningsgrad == Nedsattningsgrad.NEDSATT_MED_3_4) {
+                                        nedsattningProcent = 75
+                                    } else if (nedsattning.nedsattningsgrad == Nedsattningsgrad.NEDSATT_MED_1_2) {
+                                        nedsattningProcent = 50
+                                    } else if (nedsattning.nedsattningsgrad == Nedsattningsgrad.NEDSATT_MED_1_4) {
+                                        nedsattningProcent = 25
+                                    }
+                                    if (nedsattningProcent != null) {
+                                        sql.execute(insertSql, [id:id,
+                                                nedsattningProcent: nedsattningProcent,
+                                                fromDate: nedsattning.varaktighetFrom.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                                                toDate: nedsattning.varaktighetTom.format(DateTimeFormatter.ISO_LOCAL_DATE)])
+                                    }
+                                }
+                            }
                         }
                     } else {
                         // If SJUKFALL_CERT already exists for id, just update the DELETED state.
