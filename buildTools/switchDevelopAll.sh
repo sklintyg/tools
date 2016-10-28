@@ -1,35 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-export INTYG_HOME=`pwd`/../..
+INTYG_HOME="$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )"
 
-cd $INTYG_HOME/common-pom
-git checkout develop
-if [ $? != 0 ]; then exit 1; fi
-
-cd $INTYG_HOME/common
-git checkout develop
-if [ $? != 0 ]; then exit 1; fi
-
-cd $INTYG_HOME/intygstyper
-git checkout develop
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/intygstjanst
-git checkout develop
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/minaintyg
-git checkout develop
-if [ $? != 0 ]; then exit; fi
-	
-cd $INTYG_HOME/schemas
-git checkout develop
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/tools
-git checkout develop
-if [ $? != 0 ]; then exit; fi
-		
-cd $INTYG_HOME/webcert
-git checkout develop
-if [ $? != 0 ]; then exit; fi
+for project in schemas common intygstyper intygstjanst minaintyg webcert; do
+    echo $project
+    cd "$INTYG_HOME/$project"
+    git checkout develop
+    echo
+done

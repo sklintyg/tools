@@ -1,48 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-export INTYG_HOME=`pwd`/../..
+INTYG_HOME="$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )"
 
-if [ -d $INTYG_HOME/common-pom ]; then
-	echo '--- common-pom ---'
-	cd $INTYG_HOME/common-pom
-	git pull --rebase origin develop
-	if [ $? != 0 ]; then exit 1; fi
-fi
-
-
-echo '--- common ---'
-cd $INTYG_HOME/common
-git pull --rebase origin develop
-if [ $? != 0 ]; then exit 1; fi
-
-echo '--- tools ---'
-cd $INTYG_HOME/tools
-git pull --rebase origin develop
-if [ $? != 0 ]; then exit; fi
-
-if [ -d $INTYG_HOME/schemas ]; then
-	echo '--- schemas ---'
-	cd $INTYG_HOME/schemas
-	git pull --rebase origin develop
-	if [ $? != 0 ]; then exit; fi
-fi
-
-echo '--- intygstyper ---'
-cd $INTYG_HOME/intygstyper
-git pull --rebase origin develop
-if [ $? != 0 ]; then exit; fi
-
-echo '--- intygstjänst ---'
-cd $INTYG_HOME/intygstjanst
-git pull --rebase origin develop
-if [ $? != 0 ]; then exit; fi
-
-echo '--- mina intyg ---'
-cd $INTYG_HOME/minaintyg
-git pull --rebase origin develop
-if [ $? != 0 ]; then exit; fi
-
-echo '--- webcert ---'
-cd $INTYG_HOME/webcert
-git pull --rebase origin develop
-if [ $? != 0 ]; then exit; fi
+for project in schemas common intygstyper intygstjanst minaintyg webcert; do
+    echo $project
+    cd "$INTYG_HOME/$project"
+    git pull --rebase origin || exit 1
+    echo
+done

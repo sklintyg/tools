@@ -1,42 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-function get_branch() {
-      git branch --no-color | grep -E '^\*' | awk '{print $2}' || echo "default_value"
-      # or
-      #git symbolic-ref --short -q HEAD || echo "default_value";
-}
+INTYG_HOME="$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )"
 
-export INTYG_HOME=`pwd`/../..
-branch_name=`get_branch`
-
-cd $INTYG_HOME/common-pom
-echo "common-pom                 $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit 1; fi
-
-cd $INTYG_HOME/schemas
-echo "schemas                    $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/common
-echo "common                     $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit 1; fi
-
-cd $INTYG_HOME/tools
-echo "tools                      $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/intygstyper
-echo "intygstyper                $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/intygstjanst
-echo "intygstjanst               $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/minaintyg
-echo "minaintyg                  $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit; fi
-
-cd $INTYG_HOME/webcert
-echo "webcert                    $(b=$(git symbolic-ref -q HEAD); { [ -n "$b" ] && echo ${b##refs/heads/}; } || echo HEAD)"
-if [ $? != 0 ]; then exit; fi
+for project in schemas common intygstyper intygstjanst minaintyg webcert; do
+    cd "$INTYG_HOME/$project"
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    [[ $branch == develop ]] && branchcolor=32 || branchcolor=31
+    printf '%-16s\e['$branchcolor'm%s\e[00m\n' $project $branch
+done
