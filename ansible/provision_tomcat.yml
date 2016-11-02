@@ -2,7 +2,7 @@
 # This playbook provisions tomcat 
 
 - hosts: tomcat
-  sudo: yes 
+  become: yes 
 
   roles:
     - git

@@ -2,6 +2,6 @@
 # This playbook provisions mysql 
 
 - hosts: tomcat
-  sudo: yes 
+  become: yes 
   roles:
     - unzip

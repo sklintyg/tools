@@ -2,7 +2,7 @@
 # This playbook provisions activemq
 
 - hosts: activemq
-  sudo: yes 
+  become: yes 
 
   roles:
     - activemq

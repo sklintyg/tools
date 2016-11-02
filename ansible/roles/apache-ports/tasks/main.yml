@@ -13,7 +13,7 @@
 
 - name: enable connections through firewall (iptables)
   when: environment_name == "dev"
-  command: iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
+  command: iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
   with_items:
     - 80
     - 443

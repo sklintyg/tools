@@ -2,6 +2,6 @@
 # This playbook provisions git-crypt 
 
 - hosts: tomcat
-  sudo: yes 
+  become: yes 
   roles:
     - git-crypt

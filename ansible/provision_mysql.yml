@@ -2,7 +2,7 @@
 # This playbook provisions mysql 
 
 - hosts: mysql
-  sudo: yes 
+  become: yes 
   vars_files:
     - vars/mysql.yml
   roles:
