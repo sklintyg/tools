@@ -1,12 +1,11 @@
 ---
-# file: roles/activemq/tasks/main.yml
 
 - name: If ActiveMQ is already present, stop it first
   service: name=activemq state=stopped pattern=activemq
   register: command_result
   failed_when: "command_result|failed and 'no service or tool found' not in command_result.msg"
 
-- name: create archive directory
+- name: Create archive directory
   file: path={{ archive_dir }} state=directory mode=0755
 
 - name: Download activemq
@@ -15,7 +14,9 @@
   
 - name: Extract activemq
   unarchive: src={{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz
-             dest={{ inera_root }} copy=no
+             dest={{ inera_root }}
+             remote_src=yes
+             creates={{ inera_root }}/apache-activemq-{{ activemq_version }}
 
 - name: Create symlink to tomcat home
   file: state=link src={{ inera_root }}/apache-activemq-{{ activemq_version }} path={{ activemq_home }} mode=755

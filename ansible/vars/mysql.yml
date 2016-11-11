@@ -1,5 +1,3 @@
 ---
-# file: vars/mysql
 
 mysql_root_password: admin
-mysql_enabled_on_startup: yes

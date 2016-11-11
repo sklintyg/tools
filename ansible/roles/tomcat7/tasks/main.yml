@@ -1,43 +1,45 @@
 ---
-# file: roles/tomcat/tasks/main.yml
 
-- name: add group "{{ tomcat_group }}"
+- name: Add tomcat group "{{ tomcat_group }}"
   group: "name={{ tomcat_user }}"
 
-- name: add user "{{ tomcat_user }}"
+- name: Add tomcat user "{{ tomcat_user }}"
   user: "name={{ tomcat_user }} group={{ tomcat_group }} createhome=no"
 
-- name: delete home dir for symlink of tomcat
+- name: Delete home dir for symlink of tomcat
   file: "state=absent path={{ tomcat7_home }}"
 
 - name: Download tomcat
   get_url: url={{ tomcat_download_url }}
            dest={{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz
 
-- name: make dir
+- name: Make tomcat install dir
   file: "state=directory path={{ tomcat7_install_dir}}"
 
 - name: Extract tomcat
-  command: tar -zxf {{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz -C {{ tomcat7_install_dir}} --strip-components 1
-
+  unarchive:
+    src: "{{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz"
+    dest: "{{ tomcat7_install_dir}}"
+    extra_opts: ['--strip-components=1', '--show-stored-names']
+    remote_src: yes
+  
 - name: Create symlink to tomcat home
   file: state=link src={{ tomcat7_install_dir}} path={{ tomcat7_home }} mode=755
 
 - name: Change ownership of Tomcat installation
   file: path={{ tomcat7_install_dir}} owner=inera-tomcat group=inera-tomcat state=directory recurse=yes
 
-
 ###########
 
-- name: create log dir
+- name: Create log dir
   command: mv {{ tomcat7_home }}/logs /var/log/{{ tomcat_service }}
   args:
     creates: "/var/log/{{ tomcat_service }}/"
 
-- name: create tomcat directory in lib
+- name: Create tomcat directory in lib
   file: path=/var/lib/{{ tomcat_service }} state=directory mode=0755
 
-- name: create var directories
+- name: Create var directories
   command: "mv {{ tomcat7_home }}/{{ item }} /var/lib/{{ tomcat_service }}/{{ item }}"
   args: 
     creates: "/var/lib/{{ tomcat_service }}/{{ item }}"
@@ -45,13 +47,13 @@
     - conf
     - webapps
 
-- name: remove installed wars
+- name: Remove installed wars
   file: state=absent
         path=/var/lib/{{ tomcat_service }}/webapps/{{ item }}
   with_items:
     - examples
 
-- name: remove installed dirs
+- name: Remove installed dirs
   file: state=absent
         path={{ tomcat7_home }}/{{ item }}
   with_items:
@@ -59,12 +61,12 @@
     - webapps
     - logs
 
-- name: redirect log dir
+- name: Redirect log dir
   file: state=link 
         src=/var/log/{{ tomcat_service }} 
         dest={{ tomcat7_home }}/logs
 
-- name: create tomcat internal links
+- name: Create tomcat internal links
   file: state=link
         src=/var/lib/{{ tomcat_service }}/{{ item }}
         dest={{ tomcat7_home }}/{{ item }}
@@ -72,7 +74,7 @@
     - conf
     - webapps
 
-- name: set rights on dirs
+- name: Set rights on dirs
   file: owner={{ tomcat_user }} group={{ tomcat_user }} path={{ item }} state=directory recurse=yes
   with_items:
     - /var/log/{{ tomcat_service }}

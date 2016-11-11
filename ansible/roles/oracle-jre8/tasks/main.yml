@@ -1,5 +1,4 @@
 ---
-# file: roles/oracle-jre7/tasks/main.yml
 
 - name: Create {{ inera_root }} directory
   file: state=directory dest={{ inera_root }} mode=755
@@ -10,15 +9,20 @@
 - name: Create JAVA_HOME directory
   file: state=directory dest={{ java_home }} mode=755
 
-- name: Download java
-  command: "creates={{ archive_dir }}/{{ jre_tarball }} \
-           curl http://download.oracle.com/otn-pub/java/jdk/{{ java_version }}/{{ jre_tarball }} -o {{ archive_dir }}/{{ jre_tarball }} -L -H 'Cookie: oraclelicense=accept-securebackup-cookie'"
+- name: Download Oracle JRE
+  get_url: url="http://download.oracle.com/otn-pub/java/jdk/{{ java_version }}/{{ jre_tarball }}"
+           dest="{{ archive_dir }}/{{ jre_tarball }}"
+           headers='Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
 
 - name: Extract java
-  command: creates={{ java_home }}/bin/java
-           tar zxf {{ archive_dir }}/{{ jre_tarball }} -C {{ java_home }} --strip-components 1
+  unarchive:
+    src: "{{ archive_dir }}/{{ jre_tarball }}"
+    dest: "{{ java_home }}"
+    extra_opts: ['--strip-components=1', '--show-stored-names']
+    remote_src: yes
+    creates: "{{ java_home }}/bin/java"
 
-- name: set JAVA_HOME variable
+- name: Set JAVA_HOME variable
   lineinfile:
     dest="/etc/profile"
     regexp="export JAVA_HOME"

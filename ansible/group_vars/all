@@ -1,5 +1,4 @@
 ---
-# file: group_vars/all
 
 # General
 inera_root: /opt/inera
@@ -7,8 +6,8 @@ archive_dir: "{{ inera_root }}/archives"
 
 # Java
 java_home: "{{ inera_root }}/jre8"
-java_version: 8u65-b17
-jre_tarball: jre-8u65-linux-x64.tar.gz
+java_version: 8u112-b15
+jre_tarball: jre-8u112-linux-x64.tar.gz
 
 # Tomcat
 tomcat7_version: 7.0.57
@@ -32,3 +31,8 @@ activemq_home: "{{ inera_root }}/activemq"
 certificate_file: "{{ inera_root }}/certs/self-signed.crt"
 certificate_key_file: "{{ inera_root }}/certs/self-signed.key"
 proxy_pass: "http://127.0.0.1:{{ tomcat_https_port }}/"
+
+# MySQL
+mysql_packages:
+  - mysql
+  - mysql-server
