@@ -2,7 +2,9 @@
 # This playbook provisions mysql 
 
 - hosts: mysql
-  become: yes 
+  become: yes
+  environment:
+    "{{ proxy_env }}"
   vars_files:
     - vars/mysql.yml
   roles:

@@ -11,3 +11,7 @@ environment_name: "demo"
 
 # Apache
 domain: "privatlakarportal"
+ 
+#Dummy value for proxy_env 
+proxy_env: ""
+

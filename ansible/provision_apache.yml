@@ -2,7 +2,9 @@
 # This playbook provisions apache 
 
 - hosts: apache
-  become: yes 
+  become: yes
+  environment:
+    "{{ proxy_env }}"
   vars_files:
     - vars/apache.yml
   roles:

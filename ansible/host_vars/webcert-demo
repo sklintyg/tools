@@ -11,3 +11,7 @@ http_port: "8080"
 
 # Environment name
 environment_name: "demo"
+ 
+#Dummy value for proxy_env 
+proxy_env: ""
+

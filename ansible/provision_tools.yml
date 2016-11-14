@@ -2,7 +2,9 @@
 # This playbook provisions some common tools
 
 - hosts: tomcat
-  become: yes 
+  become: yes
+  environment:
+    "{{ proxy_env }}"
   roles:
     - unzip
     - git

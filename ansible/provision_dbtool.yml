@@ -3,6 +3,8 @@
 
 - hosts: dbtool
   become: yes
+  environment:
+    "{{ proxy_env }}"
   vars_files:
     - vars/dbtool.yml
   roles:

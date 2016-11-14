@@ -11,3 +11,7 @@ environment_name: "dev"
 
 # Apache
 domain: "rehabstod"
+ 
+#Dummy value for proxy_env 
+proxy_env: ""
+
