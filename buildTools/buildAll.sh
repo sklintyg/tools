@@ -13,7 +13,7 @@ start_time=$(date +%s)
 # Building with --parallel does not guarentee that 'clean' is run in the correct order. We therefore iterate twice.
 for project in common intygstyper intygstjanst minaintyg webcert; do
     cd "$INTYG_HOME/$project"
-    ./gradlew clean || exit 1
+    ./gradlew clean
 done
 
 for project in common intygstyper intygstjanst minaintyg webcert; do
