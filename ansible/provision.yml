@@ -1,9 +1,8 @@
 ---
 # This playbook provisions a full stack environment
 
-- include: provision_unzip.yml
+- include: provision_tools.yml
 - include: provision_mysql.yml
 - include: provision_activemq.yml
 - include: provision_apache.yml
 - include: provision_tomcat.yml
-- include: provision_git-crypt.yml

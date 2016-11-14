@@ -1,7 +1,0 @@
----
-# This playbook provisions mysql 
-
-- hosts: tomcat
-  become: yes 
-  roles:
-    - unzip

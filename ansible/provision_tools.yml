@@ -1,0 +1,9 @@
+---
+# This playbook provisions some common tools
+
+- hosts: tomcat
+  become: yes 
+  roles:
+    - unzip
+    - git
+    - git-crypt

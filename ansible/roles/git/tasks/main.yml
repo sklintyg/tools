@@ -1,5 +1,4 @@
 ---
-# file: roles/git/tasks/main.yml
 
 - name: install git from yum
   yum: name=git state=present

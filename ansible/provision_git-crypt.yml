@@ -1,7 +1,0 @@
----
-# This playbook provisions git-crypt 
-
-- hosts: tomcat
-  become: yes 
-  roles:
-    - git-crypt

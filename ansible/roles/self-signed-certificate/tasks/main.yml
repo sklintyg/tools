@@ -1,5 +1,4 @@
 ---
-# file: roles/self-signed-certificate/tasks/main.yml
 
 - name: Make sure openssl is installed
   yum: name=openssl state=present

@@ -1,5 +1,4 @@
 ---
-# file: vars/apache
 
 apache_extra_parameters: |
     ProxyPreserveHost On

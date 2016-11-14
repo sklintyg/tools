@@ -1,5 +1,4 @@
 ---
-# file: roles/git-crypt/tasks/main.yml
 
 - name: install gcc-c++ from yum
   yum: name=gcc-c++ state=present

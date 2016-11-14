@@ -5,6 +5,5 @@
   become: yes 
 
   roles:
-    - git
     - oracle-jre8
     - tomcat7
