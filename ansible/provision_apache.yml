@@ -5,14 +5,10 @@
   become: yes 
   vars_files:
     - vars/apache.yml
-  vars:
-    apache_root: /etc/apache2
   roles:
     - self-signed-certificate
-    - geerlingguy.apache
+    - apache
     - apache-ports
   handlers:
-    - name: restart apache2
-      service: name=apache2 state=restarted
     - name: restart httpd
       service: name=httpd state=restarted

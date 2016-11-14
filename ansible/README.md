@@ -6,11 +6,6 @@ Exempelvis:
 
     ansible-playbook -i hosts_lab provision.yml
     
-Kom ihåg att git-crypt behöver installeras separat:
-
-    ansible-playbook -i hosts_lab provision_git-crypt.yml
-    
-    
 ### Lab-miljön och delade resurser
 
 Se hosts_lab

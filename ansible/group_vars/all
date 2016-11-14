@@ -14,8 +14,6 @@ tomcat7_version: 7.0.57
 tomcat_user: inera-tomcat
 tomcat_group: inera-tomcat
 proxy_name: "localhost"
-
-#Tomcat7
 tomcat_service: inera-tomcat
 tomcat7_home: "{{ inera_root }}/tomcat7"
 tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ tomcat_service }}"
@@ -36,3 +34,10 @@ proxy_pass: "http://127.0.0.1:{{ tomcat_https_port }}/"
 mysql_packages:
   - mysql
   - mysql-server
+
+# Apache http
+apache_packages:
+  - httpd
+  - httpd-devel
+  - mod_ssl
+  - openssh
