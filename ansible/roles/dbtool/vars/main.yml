@@ -1,3 +1,4 @@
+dbtool_root_dir: {{ inera_root}/dbtool
 dbtool_username: inera
 dbtool_password: changeme
 webcert_db_username: webcert

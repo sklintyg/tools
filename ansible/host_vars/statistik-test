@@ -1,5 +1,4 @@
 ---
-# file: host_vars/statistik-test
 
 # Tomcat
 proxy_name: "fitnesse.inera.nordicmedtest.se"

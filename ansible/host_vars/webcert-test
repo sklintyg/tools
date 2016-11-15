@@ -1,5 +1,4 @@
 ---
-# file: host_vars/webcert-test
 
 # Tomcat
 proxy_name: "webcert.inera.nordicmedtest.se"

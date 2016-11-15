@@ -13,10 +13,22 @@
 - name: Add apache vhosts configuration.
   template:
     src: "vhosts.conf.j2"
-    dest: "/etc/httpd/conf.d/vhosts.conf"
+    dest: "/etc/httpd/conf.d/{{ domain }}.conf"
     owner: root
     group: root
     mode: 0644
+
+- name: Fix ssl.conf _default_ vhost
+  lineinfile:
+    dest="/etc/httpd/conf.d/ssl.conf"
+    regexp="<VirtualHost .*:443>"
+    line="<VirtualHost 127.0.0.1:443>"
+
+- name: Make apache logs accessible to wheel group
+  file: path=/var/log/httpd mode=0750 group=wheel
+
+- name: Allow httpd to initiate network connection to tomcat
+  command: "/usr/sbin/setsebool -P httpd_can_network_connect 1"
 
 - name: Ensure Apache is started and enabled on boot.
   service: "name=httpd state=started enabled=yes"

@@ -1,5 +1,4 @@
 ---
-# file: host_vars/minaintyg-test
 
 # Tomcat
 proxy_name: "minaintyg.inera.nordicmedtest.se"

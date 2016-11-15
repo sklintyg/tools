@@ -1,5 +1,4 @@
 ---
-# file: host_vars/intygstjanst-test
 
 # Tomcat
 proxy_name: "intygstjanst.inera.nordicmedtest.se"
