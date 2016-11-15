@@ -8,15 +8,7 @@
   file: path=/var/log/httpd mode=0750 group=wheel
 
 - name: Allow httpd to initiate network connection to tomcat
-  when: environment_name != "dev"
   command: "/usr/sbin/setsebool -P httpd_can_network_connect 1"
-
-- name: enable connections through firewall (iptables)
-  when: environment_name == "dev"
-  command: iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
-  with_items:
-    - 80
-    - 443
 
 - name: remove standard sites
   file: state=absent

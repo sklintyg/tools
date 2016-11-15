@@ -23,15 +23,3 @@
   with_items:
     - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
   when: mysql_install_packages is defined and mysql_install_packages.changed
-  
-- name: Get list of hosts for the root user.
-  command: mysql -NBe 'SELECT Host FROM mysql.user WHERE User = "root" ORDER BY (Host="localhost") ASC'
-  register: mysql_root_hosts
-  when: mysql_install_packages is defined and mysql_install_packages.changed
-
-- name: Update MySQL root password for localhost root account.
-  shell: >
-    mysql -u root -NBe
-    'SET PASSWORD FOR "root"@"{{ item }}" = PASSWORD("{{ mysql_root_password }}");'
-  with_items: "{{ mysql_root_hosts.stdout_lines|default([]) }}"
-  when: mysql_install_packages is defined and mysql_install_packages.changed
