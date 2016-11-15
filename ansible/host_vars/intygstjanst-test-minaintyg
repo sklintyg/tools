@@ -13,5 +13,6 @@ tomcat_https_port: 18181
 environment_name: "test"
  
 #Dummy value for proxy_env 
-proxy_env: ""
+proxy_env: {}
+
 

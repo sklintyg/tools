@@ -12,5 +12,6 @@ domain: "minaintyg"
 environment_name: "demo"
  
 #Dummy value for proxy_env 
-proxy_env: ""
+proxy_env: {}
+
 

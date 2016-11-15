@@ -20,5 +20,6 @@ tomcat_http_port: 8082
 tomcat_https_port: 8183
  
 #Dummy value for proxy_env 
-proxy_env: ""
+proxy_env: {}
+
 

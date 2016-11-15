@@ -8,5 +8,6 @@ domain: "webcert"
 environment_name: "dev"
  
 #Dummy value for proxy_env 
-proxy_env: ""
+proxy_env: {}
+
 
