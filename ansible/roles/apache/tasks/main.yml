@@ -5,5 +5,18 @@
   with_items: "{{ apache_packages }}"
   register: apache_install_packages
 
+- name: Check whether certificates defined in vhosts exist.
+  stat: path={{ item.certificate_file }}
+  register: apache_ssl_certificates
+  with_items: "{{ apache_vhosts_ssl }}"
+
+- name: Add apache vhosts configuration.
+  template:
+    src: "vhosts.conf.j2"
+    dest: "/etc/httpd/conf.d/vhosts.conf"
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Ensure Apache is started and enabled on boot.
   service: "name=httpd state=started enabled=yes"
