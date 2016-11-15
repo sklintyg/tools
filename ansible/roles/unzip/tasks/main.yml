@@ -1,3 +1,0 @@
----
-- name: install unzip from yum
-  yum: name=unzip state=present

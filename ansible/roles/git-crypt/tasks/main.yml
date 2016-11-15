@@ -1,9 +1,9 @@
 ---
 
-- name: install gcc-c++ from yum
+- name: Install gcc-c++ from yum
   yum: name=gcc-c++ state=present
 
-- name: install openssl-devel from yum
+- name: Install openssl-devel from yum
   yum: name=openssl-devel state=present
 
 - name: Checkout git-crypt from github

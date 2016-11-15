@@ -1,0 +1,10 @@
+---
+
+- name: Install unzip from yum
+  yum: name=unzip state=present
+
+- name: Install man from yum
+  yum: name=man state=present
+
+- name: Install man pages from yum
+  yum: name=man-pages state=present

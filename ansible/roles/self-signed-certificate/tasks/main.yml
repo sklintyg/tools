@@ -3,7 +3,7 @@
 - name: Make sure openssl is installed
   yum: name=openssl state=present
 
-- name: create certs dir
+- name: Create certs dir
   file: state=directory path={{ inera_root }}/certs
 
 - name: Create self-signed certificate
