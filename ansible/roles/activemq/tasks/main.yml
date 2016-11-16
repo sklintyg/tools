@@ -18,7 +18,10 @@
              remote_src=yes
              creates={{ inera_root }}/apache-activemq-{{ activemq_version }}
 
-- name: Create symlink to tomcat home
+- name: Remove previous activemq home link, if exists
+  file: state=absent path={{ activemq_home }}
+
+- name: Create symlink to actimemq home
   file: state=link src={{ inera_root }}/apache-activemq-{{ activemq_version }} path={{ activemq_home }} mode=755
 
 - name: Make script executable
@@ -26,6 +29,9 @@
 
 - name: Make service script executable
   file: path="{{ activemq_home }}/bin/linux-x86-64/activemq" mode=0755
+
+- name: Remove service link, if exists
+  file: state=absent path=/etc/init.d/activemq
 
 - name: Make service link
   file: state=link src="{{ activemq_home }}/bin/linux-x86-64/activemq" path=/etc/init.d/activemq mode=0755

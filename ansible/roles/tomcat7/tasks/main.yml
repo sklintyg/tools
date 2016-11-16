@@ -6,9 +6,6 @@
 - name: Add tomcat user "{{ tomcat_user }}"
   user: "name={{ tomcat_user }} group={{ tomcat_group }} createhome=no"
 
-- name: Delete home dir for symlink of tomcat
-  file: "state=absent path={{ tomcat7_home }}"
-
 - name: Download tomcat
   get_url: url={{ tomcat_download_url }}
            dest={{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz
@@ -24,6 +21,9 @@
     remote_src: yes
     creates: "{{ tomcat7_install_dir}}/bin/startup.sh"
   
+- name: Remove tomcat home symlink, if exists
+  file: "state=absent path={{ tomcat7_home }}"
+
 - name: Create symlink to tomcat home
   file: state=link src={{ tomcat7_install_dir}} path={{ tomcat7_home }} mode=755
 

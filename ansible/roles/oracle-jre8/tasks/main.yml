@@ -6,21 +6,23 @@
 - name: Create {{ archive_dir }} directory
   file: state=directory dest={{ archive_dir }} mode=755
 
-- name: Create JAVA_HOME directory
-  file: state=directory dest={{ java_home }} mode=755
-
 - name: Download Oracle JRE
-  get_url: url="http://download.oracle.com/otn-pub/java/jdk/{{ java_version }}/{{ jre_tarball }}"
+  get_url: url="http://download.oracle.com/otn-pub/java/jdk/{{ java_remote_dir }}/{{ jre_tarball }}"
            dest="{{ archive_dir }}/{{ jre_tarball }}"
            headers='Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
 
 - name: Extract java
   unarchive:
     src: "{{ archive_dir }}/{{ jre_tarball }}"
-    dest: "{{ java_home }}"
-    extra_opts: ['--strip-components=1', '--show-stored-names']
+    dest: "{{ inera_root }}"
     remote_src: yes
-    creates: "{{ java_home }}/bin/java"
+    creates: "{{ inera_root }}/{{ java_local_dir }}/bin/java"
+
+- name: Remove previous java home link, if exists
+  file: state=absent path={{ java_home }}
+
+- name: Make java home link
+  file: state=link src="{{ inera_root }}/{{ java_local_dir }}" path={{ java_home }}
 
 - name: Set JAVA_HOME variable
   lineinfile:
@@ -29,11 +31,8 @@
     insertafter="EOF"
     line="export JAVA_HOME={{ java_home }}"
 
-- name: Remove unused java softlink, if exists
-  file: state=absent path=/usr/local/bin/java
-
-- name: Remove previous link, if exists
+- name: Remove previous java bin link, if exists
   file: state=absent path=/usr/bin/java
 
-- name: Make java link
+- name: Make java bin link
   file: state=link src="{{ java_home }}/bin/java" path=/usr/bin/java
