@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INTYG_HOME="$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )"
+INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 
 branch=${1:-develop}
 

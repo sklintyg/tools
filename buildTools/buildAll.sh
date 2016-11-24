@@ -6,7 +6,7 @@ read -e -p "Use checkstyle [y/n]? [y]: " PROCEED
 
 [[ $PROCEED =~ [nN] ]] && CMD="./gradlew --parallel build install"
 
-INTYG_HOME="$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )"
+INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 
 start_time=$(date +%s)
 
