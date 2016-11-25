@@ -27,34 +27,12 @@
 - name: Create symlink to tomcat home
   file: state=link src={{ tomcat7_install_dir}} path={{ tomcat7_home }} mode=755
 
-- name: Change ownership of Tomcat installation
-  file: path={{ tomcat7_install_dir}} owner=inera-tomcat group=inera-tomcat state=directory recurse=yes
+- name: Change ownership of tomcat installation
+  file: path={{ tomcat7_install_dir}} owner={{ tomcat_user }} group={{ tomcat_user }} state=directory recurse=yes
 
 ###########
 
-- name: Create log dir
-  command: mv {{ tomcat7_home }}/logs /var/log/{{ tomcat_service }}
-  args:
-    creates: "/var/log/{{ tomcat_service }}/"
-
-- name: Create tomcat directory in lib
-  file: path=/var/lib/{{ tomcat_service }} state=directory mode=0755
-
-- name: Create var directories
-  command: "mv {{ tomcat7_home }}/{{ item }} /var/lib/{{ tomcat_service }}/{{ item }}"
-  args: 
-    creates: "/var/lib/{{ tomcat_service }}/{{ item }}"
-  with_items:
-    - conf
-    - webapps
-
-- name: Remove installed wars
-  file: state=absent
-        path=/var/lib/{{ tomcat_service }}/webapps/{{ item }}
-  with_items:
-    - examples
-
-- name: Remove installed dirs
+- name: Remove installed dirs and links
   file: state=absent
         path={{ tomcat7_home }}/{{ item }}
   with_items:
@@ -62,24 +40,17 @@
     - webapps
     - logs
 
-- name: Redirect log dir
-  file: state=link 
-        src=/var/log/{{ tomcat_service }} 
-        dest={{ tomcat7_home }}/logs
-
-- name: Create tomcat internal links
-  file: state=link
-        src=/var/lib/{{ tomcat_service }}/{{ item }}
-        dest={{ tomcat7_home }}/{{ item }}
+- name: Create tomcat internal directories
+  file: path={{ tomcat7_home }}/{{ item }} state=directory owner={{ tomcat_user }} group={{ tomcat_user }} recurse=yes
   with_items:
     - conf
     - webapps
 
-- name: Set rights on dirs
-  file: owner={{ tomcat_user }} group={{ tomcat_user }} path={{ item }} state=directory recurse=yes
-  with_items:
-    - /var/log/{{ tomcat_service }}
-    - /var/lib/{{ tomcat_service }}
+- name: Create log dir
+  file: path=/var/log/{{ tomcat_service }} state=directory owner={{ tomcat_user }} group={{ tomcat_user }} recurse=yes
+
+- name: Redirect log dir
+  file: state=link src=/var/log/{{ tomcat_service }} dest={{ tomcat7_home }}/logs owner={{ tomcat_user }} group={{ tomcat_user }}
 
 #####
 
@@ -92,5 +63,5 @@
 - name: Add server.xml
   template: src=server.xml.j2 dest={{ tomcat7_home }}/conf/server.xml owner={{ tomcat_user }} mode=644
 
-- name: Enable Tomcat
+- name: Enable tomcat
   service: name={{ tomcat_service }} state=stopped enabled=yes
