@@ -1,10 +1,11 @@
 ---
 
-- name: Install unzip from yum
-  yum: name=unzip state=present
+- name: Install some basic dependencies
+  yum: name={{item}} state=present
+  with_items:
+   - unzip
+   - man
+   - man-pages
 
-- name: Install man from yum
-  yum: name=man state=present
-
-- name: Install man pages from yum
-  yum: name=man-pages state=present
+- name: Upgrade all packages
+  yum: name=* state=latest
