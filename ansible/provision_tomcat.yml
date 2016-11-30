@@ -6,5 +6,4 @@
   environment:
     "{{ proxy_env }}"
   roles:
-    - oracle-jre8
     - tomcat7

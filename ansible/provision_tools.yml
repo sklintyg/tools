@@ -1,7 +1,7 @@
 ---
 # This playbook provisions some common tools
 
-- hosts: tomcat
+- hosts: tools
   become: yes
   environment:
     "{{ proxy_env }}"
@@ -9,3 +9,4 @@
     - packages
     - git
     - git-crypt
+    - oracle-jre8
