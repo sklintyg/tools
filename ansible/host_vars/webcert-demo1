@@ -5,7 +5,7 @@ proxy_name: "test.webcert.intygstjanster.se"
 # Tomcat
 tomcat_service: "{{ inventory_hostname }}-tomcat"
 tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
-tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ tomcat_service }}"
+tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ inventory_hostname }}"
 tomcat_server_port: 8005
 tomcat_http_port: 8081
 tomcat_https_port: 8182
