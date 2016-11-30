@@ -20,7 +20,7 @@
     extra_opts: ['--strip-components=1', '--show-stored-names']
     remote_src: yes
     creates: "{{ tomcat7_install_dir}}/bin/startup.sh"
-  
+
 - name: Remove tomcat home symlink, if exists
   file: "state=absent path={{ tomcat7_home }}"
 
@@ -42,7 +42,7 @@
 
 - name: Create var directories
   command: "mv {{ tomcat7_home }}/{{ item }} /var/lib/{{ tomcat_service }}/{{ item }}"
-  args: 
+  args:
     creates: "/var/lib/{{ tomcat_service }}/{{ item }}"
   with_items:
     - conf
@@ -63,8 +63,8 @@
     - logs
 
 - name: Redirect log dir
-  file: state=link 
-        src=/var/log/{{ tomcat_service }} 
+  file: state=link
+        src=/var/log/{{ tomcat_service }}
         dest={{ tomcat7_home }}/logs
 
 - name: Create tomcat internal links
@@ -80,8 +80,6 @@
   with_items:
     - /var/log/{{ tomcat_service }}
     - /var/lib/{{ tomcat_service }}
-
-#####
 
 - name: Add init.d script
   template: src=tomcat-init.sh.j2 dest=/etc/init.d/{{ tomcat_service }} mode=755

@@ -7,7 +7,6 @@ DirectoryIndex index.php index.html
 {% if vhost.documentroot is defined %}
   DocumentRoot {{ vhost.documentroot }}
 {% endif %}
-
 {% if vhost.documentroot is defined %}
   <Directory "{{ vhost.documentroot }}">
     AllowOverride All
@@ -16,6 +15,22 @@ DirectoryIndex index.php index.html
     Allow from all
   </Directory>
 {% endif %}
+
+  <Proxy balancer://http_balancer>
+  #Tomcat-nodes (from tomcat-group in host-file)
+{% for host in groups.tomcat %}
+{% if domain == hostvars[host]['domain'] %}
+    #Ansible-host: {{ host }}
+    BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }}
+{% endif %}
+{% endfor %}
+    ProxySet lbmethod=byrequests
+  </Proxy>
+
+  ProxyPass /balance-manager !
+  ProxyPass / balancer://http_balancer/ stickysession=JSESSIONID|jsessionid
+  ProxyPassReverse / balancer://http_balancer/
+
 {% if vhost.extra_parameters is defined %}
   {{ vhost.extra_parameters }}
 {% endif %}
@@ -33,6 +48,7 @@ DirectoryIndex index.php index.html
 {% endif %}
 
   SSLEngine on
+  SSLProxyEngine on
   SSLCipherSuite {{ apache_ssl_cipher_suite }}
   SSLProtocol {{ apache_ssl_protocol }}
   SSLHonorCipherOrder On
@@ -50,6 +66,22 @@ DirectoryIndex index.php index.html
     Allow from all
   </Directory>
 {% endif %}
+
+  <Proxy balancer://https_balancer>
+  #Tomcat-nodes (from tomcat-group in host-file)
+{% for host in groups.tomcat %}
+{% if domain == hostvars[host]['domain'] %}
+    #Ansible-host: {{ host }}
+    BalancerMember https://127.0.0.1:{{ hostvars[host].tomcat_https_port }}
+{% endif %}
+{% endfor %}
+    ProxySet lbmethod=byrequests
+  </Proxy>
+
+  ProxyPass /balance-manager !
+  ProxyPass / balancer://https_balancer/ stickysession=JSESSIONID|jsessionid
+  ProxyPassReverse / balancer://https_balancer/
+
 {% if vhost.extra_parameters is defined %}
   {{ vhost.extra_parameters }}
 {% endif %}

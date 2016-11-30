@@ -1,0 +1,22 @@
+# Tomcat
+proxy_name: "vm.minaintyg"
+
+tomcat_service: "{{ inventory_hostname }}-tomcat"
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ tomcat_service }}"
+inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
+
+tomcat_server_port: 8009
+tomcat_http_port: 8084
+tomcat_https_port: 8185
+
+# Environment name
+environment_name: "dev"
+
+# Apache
+domain: "minaintyg"
+
+#Dummy value for proxy_env
+proxy_env: {}
+
+

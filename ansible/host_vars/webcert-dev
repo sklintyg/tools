@@ -1,5 +1,5 @@
 # Tomcat
-proxy_name: "vm.webcert"
+#proxy_name: "vm.webcert"
 
 # Apache
 domain: "webcert"

@@ -10,7 +10,7 @@
   register: apache_ssl_certificates
   with_items: "{{ apache_vhosts_ssl }}"
 
-- name: Add apache vhosts configuration.
+- name: Create base vhost config and load balancing.
   template:
     src: "vhosts.conf.j2"
     dest: "/etc/httpd/conf.d/{{ domain }}.conf"
