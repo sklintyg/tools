@@ -4,19 +4,19 @@ CMD="./gradlew --parallel build install -PcodeQuality"
 
 read -e -p "Use checkstyle [y/n]? [y]: " PROCEED
 
-[[ $PROCEED =~ [nN] ]] && CMD="./gradlew --parallel build install"
+[[ $PROCEED =~ [nN] ]] && CMD="./gradlew build install"
 
 INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 
 start_time=$(date +%s)
 
 # Building with --parallel does not guarentee that 'clean' is run in the correct order. We therefore iterate twice.
-for project in common intygstyper intygstjanst minaintyg webcert; do
+for project in common infra intygstyper intygstjanst minaintyg webcert; do
     cd "$INTYG_HOME/$project"
     ./gradlew clean
 done
 
-for project in common intygstyper intygstjanst minaintyg webcert; do
+for project in common infra intygstyper intygstjanst minaintyg webcert; do
     cd "$INTYG_HOME/$project"
     ${CMD} "$@" || exit 1
 done
