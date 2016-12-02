@@ -1,7 +1,6 @@
 # Tomcat
 proxy_name: "privatlakarportal.inera.nordicmedtest.se"
-tomcat_service: tomcat-priv
-tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+
 tomcat_server_port: 8006
 tomcat_http_port: 8081
 tomcat_https_port: 8182
@@ -11,8 +10,3 @@ environment_name: "test"
 
 # Apache
 domain: "privatlakarportal"
- 
-#Dummy value for proxy_env 
-proxy_env: {}
-
-

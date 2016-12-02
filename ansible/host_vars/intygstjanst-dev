@@ -1,7 +1,7 @@
+---
+
 # Tomcat
 proxy_name: "vm.intygstjanst"
-tomcat_service: it-tomcat
-tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
 tomcat_server_port: 8007
 tomcat_http_port: 8082
 tomcat_https_port: 8183
@@ -11,8 +11,3 @@ environment_name: "dev"
 
 # Apache
 domain: "intygstjanst"
- 
-#Dummy value for proxy_env 
-proxy_env: {}
-
-

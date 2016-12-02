@@ -9,8 +9,3 @@ domain: "webcert"
 
 # Environment name
 environment_name: "lab"
- 
-#Dummy value for proxy_env 
-proxy_env: {}
-
-

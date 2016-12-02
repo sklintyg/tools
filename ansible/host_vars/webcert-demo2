@@ -3,20 +3,12 @@
 proxy_name: "test.webcert.intygstjanster.se"
 
 # Tomcat
-tomcat_service: "{{ inventory_hostname }}-tomcat"
-tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
-tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ inventory_hostname }}"
 tomcat_server_port: 8007
 tomcat_http_port: 8083
 tomcat_https_port: 8184
-inera_tomcat_folder: "/var/lib/{{ tomcat_service }}"
-
 
 # Apache
 domain: "webcert"
 
 # Environment name
 environment_name: "demo"
-
-#Dummy value for proxy_env
-proxy_env: {}

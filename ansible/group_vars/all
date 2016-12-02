@@ -8,16 +8,17 @@ archive_dir: "{{ inera_root }}/archives"
 java_home: "{{ inera_root }}/jre8"
 java_remote_dir: 8u112-b15 # The directory name in the download url
 java_local_dir: jre1.8.0_112 # The directory name created when untarred
-jre_tarball: jre-8u112-linux-x64.tar.gz 
+jre_tarball: jre-8u112-linux-x64.tar.gz
 
 # Tomcat
 tomcat7_version: 7.0.57
 tomcat_user: inera-tomcat
 tomcat_group: inera-tomcat
 proxy_name: "localhost"
-tomcat_service: inera-tomcat
-tomcat7_home: "{{ inera_root }}/tomcat7"
-tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ tomcat_service }}"
+tomcat_service: "{{ inventory_hostname }}-tomcat
+tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ inventory_hostname }}"
+
 tomcat_server_port: 8005
 tomcat_http_port: 8080
 tomcat_https_port: 8181
@@ -30,6 +31,9 @@ activemq_home: "{{ inera_root }}/activemq"
 certificate_file: "{{ inera_root }}/certs/self-signed.crt"
 certificate_key_file: "{{ inera_root }}/certs/self-signed.key"
 proxy_pass: "http://127.0.0.1:{{ tomcat_https_port }}/"
+
+#Dummy value for proxy_env 
+proxy_env: {}
 
 # MySQL
 mysql_packages:
