@@ -72,7 +72,7 @@ DirectoryIndex index.php index.html
 {% for host in groups.tomcat %}
 {% if domain == hostvars[host]['domain'] %}
     #Ansible-host: {{ host }}
-    BalancerMember https://127.0.0.1:{{ hostvars[host].tomcat_https_port }}
+    BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }}
 {% endif %}
 {% endfor %}
     ProxySet lbmethod=byrequests
