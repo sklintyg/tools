@@ -1,0 +1,26 @@
+---
+
+- name: "Remove {{ inera_root }}"
+  file:
+    path: "{{ inera_root }}"
+    state: absent
+
+- name: "Remove apache config for {{ domain }}"
+  file:
+    path: "/etc/httpd/conf.d/{{ domain }}.conf"
+    state: absent
+
+- name: "Drop database for {{ domain }}"
+  mysql_db:
+    name: "{{ domain }}"
+    state: absent
+
+- name: "Remove tomcat logs for {{ domain }}"
+  file:
+    path: "/var/log/{{ tomcat_service }}"
+    state: absent
+
+- name: "Remove apache logs for {{ domain }}"
+  file:
+    path: "/var/log/httpd"
+    state: absent
