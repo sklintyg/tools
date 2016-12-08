@@ -1,0 +1,11 @@
+---
+
+# Tomcat
+proxy_name: "vm.intygstjanst"
+
+tomcat_server_port: 8009
+tomcat_http_port: 8085
+tomcat_https_port: 8186
+
+# Apache
+domain: "intygstjanst"
