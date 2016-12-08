@@ -19,8 +19,3 @@
   file:
     path: "/var/log/{{ tomcat_service }}"
     state: absent
-
-- name: "Remove apache logs for {{ domain }}"
-  file:
-    path: "/var/log/httpd"
-    state: absent
