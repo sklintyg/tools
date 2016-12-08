@@ -1,13 +1,4 @@
 ---
 
-# Tomcat
-proxy_name: "vm.intygstjanst"
-tomcat_server_port: 8007
-tomcat_http_port: 8082
-tomcat_https_port: 8183
-
-# Environment name
-environment_name: "dev"
-
 # Apache
 domain: "intygstjanst"

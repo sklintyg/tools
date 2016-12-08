@@ -6,6 +6,3 @@ proxy_name: "intygspoc.inera.nordicmedtest.se"
 # Apache
 proxy_pass: "http://127.0.0.1:8181/"
 domain: "webcert"
-
-# Environment name
-environment_name: "lab"

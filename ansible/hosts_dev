@@ -6,7 +6,8 @@ webcert-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_
 rehabstod-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}
 
 [tomcat]
-intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}
+intygstjanst-dev1 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}
+intygstjanst-dev2 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}
 minaintyg-dev1 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}
 minaintyg-dev2 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}
 privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port=2222 ansible_ssh_private_key_file={{keyFile}}

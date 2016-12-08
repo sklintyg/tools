@@ -5,8 +5,5 @@ tomcat_server_port: 8009
 tomcat_http_port: 8084
 tomcat_https_port: 8185
 
-# Environment name
-environment_name: "dev"
-
 # Apache
 domain: "minaintyg"

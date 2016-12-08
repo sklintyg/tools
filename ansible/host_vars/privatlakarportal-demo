@@ -5,8 +5,5 @@ tomcat_server_port: 8006
 tomcat_http_port: 8081
 tomcat_https_port: 8182
 
-# Environment name
-environment_name: "demo"
-
 # Apache
 domain: "privatlakarportal"

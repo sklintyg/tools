@@ -5,6 +5,3 @@ proxy_name: "test.webcert.intygstjanster.se"
 
 # Apache
 domain: "webcert"
-
-# Environment name
-environment_name: "demo"

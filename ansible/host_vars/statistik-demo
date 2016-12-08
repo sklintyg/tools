@@ -2,17 +2,10 @@
 
 # Tomcat
 proxy_name: "test.statistik.intygstjanster.sjunet.org"
+tomcat_server_port: 8007
+tomcat_http_port: 8082
+tomcat_https_port: 8183
 
 # Apache
 proxy_pass: "http://127.0.0.1:8181/"
 domain: "statistik"
-
-# Environment name
-environment_name: "demo"
-
-
-# Tomcat
-
-tomcat_server_port: 8007
-tomcat_http_port: 8082
-tomcat_https_port: 8183

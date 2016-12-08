@@ -8,6 +8,3 @@ tomcat_https_port: 8182
 
 # Apache
 domain: "intygstjanst"
-
-# Environment name
-environment_name: "lab"
