@@ -1,4 +1,6 @@
 ---
 
+proxy_name: "vm.webcert"
+
 # Apache
 domain: "webcert"

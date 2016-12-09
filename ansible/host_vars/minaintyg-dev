@@ -1,4 +1,6 @@
 ---
 
+proxy_name: "vm.minaintyg"
+
 # Apache
 domain: "minaintyg"

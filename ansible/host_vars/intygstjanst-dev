@@ -1,4 +1,6 @@
 ---
 
+proxy_name: "vm.intygstjanst"
+
 # Apache
 domain: "intygstjanst"

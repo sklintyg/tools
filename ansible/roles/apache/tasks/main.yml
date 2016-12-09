@@ -24,6 +24,16 @@
     regexp="<VirtualHost .*:443>"
     line="<VirtualHost 127.0.0.1:443>"
 
+- name: Turn on NameVirtualHost for http and https
+  lineinfile:
+        dest={{ item.filename }}
+        regexp="^NameVirtualHost"
+        insertafter="EOF"
+        line="NameVirtualHost *:{{ item.port }}"
+  with_items:
+    - { filename: /etc/httpd/conf/httpd.conf, port: 80 }
+    - { filename: /etc/httpd/conf.d/ssl.conf, port: 443 }
+  
 - name: Make apache logs accessible to wheel group
   file: path=/var/log/httpd mode=0750 group=wheel
 
