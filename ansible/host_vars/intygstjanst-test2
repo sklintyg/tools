@@ -1,6 +1,11 @@
 ---
 
+# Tomcat
 proxy_name: "intygstjanst.inera.nordicmedtest.se"
+
+tomcat_server_port: 8010
+tomcat_http_port: 8086
+tomcat_https_port: 8187
 
 # Apache
 domain: "intygstjanst"
