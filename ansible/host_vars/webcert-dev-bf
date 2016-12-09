@@ -1,10 +1,9 @@
 ---
 
-#proxy
+# Proxy
 proxy_env:
   http_proxy: http://bf-proxy.sth:8888
   https_proxy: http://bf-proxy.sth:8888
 
 # Apache
-proxy_pass: "http://127.0.0.1:8181/"
 domain: "webcert"

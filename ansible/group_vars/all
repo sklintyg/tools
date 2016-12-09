@@ -12,16 +12,11 @@ jre_tarball: jre-8u112-linux-x64.tar.gz
 
 # Tomcat
 tomcat7_version: 7.0.57
-tomcat_user: inera-tomcat
-tomcat_group: inera-tomcat
-proxy_name: "localhost"
-tomcat_service: "{{ inventory_hostname }}-tomcat"
-tomcat7_home: "{{ inera_root }}/{{ tomcat_service }}"
+tomcat7_user: inera-tomcat
+tomcat7_group: inera-tomcat
+tomcat7_service: "{{ inventory_hostname }}-tomcat"
+tomcat7_home: "{{ inera_root }}/{{ tomcat7_service }}"
 tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ inventory_hostname }}"
-
-tomcat_server_port: 8005
-tomcat_http_port: 8080
-tomcat_https_port: 8181
 
 # ActiveMQ
 activemq_home: "{{ inera_root }}/activemq"

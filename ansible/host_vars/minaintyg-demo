@@ -4,5 +4,4 @@
 proxy_name: "test.minaintyg.intygstjanster.se"
 
 # Apache
-proxy_pass: "http://127.0.0.1:8181/"
 domain: "minaintyg"

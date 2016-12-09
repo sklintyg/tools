@@ -1,6 +1,11 @@
 ---
 
+# Tomcat
 proxy_name: "minaintyg.inera.nordicmedtest.se"
+
+tomcat_server_port: 8008
+tomcat_http_port: 8084
+tomcat_https_port: 8185
 
 # Apache
 domain: "minaintyg"

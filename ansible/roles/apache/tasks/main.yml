@@ -33,7 +33,7 @@
   with_items:
     - { filename: /etc/httpd/conf/httpd.conf, port: 80 }
     - { filename: /etc/httpd/conf.d/ssl.conf, port: 443 }
-  
+
 - name: Make apache logs accessible to wheel group
   file: path=/var/log/httpd mode=0750 group=wheel
 

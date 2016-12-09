@@ -2,11 +2,11 @@
 
 - name: "Shut down tomcat"
   service:
-    name: "{{ tomcat_service }}"
+    name: "{{ tomcat7_service }}"
     state: stopped
-    pattern: "{{ tomcat_service }}"
+    pattern: "{{ tomcat7_service }}"
 
 - name: "Remove tomcat logs for {{ domain }}"
   file:
-    path: "/var/log/{{ tomcat_service }}"
+    path: "/var/log/{{ tomcat7_service }}"
     state: absent
