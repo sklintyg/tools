@@ -1,8 +1,8 @@
 ---
 # This playbook cleans a server, removing configuration and resources
 
-- hosts: apache, tomcat
+- hosts: tomcat
   become: yes
   roles:
-    - cleanup
+    - cleanup_tomcat
   serial: 1

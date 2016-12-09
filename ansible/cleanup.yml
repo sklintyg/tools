@@ -1,0 +1,4 @@
+---
+
+- include: cleanup_tomcat.yml
+- include: cleanup_basic.yml

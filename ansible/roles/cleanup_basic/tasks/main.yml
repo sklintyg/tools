@@ -1,5 +1,11 @@
 ---
 
+- name: "Shut down Apache"
+  service:
+    name: httpd
+    state: stopped
+    pattern: httpd
+
 - name: "Remove {{ inera_root }}"
   file:
     path: "{{ inera_root }}"
@@ -13,9 +19,4 @@
 - name: "Drop database for {{ domain }}"
   mysql_db:
     name: "{{ domain }}"
-    state: absent
-
-- name: "Remove tomcat logs for {{ domain }}"
-  file:
-    path: "/var/log/{{ tomcat_service }}"
     state: absent

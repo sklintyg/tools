@@ -1,0 +1,8 @@
+---
+# This playbook cleans a server, removing configuration and resources
+
+- hosts: tools
+  become: yes
+  roles:
+    - cleanup_basic
+  serial: 1
