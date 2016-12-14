@@ -4,7 +4,7 @@ INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 
 start_time=$(date +%s)
 
-for project in common infra intygstyper intygstjanst minaintyg webcert; do
+for project in common infra intygstjanst minaintyg webcert; do
     cd "$INTYG_HOME/$project"
     ./gradlew build install || exit 1
 done
