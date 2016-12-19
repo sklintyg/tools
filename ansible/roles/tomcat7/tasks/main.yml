@@ -11,7 +11,7 @@
            dest={{ archive_dir }}/apache-tomcat-{{ tomcat7_version }}.tar.gz
 
 - name: Make tomcat install dir
-  file: "state=directory path={{ tomcat7_install_dir}}"
+  file: "state=directory path={{ tomcat7_install_dir }}"
 
 - name: Extract tomcat
   unarchive:
