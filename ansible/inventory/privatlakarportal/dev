@@ -1,0 +1,11 @@
+[apache]
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+
+[tomcat]
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+
+[mysql]
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+
+[tools]
+privatlakarportal-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}

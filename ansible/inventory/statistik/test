@@ -1,0 +1,11 @@
+[apache]
+statistik-test ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[Tomcat]
+statistik-test ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[mysql]
+statistik-test ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[tools]
+statistik-test ansible_ssh_host=87.238.57.182 ansible_ssh_user=inera ansible_ssh_port=26022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
