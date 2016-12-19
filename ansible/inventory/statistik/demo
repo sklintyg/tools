@@ -1,0 +1,14 @@
+[apache]
+statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[tomcat]
+statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[activemq]
+statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[mysql]
+statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa
+
+[tools]
+statistik-demo ansible_ssh_host=10.250.34.21 ansible_ssh_user=statservices1 ansible_ssh_private_key_file=~/.ssh/inera_rsa

@@ -2,7 +2,6 @@
 webcert-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [tomcat]
-intygstjanst-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [activemq]
@@ -15,5 +14,4 @@ webcert-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_po
 webcert-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 
 [tools]
-intygstjanst-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
 webcert-lab ansible_ssh_host=87.238.57.179 ansible_ssh_user=inera ansible_ssh_port=13022 ansible_ssh_private_key_file=~/.ssh/inera_rsa
