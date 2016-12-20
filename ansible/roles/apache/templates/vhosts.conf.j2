@@ -21,14 +21,16 @@ DirectoryIndex index.php index.html
 {% for host in groups.tomcat %}
 {% if domain == hostvars[host]['domain'] %}
     #Ansible-host: {{ host }}
-    BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }}
+    BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }} route={{ loop.index }}
 {% endif %}
 {% endfor %}
     ProxySet lbmethod=byrequests
   </Proxy>
 
+  Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED
+
   ProxyPass /balance-manager !
-  ProxyPass / balancer://http_balancer/ stickysession=JSESSIONID|jsessionid
+  ProxyPass / balancer://http_balancer/ stickysession=ROUTEID
   ProxyPassReverse / balancer://http_balancer/
 
 {% if vhost.extra_parameters is defined %}
@@ -72,14 +74,16 @@ DirectoryIndex index.php index.html
 {% for host in groups.tomcat %}
 {% if domain == hostvars[host]['domain'] %}
     #Ansible-host: {{ host }}
-    BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }}
+    BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }} route={{ loop.index }}
 {% endif %}
 {% endfor %}
     ProxySet lbmethod=byrequests
   </Proxy>
 
+  Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED
+
   ProxyPass /balance-manager !
-  ProxyPass / balancer://https_balancer/ stickysession=JSESSIONID|jsessionid
+  ProxyPass / balancer://https_balancer/ stickysession=ROUTEID
   ProxyPassReverse / balancer://https_balancer/
 
 {% if vhost.extra_parameters is defined %}
