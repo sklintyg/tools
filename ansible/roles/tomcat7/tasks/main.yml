@@ -48,8 +48,6 @@
     state: directory
     recurse: yes
 
-###########
-
 - name: Remove installed dirs and links
   file:
     state: absent
