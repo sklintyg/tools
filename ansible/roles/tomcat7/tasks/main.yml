@@ -38,7 +38,7 @@
     state: link
     src: "{{ tomcat7_install_dir}}"
     path: "{{ tomcat7_home }}"
-    mode: 755
+    mode: 0755
 
 - name: Change ownership of tomcat installation
   file:
@@ -87,21 +87,21 @@
   template:
     src: tomcat-init.sh.j2
     dest: "/etc/init.d/{{ tomcat7_service }}"
-    mode: 755
+    mode: 0755
 
 - name: Add tomcat-user.xml
   template:
     src: tomcat-users.xml.j2
     dest: "{{ tomcat7_home }}/conf/tomcat-users.xml"
     owner: "{{ tomcat7_user }}"
-    mode: 644
+    mode: 0644
 
 - name: Add server.xml
   template:
     src: server.xml.j2
     dest: "{{ tomcat7_home }}/conf/server.xml"
     owner: "{{ tomcat7_user }}"
-    mode: 644
+    mode: 0644
 
 - name: Enable tomcat
   service:

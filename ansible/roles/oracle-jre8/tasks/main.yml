@@ -4,13 +4,13 @@
   file:
     state: directory
     dest: "{{ inera_root }}"
-    mode: 755
+    mode: 0755
 
 - name: Create {{ archive_dir }} directory
   file:
     state: directory
     dest: "{{ archive_dir }}"
-    mode: 755
+    mode: 0755
 
 - name: Download Oracle JRE
   get_url:

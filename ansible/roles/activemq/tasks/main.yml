@@ -36,7 +36,7 @@
     state: link
     src: "{{ inera_root }}/apache-activemq-{{ activemq_version }}"
     path: "{{ activemq_home }}"
-    mode: 755
+    mode: 0755
 
 - name: Make script executable
   file:

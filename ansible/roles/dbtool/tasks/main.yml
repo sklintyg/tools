@@ -44,7 +44,7 @@
   template:
     src: dbtool-init.sh.j2
     dest: /etc/init.d/dbTool
-    mode: 755
+    mode: 0755
 
 - name: Enable DB tool service
   service:
