@@ -1,43 +1,72 @@
 ---
 
 - name: If ActiveMQ is already present, stop it first
-  service: name=activemq state=stopped pattern=activemq
+  service:
+    name: activemq
+    state: stopped
+    pattern: activemq
   register: command_result
   failed_when: "command_result|failed and 'no service or tool found' not in command_result.msg"
 
 - name: Create archive directory
-  file: path={{ archive_dir }} state=directory mode=0755
+  file:
+    path: "{{ archive_dir }}"
+    state: directory
+    mode: 0755
 
 - name: Download activemq
-  get_url: url={{ activemq_download_url }}
-           dest={{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz
-  
+  get_url:
+    url: "{{ activemq_download_url }}"
+    dest: "{{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz"
+
 - name: Extract activemq
-  unarchive: src={{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz
-             dest={{ inera_root }}
-             remote_src=yes
-             creates={{ inera_root }}/apache-activemq-{{ activemq_version }}
+  unarchive:
+    src: "{{ archive_dir }}/apache-activemq-{{ activemq_version }}-bin.tar.gz"
+    dest: "{{ inera_root }}"
+    remote_src: yes
+    creates: "{{ inera_root }}/apache-activemq-{{ activemq_version }}"
 
 - name: Remove previous activemq home link, if exists
-  file: state=absent path={{ activemq_home }}
+  file:
+    state: absent
+    path: "{{ activemq_home }}"
 
 - name: Create symlink to actimemq home
-  file: state=link src={{ inera_root }}/apache-activemq-{{ activemq_version }} path={{ activemq_home }} mode=755
+  file:
+    state: link
+    src: "{{ inera_root }}/apache-activemq-{{ activemq_version }}"
+    path: "{{ activemq_home }}"
+    mode: 755
 
 - name: Make script executable
-  file: path="{{ activemq_home }}/bin/activemq" mode=0755
+  file:
+    path: "{{ activemq_home }}/bin/activemq"
+    mode: 0755
 
 - name: Make service script executable
-  file: path="{{ activemq_home }}/bin/linux-x86-64/activemq" mode=0755
+  file:
+    path: "{{ activemq_home }}/bin/linux-x86-64/activemq"
+    mode: 0755
 
 - name: Remove service link, if exists
-  file: state=absent path=/etc/init.d/activemq
+  file:
+    state: absent
+    path: /etc/init.d/activemq
 
 - name: Make service link
-  file: state=link src="{{ activemq_home }}/bin/linux-x86-64/activemq" path=/etc/init.d/activemq mode=0755
+  file:
+    state: link
+    src: "{{ activemq_home }}/bin/linux-x86-64/activemq"
+    path: /etc/init.d/activemq
+    mode: 0755
 
 - name: Enable ActiveMQ
-  service: name=activemq enabled=yes
+  service:
+    name: activemq
+    enabled: yes
 
 - name: Start ActiveMQ
-  service: name=activemq state=started pattern=activemq
+  service:
+    name: activemq
+    state: started
+    pattern: activemq

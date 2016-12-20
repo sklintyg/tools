@@ -1,13 +1,19 @@
 ---
 
 - name: Install gcc-c++ from yum
-  yum: name=gcc-c++ state=present
+  yum:
+    name: gcc-c++
+    state: present
 
 - name: Install openssl-devel from yum
-  yum: name=openssl-devel state=present
+  yum:
+    name: openssl-devel
+    state: present
 
 - name: Checkout git-crypt from github
-  git: repo=https://github.com/AGWA/git-crypt.git dest="{{ inera_root }}/git-crypt"
+  git:
+    repo: https://github.com/AGWA/git-crypt.git
+    dest: "{{ inera_root }}/git-crypt"
 
 - name: Build git-crypt
   command: make

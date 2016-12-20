@@ -1,11 +1,16 @@
 ---
 
 - name: Make sure openssl is installed
-  yum: name=openssl state=present
+  yum:
+    name: openssl
+    state: present
 
 - name: Create certs dir
-  file: state=directory path={{ inera_root }}/certs
+  file:
+    state: directory
+    path: "{{ inera_root }}/certs"
 
 - name: Create self-signed certificate
-  command: creates={{ inera_root }}/certs/self-signed.crt
-    openssl req -batch -x509 -nodes -days 3650 -newkey rsa:2048 -keyout {{ inera_root }}/certs/self-signed.key -out {{ inera_root }}/certs/self-signed.crt
+  command: openssl req -batch -x509 -nodes -days 3650 -newkey rsa:2048 -keyout {{ inera_root }}/certs/self-signed.key -out {{ inera_root }}/certs/self-signed.crt
+  args:
+    creates: "{{ inera_root }}/certs/self-signed.crt"

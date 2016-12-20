@@ -1,7 +1,9 @@
 ---
 
 - name: Install some basic dependencies
-  yum: name={{item}} state=present
+  yum:
+    name: "{{item}}"
+    state: present
   with_items:
    - unzip
    - man
@@ -9,4 +11,6 @@
    - tree
 
 - name: Upgrade all packages
-  yum: name=* state=latest
+  yum:
+    name: "*"
+    state: latest

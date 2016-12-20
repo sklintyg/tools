@@ -1,12 +1,15 @@
 ---
 
 - name: Ensure apache packages are installed.
-  yum: name={{ item }} state=installed
+  yum:
+    name: "{{ item }}"
+    state: installed
   with_items: "{{ apache_packages }}"
   register: apache_install_packages
 
 - name: Check whether certificates defined in vhosts exist.
-  stat: path={{ item.certificate_file }}
+  stat:
+    path: "{{ item.certificate_file }}"
   register: apache_ssl_certificates
   with_items: "{{ apache_vhosts_ssl }}"
 
@@ -20,22 +23,25 @@
 
 - name: Fix ssl.conf _default_ vhost
   lineinfile:
-    dest="/etc/httpd/conf.d/ssl.conf"
-    regexp="<VirtualHost .*:443>"
-    line="<VirtualHost 127.0.0.1:443>"
+    dest: "/etc/httpd/conf.d/ssl.conf"
+    regexp: "<VirtualHost .*:443>"
+    line: "<VirtualHost 127.0.0.1:443>"
 
 - name: Turn on NameVirtualHost for http and https
   lineinfile:
-        dest={{ item.filename }}
-        regexp="^NameVirtualHost"
-        insertafter="EOF"
-        line="NameVirtualHost *:{{ item.port }}"
+    dest: "{{ item.filename }}"
+    regexp: "^NameVirtualHost"
+    insertafter: "EOF"
+    line: "NameVirtualHost *:{{ item.port }}"
   with_items:
     - { filename: /etc/httpd/conf/httpd.conf, port: 80 }
     - { filename: /etc/httpd/conf.d/ssl.conf, port: 443 }
 
 - name: Make apache logs accessible to wheel group
-  file: path=/var/log/httpd mode=0750 group=wheel
+  file:
+    path: /var/log/httpd
+    mode: 0750
+    group: wheel
 
 - name: Allow httpd to initiate network connection to tomcat
   command: "/usr/sbin/setsebool -P httpd_can_network_connect 1"

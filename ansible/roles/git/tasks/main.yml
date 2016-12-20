@@ -1,7 +1,9 @@
 ---
 
 - name: Install git from yum
-  yum: name=git state=present
+  yum:
+    name: git
+    state: present
 
 - name: Set git proxy (http)
   shell: "git config --global http.proxy {{ proxy_env.http_proxy }}"

@@ -2,10 +2,13 @@
 
 - name: Ensure MySQL Yum repo is installed
   shell: rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
-           creates=/etc/yum.repos.d/mysql-community.repo
+  args:
+    creates: /etc/yum.repos.d/mysql-community.repo
 
 - name: Ensure libselinux-python is installed.
-  yum: name=libselinux-python state=present
+  yum:
+    name: libselinux-python
+    state: present
 
 - name: Ensure MySQL packages are installed.
   yum: name={{ item }} state=installed
@@ -13,7 +16,9 @@
   register: mysql_install_packages
 
 - name: Ensure MySQL Python libraries are installed.
-  yum: name=MySQL-python state=installed
+  yum:
+    name: MySQL-python
+    state: installed
 
 - name: Ensure MySQL is started and enabled on boot.
   service: "name=mysqld state=started enabled=yes"

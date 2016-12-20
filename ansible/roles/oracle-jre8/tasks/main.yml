@@ -1,15 +1,22 @@
 ---
 
 - name: Create {{ inera_root }} directory
-  file: state=directory dest={{ inera_root }} mode=755
+  file:
+    state: directory
+    dest: "{{ inera_root }}"
+    mode: 755
 
 - name: Create {{ archive_dir }} directory
-  file: state=directory dest={{ archive_dir }} mode=755
+  file:
+    state: directory
+    dest: "{{ archive_dir }}"
+    mode: 755
 
 - name: Download Oracle JRE
-  get_url: url="http://download.oracle.com/otn-pub/java/jdk/{{ java_remote_dir }}/{{ jre_tarball }}"
-           dest="{{ archive_dir }}/{{ jre_tarball }}"
-           headers='Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+  get_url:
+    url: "http://download.oracle.com/otn-pub/java/jdk/{{ java_remote_dir }}/{{ jre_tarball }}"
+    dest: "{{ archive_dir }}/{{ jre_tarball }}"
+    headers: 'Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
 
 - name: Extract java
   unarchive:
@@ -19,20 +26,30 @@
     creates: "{{ inera_root }}/{{ java_local_dir }}/bin/java"
 
 - name: Remove previous java home link, if exists
-  file: state=absent path={{ java_home }}
+  file:
+    state: absent
+    path: "{{ java_home }}"
 
 - name: Make java home link
-  file: state=link src="{{ inera_root }}/{{ java_local_dir }}" path={{ java_home }}
+  file:
+    state: link
+    src: "{{ inera_root }}/{{ java_local_dir }}"
+    path: "{{ java_home }}"
 
 - name: Set JAVA_HOME variable
   lineinfile:
-    dest="/etc/profile"
-    regexp="export JAVA_HOME"
-    insertafter="EOF"
-    line="export JAVA_HOME={{ java_home }}"
+    dest: "/etc/profile"
+    regexp: "export JAVA_HOME"
+    insertafter: "EOF"
+    line: "export JAVA_HOME={{ java_home }}"
 
 - name: Remove previous java bin link, if exists
-  file: state=absent path=/usr/bin/java
+  file:
+    state: absent
+    path: /usr/bin/java
 
 - name: Make java bin link
-  file: state=link src="{{ java_home }}/bin/java" path=/usr/bin/java
+  file:
+    state: link
+    src: "{{ java_home }}/bin/java"
+    path: /usr/bin/java
