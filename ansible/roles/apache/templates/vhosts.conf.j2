@@ -19,10 +19,8 @@ DirectoryIndex index.php index.html
   <Proxy balancer://http_balancer>
   #Tomcat-nodes (from tomcat-group in host-file)
 {% for host in groups.tomcat %}
-{% if domain == hostvars[host]['domain'] %}
     #Ansible-host: {{ host }}
     BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }} route={{ loop.index }}
-{% endif %}
 {% endfor %}
     ProxySet lbmethod=byrequests
   </Proxy>
@@ -72,10 +70,8 @@ DirectoryIndex index.php index.html
   <Proxy balancer://https_balancer>
   #Tomcat-nodes (from tomcat-group in host-file)
 {% for host in groups.tomcat %}
-{% if domain == hostvars[host]['domain'] %}
     #Ansible-host: {{ host }}
     BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }} route={{ loop.index }}
-{% endif %}
 {% endfor %}
     ProxySet lbmethod=byrequests
   </Proxy>
