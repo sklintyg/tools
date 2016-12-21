@@ -17,8 +17,8 @@ DirectoryIndex index.php index.html
 
 {% for host in groups.tomcat %}
 {% if hostvars[host]['proxy_dir'] is defined %}
-  ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_server_port'] }}/{{ hostvars[host]['proxy_dir'] }}/
-  ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_server_port'] }}/{{ hostvars[host]['proxy_dir'] }}/
+  ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
+  ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
 {% endif %}
 {% endfor %}
 
@@ -74,8 +74,8 @@ DirectoryIndex index.php index.html
 
 {% for host in groups.tomcat %}
 {% if hostvars[host]['proxy_dir'] is defined %}
-  ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_server_port'] }}/{{ hostvars[host]['proxy_dir'] }}/
-  ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_server_port'] }}/{{ hostvars[host]['proxy_dir'] }}/
+  ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
+  ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
 {% endif %}
 {% endfor %}
 
