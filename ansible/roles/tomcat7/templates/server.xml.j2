@@ -74,7 +74,6 @@
 
     <!-- Define an ssl-like connector that an ssl-terminating server should use.
     -->
-    {% if proxy_name is defined %}
         <Connector port="{{ tomcat_https_port }}" protocol="HTTP/1.1"
                    URIEncoding="UTF-8"
                    connectionTimeout="20000"
@@ -84,7 +83,6 @@
                    proxyName="{{ proxy_name }}"
                    secure="true"
                    />
-    {% endif %}
 
     <!-- A "Connector" using the shared thread pool-->
     <!--

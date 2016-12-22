@@ -17,6 +17,7 @@ tomcat7_group: inera-tomcat
 tomcat7_service: "{{ inventory_hostname }}-tomcat"
 tomcat7_home: "{{ inera_root }}/{{ tomcat7_service }}"
 tomcat7_install_dir: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ inventory_hostname }}"
+use_proxy: true
 
 # ActiveMQ
 activemq_home: "{{ inera_root }}/activemq"

@@ -16,7 +16,7 @@ DirectoryIndex index.php index.html
 {% endif %}
 
 {% for host in groups.tomcat %}
-{% if hostvars[host]['proxy_dir'] is defined %}
+{% if not hostvars[host]['use_proxy'] %}
   ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
   ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
 {% endif %}
@@ -24,7 +24,7 @@ DirectoryIndex index.php index.html
 
   <Proxy balancer://http_balancer>
 {% for host in groups.tomcat %}
-  {% if hostvars[host]['proxy_name'] is defined %}
+  {% if hostvars[host]['use_proxy'] %}
     BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }} route={{ loop.index }}
   {% endif %}
 {% endfor %}
@@ -73,15 +73,15 @@ DirectoryIndex index.php index.html
 {% endif %}
 
 {% for host in groups.tomcat %}
-{% if hostvars[host]['proxy_dir'] is defined %}
-  ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
-  ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}/
+{% if not hostvars[host]['use_proxy'] %}
+  ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_https_port'] }}{{ hostvars[host]['proxy_dir'] }}/
+  ProxyPassReverse {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_https_port'] }}{{ hostvars[host]['proxy_dir'] }}/
 {% endif %}
 {% endfor %}
 
   <Proxy balancer://https_balancer>
 {% for host in groups.tomcat %}
-  {% if hostvars[host]['proxy_name'] is defined %}
+  {% if hostvars[host]['use_proxy'] %}
     BalancerMember http://127.0.0.1:{{ hostvars[host].tomcat_https_port }} route={{ loop.index }}
   {% endif %}
 {% endfor %}
