@@ -16,7 +16,7 @@
   get_url:
     url: "http://download.oracle.com/otn-pub/java/jdk/{{ java_remote_dir }}/{{ jre_tarball }}"
     dest: "{{ archive_dir }}/{{ jre_tarball }}"
-    headers: 'Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+    headers: "Cookie:oraclelicense=accept-securebackup-cookie"
 
 - name: Extract java
   unarchive:
