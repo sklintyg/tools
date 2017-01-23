@@ -1,5 +1,9 @@
 # Tomcat
 proxy_name: "privatlakarportal.inera.nordicmedtest.se"
 
+tomcat_server_port: 8012
+tomcat_http_port: 8088
+tomcat_https_port: 8189
+
 # Apache
 domain: "privatlakarportal"
