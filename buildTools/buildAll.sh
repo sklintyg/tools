@@ -4,7 +4,7 @@ CMD="./gradlew --parallel build install -PcodeQuality"
 
 read -e -p "Use code quality tools? [y/n]? [y]: " PROCEED
 
-[[ $PROCEED =~ [nN] ]] && CMD="./gradlew build install"
+[[ $PROCEED =~ [nN] ]] && CMD="./gradlew --parallel build install"
 
 INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 

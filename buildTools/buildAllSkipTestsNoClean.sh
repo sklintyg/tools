@@ -6,7 +6,7 @@ start_time=$(date +%s)
 
 for project in common infra intygstjanst minaintyg webcert; do
     cd "$INTYG_HOME/$project"
-    ./gradlew assemble install || exit 1
+    ./gradlew --parallel -xtest build install || exit 1
 done
 
 duration=$(( $(date +%s) - $start_time ))
