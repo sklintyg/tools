@@ -1,9 +1,11 @@
 #!/bin/bash
 
+scriptdir=$( cd $(dirname "${BASH_SOURCE[0]}") && pwd )
+
 read -e -p "Use code quality tools? [y/n]? [y]: " QUALTOOLS
 
 if [[ $QUALTOOLS =~ [nN] ]]; then
-    ./build_common.sh -c
+    $scriptdir/build_common.sh -c
 else
-    ./build_common.sh -c -q
+    $scriptdir/build_common.sh -c -q
 fi

@@ -1,3 +1,5 @@
 #!/bin/bash
 
-./build_common.sh -xt
+scriptdir=$( cd $(dirname "${BASH_SOURCE[0]}") && pwd )
+
+$scriptdir/build_common.sh -xt
