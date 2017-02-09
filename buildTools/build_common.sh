@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _display_help() {
-    echo "Usage: $0 [OPTION...]" >&2
+    echo "Usage: $0 [OPTION...]"
     echo "Builds the core 'Intygsprojektet'."
     echo "Default behaviour is to run unit tests but no 'clean' and no code quality tools."
     echo
