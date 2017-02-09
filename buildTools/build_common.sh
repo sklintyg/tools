@@ -1,24 +1,17 @@
 #!/bin/bash
 
-############
-#Functions:#
-############
-
-display_help() {
+_display_help() {
     echo "Usage: $0 [OPTION...]" >&2
-    echo "Builds the core intygsprojekt."
-    echo "Default behaviour is to run unit tests and treat failures as errors."
+    echo "Builds the core 'Intygsprojektet'."
+    echo "Default behaviour is to run unit tests but no 'clean' and no code quality tools."
     echo
-    echo "   --help                  shows this message"
-    echo "   -c, --clean             clean before building    "
+    echo "   -h, --help              shows this message"
+    echo "   -c, --clean             clean before building"
     echo "   -q, --code-quality      apply code rules check; failures are treated as errors"
-    echo "   -xt, --exclude-tests    do not run unit tests          "
+    echo "   -xt, --exclude-tests    do not run unit tests"
     echo
 }
 
-#######################################
-#<-------Script execution starts here #
-#######################################
 projects=(common infra intygstjanst minaintyg webcert)
 command="./gradlew --parallel build install "
 flags=""
@@ -26,13 +19,10 @@ clean=false
 
 for arg; do
     case $arg in
-        --help) display_help && exit 0;;
-        -c) clean=true ;;
-        --clean) clean=true ;;
-        -q) flags+="-PcodeQuality " ;;
-        --code-quality) flags+="-PcodeQuality " ;;
-        -xt) flags+="-xtest " ;; # No tests
-        --exclude-tests) flags+="-xtest " ;; # No tests
+        -h|--help) _display_help && exit 0;;
+        -c|--clean) clean=true ;;
+        -q|--code-quality) flags+="-PcodeQuality " ;;
+        -xt|--exclude-tests) flags+="-xtest " ;; # No tests
     esac
 done
 
