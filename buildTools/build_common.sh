@@ -19,10 +19,11 @@ clean=false
 
 for arg; do
     case $arg in
-        -h|--help) _display_help && exit 0;;
+        -h|--help) _display_help && exit 0 ;;
         -c|--clean) clean=true ;;
         -q|--code-quality) flags+="-PcodeQuality " ;;
         -xt|--exclude-tests) flags+="-xtest " ;; # No tests
+        *) _display_help && exit 1 ;;
     esac
 done
 
