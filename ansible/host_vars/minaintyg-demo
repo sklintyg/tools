@@ -1,7 +1,7 @@
 ---
 
 # Tomcat
-proxy_name: "test.minaintyg.intygstjanster.se"
+proxy_name: "demo.minaintyg.intygstjanster.se"
 
 # Apache
 domain: "minaintyg"
