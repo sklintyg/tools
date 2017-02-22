@@ -1,7 +1,10 @@
 ---
+proxy_env:
+  http_proxy: http://bf-proxy.sth:8888
+  https_proxy: http://bf-proxy.sth:8888
 
 # Tomcat
-proxy_name: "test.webcert.intygstjanster.se"
+proxy_name: "demo.webcert.intygstjanster.se"
 
 # Apache
 domain: "webcert"
