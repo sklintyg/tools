@@ -5,5 +5,9 @@ proxy_env:
   http_proxy: http://bf-proxy.sth:8888
   https_proxy: http://bf-proxy.sth:8888
 
+tomcat_server_port: 8011
+tomcat_http_port: 8188
+tomcat_https_port: 8105
+
 # Apache
 domain: "rehabstod"
