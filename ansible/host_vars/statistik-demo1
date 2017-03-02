@@ -1,9 +1,13 @@
 ---
+
 proxy_env:
   http_proxy: http://bf-proxy.sth:8888
   https_proxy: http://bf-proxy.sth:8888
 
 # Tomcat
 proxy_name: "demo.statistik.intygstjanster.se"
+tomcat_server_port: 8007
+tomcat_http_port: 8182
+tomcat_https_port: 8082
 
 domain: "statistik"

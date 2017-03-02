@@ -5,5 +5,8 @@ proxy_env:
 
 # Tomcat
 proxy_name: "demo.statistik.intygstjanster.se"
+tomcat_server_port: 8008
+tomcat_http_port: 8183
+tomcat_https_port: 8083
 
 domain: "statistik"
