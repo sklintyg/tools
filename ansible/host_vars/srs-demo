@@ -1,0 +1,10 @@
+---
+
+proxy_env:
+  http_proxy: http://bf-proxy.sth:8888
+  https_proxy: http://bf-proxy.sth:8888
+
+proxy_name: "demo.srs.intygstjanster.se"
+
+# Apache
+domain: "srs"

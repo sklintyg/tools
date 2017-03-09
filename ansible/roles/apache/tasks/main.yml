@@ -43,8 +43,17 @@
     mode: 0750
     group: wheel
 
+
+#Required for seboolean module to work
+- yum:
+    name: libsemanage-python
+    state: installed
+
 - name: Allow httpd to initiate network connection to tomcat
-  command: "/usr/sbin/setsebool -P httpd_can_network_connect 1"
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
 
 - name: Ensure Apache is started and enabled on boot.
   service: "name=httpd state=started enabled=yes"
