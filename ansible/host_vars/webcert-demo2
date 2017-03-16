@@ -1,4 +1,5 @@
 ---
+
 proxy_env:
   http_proxy: http://bf-proxy.sth:8888
   https_proxy: http://bf-proxy.sth:8888
@@ -7,8 +8,8 @@ proxy_name: "demo.webcert.intygstjanster.se"
 
 # Tomcat
 tomcat_server_port: 8006
-tomcat_http_port: 8182
-tomcat_https_port: 8081
+tomcat_http_port: 8081
+tomcat_https_port: 8182
 
 # Apache
 domain: "webcert"
