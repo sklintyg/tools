@@ -1,0 +1,6 @@
+---
+
+proxy_name: "vm.srs"
+
+# Apache
+domain: "srs"
