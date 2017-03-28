@@ -1,8 +1,8 @@
 ---
 # Tomcat
-tomcat_server_port: 8008
-tomcat_http_port: 8184
-tomcat_https_port: 8104
+tomcat_server_port: 8010
+tomcat_http_port: 8187
+tomcat_https_port: 8085
 
 proxy_name: "demo.intygstjanst.intygstjanster.se"
 
