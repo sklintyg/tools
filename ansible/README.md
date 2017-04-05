@@ -6,6 +6,13 @@ Exempelvis:
 
     ansible-playbook -i hosts_lab provision.yml
     
+#### Hantera problem med MySQL
+I något fall har MySQL inte kunnat installeras pga en påstådd yum-konflikt med MariaDB. Detta går att lösa genom att på målmiljön lägga till följande rad i _/etc/yum.conf_:
+
+    exclude=mariadb*
+    
+Skulle detta bli en återkommande problem gör vi förslagsvis ett ansible-steg som modifierar filen före MySQL installeras.    
+    
 ### DB tool
 
 Specifikt för LAB-miljön (intygspoc) så kan man installera ett verktyg för att enkelt ta och återställa databassnapshots. Se /tools/dbtool
