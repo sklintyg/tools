@@ -1,13 +1,5 @@
 ---
 
-- name: If ActiveMQ is already present, stop it first
-  service:
-    name: activemq
-    state: stopped
-    pattern: activemq
-  register: command_result
-  failed_when: "command_result|failed and 'no service or tool found' not in command_result.msg"
-
 - name: Create archive directory
   file:
     path: "{{ archive_dir }}"
@@ -26,11 +18,6 @@
     remote_src: yes
     creates: "{{ inera_root }}/apache-activemq-{{ activemq_version }}"
 
-- name: Remove previous activemq home link, if exists
-  file:
-    state: absent
-    path: "{{ activemq_home }}"
-
 - name: Create symlink to actimemq home
   file:
     state: link
@@ -48,11 +35,6 @@
     path: "{{ activemq_home }}/bin/linux-x86-64/activemq"
     mode: 0755
 
-- name: Remove service link, if exists
-  file:
-    state: absent
-    path: /etc/init.d/activemq
-
 - name: Make service link
   file:
     state: link
@@ -60,13 +42,9 @@
     path: /etc/init.d/activemq
     mode: 0755
 
-- name: Enable ActiveMQ
-  service:
-    name: activemq
-    enabled: yes
-
 - name: Start ActiveMQ
   service:
     name: activemq
     state: started
+    enabled: yes
     pattern: activemq

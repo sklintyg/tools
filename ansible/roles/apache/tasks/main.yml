@@ -43,7 +43,6 @@
     mode: 0750
     group: wheel
 
-
 #Required for seboolean module to work
 - yum:
     name: libsemanage-python
@@ -56,4 +55,7 @@
     persistent: yes
 
 - name: Ensure Apache is started and enabled on boot.
-  service: "name=httpd state=started enabled=yes"
+  service:
+    name: httpd
+    state: started
+    enabled: yes

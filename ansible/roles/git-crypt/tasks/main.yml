@@ -16,12 +16,11 @@
     dest: "{{ inera_root }}/git-crypt"
 
 - name: Build git-crypt
-  command: make
-  args:
+  make: 
     chdir: "{{ inera_root }}/git-crypt"
-    creates: "{{ inera_root }}/git-crypt/git-crypt"
 
 - name: Copy git-crypt to /usr/local/bin
-  command: cp {{ inera_root }}/git-crypt/git-crypt /usr/local/bin
-  args:
-    creates: /usr/local/bin/git-crypt
+  copy:
+    src: "{{ inera_root }}/git-crypt/git-crypt"
+    dest: "/usr/local/bin"
+    remote_src: True

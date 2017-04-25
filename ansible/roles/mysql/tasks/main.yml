@@ -11,7 +11,9 @@
     state: present
 
 - name: Ensure MySQL packages are installed.
-  yum: name={{ item }} state=installed
+  yum:
+    name: "{{ item }}"
+    state: installed
   with_items: "{{ mysql_packages }}"
   register: mysql_install_packages
 
@@ -21,7 +23,10 @@
     state: installed
 
 - name: Ensure MySQL is started and enabled on boot.
-  service: "name=mysqld state=started enabled=yes"
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
 
 - name: Disallow root login remotely
   command: 'mysql -NBe "{{ item }}"'
