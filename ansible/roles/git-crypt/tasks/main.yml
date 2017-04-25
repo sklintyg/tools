@@ -23,4 +23,5 @@
   copy:
     src: "{{ inera_root }}/git-crypt/git-crypt"
     dest: "/usr/local/bin"
+    mode: 0755
     remote_src: True
