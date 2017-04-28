@@ -188,6 +188,7 @@ class AnonymiseraIntygForSRS {
         String aktivitetKontaktMedFk = getAktivitet(intyg, 'Kontakt_med_Forsakringskassan_ar_aktuell')
 
         String medicinskttillstandDiagnoskod = intyg.'ns3:lakarutlatande'.'ns1:medicinsktTillstand'.'ns1:tillstandskod'.@code
+        medicinskttillstandDiagnoskod = medicinskttillstandDiagnoskod.replace(",", " ")
 
         String funktionstillstandTyp = intyg.'ns3:lakarutlatande'.'ns1:funktionstillstand'.'ns1:typAvFunktionstillstand'.find { it -> it.text() == 'Kroppsfunktion'} ? 'true' : 'false'
         String funktionstillstandPrognos = intyg.'ns3:lakarutlatande'.'ns1:funktionstillstand'.'ns1:arbetsformaga'.'ns1:prognosangivelse'
