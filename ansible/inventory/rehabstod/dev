@@ -2,7 +2,8 @@
 rehabstod-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
 
 [tomcat]
-rehabstod-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+rehabstod-dev1 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+rehabstod-dev2 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
 
 [tools]
 rehabstod-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}

@@ -1,0 +1,11 @@
+---
+
+# Tomcat
+proxy_name: "vm.rehabstod"
+
+tomcat_server_port: 8015
+tomcat_http_port: 8091
+tomcat_https_port: 8192
+
+# Apache
+domain: "rehabstod"
