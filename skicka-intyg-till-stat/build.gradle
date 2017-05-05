@@ -17,7 +17,7 @@ dependencies {
 }
 
 repositories {
-     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/" }
+     maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
      maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/" }
      maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
      maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/" }

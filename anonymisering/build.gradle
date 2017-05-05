@@ -7,7 +7,7 @@ version = "2.1.4"
 uploadArchives {
   repositories {
     mavenDeployer {
-      repository(url: "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases") {
+      repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
         authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
       }
     }
@@ -25,7 +25,7 @@ dependencies {
 }
 
 repositories {
-  maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/releases/" }
+  maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
   maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
   maven { url "http://repo.maven.apache.org/maven2" }
 }
