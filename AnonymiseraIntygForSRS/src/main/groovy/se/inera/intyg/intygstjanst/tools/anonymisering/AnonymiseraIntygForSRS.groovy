@@ -237,6 +237,7 @@ class AnonymiseraIntygForSRS {
     static String[] buildVardkontakter(vardkontakter) {
         String[] ret = ["", "", "", ""]
         int i = 0
+
         vardkontakter.each { v ->
             ret[i] = (String) v.'ns1:vardkontakttyp'
             ret[i += 1] = (String) v.'ns1:vardkontaktstid'
@@ -258,11 +259,25 @@ class AnonymiseraIntygForSRS {
 
     static String[] buildArbetsformagaNedsattningar(nedsattningar) {
         String[] ret = ["", "", "", "", "", "", "", ""]
-        int i = 0
         nedsattningar.each { v ->
-            ret[i] = (String) v.'ns1:varaktighetFrom'
-            ret[i += 1] = (String) v.'ns1:varaktighetTom'
-            i++
+            switch (v.'ns1:nedsattningsgrad') {
+                case 'Helt_nedsatt':
+                    ret[6] = (String) v.'ns1:varaktighetFrom'
+                    ret[7] = (String) v.'ns1:varaktighetTom'
+                    break
+                case 'Nedsatt_med_1/4':
+                    ret[0] = (String) v.'ns1:varaktighetFrom'
+                    ret[1] = (String) v.'ns1:varaktighetTom'
+                    break
+                case 'Nedsatt_med_1/2':
+                    ret[2] = (String) v.'ns1:varaktighetFrom'
+                    ret[3] = (String) v.'ns1:varaktighetTom'
+                    break
+                case 'Nedsatt_med_3/4':
+                    ret[4] = (String) v.'ns1:varaktighetFrom'
+                    ret[5] = (String) v.'ns1:varaktighetTom'
+                    break
+            }
         }
         return ret
     }
