@@ -112,9 +112,9 @@
          Documentation at /docs/config/engine.html -->
 
     <!-- You should set jvmRoute to support load-balancing via AJP ie :
-    <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
-    -->
-    <Engine name="Catalina" defaultHost="localhost">
+	 <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">    -->
+
+    <Engine name="Catalina" defaultHost="localhost" {% if tomcat_jvm_route is defined %}jvmRoute="{{ tomcat_jvm_route }}"{% endif %}>
 
       <!--For clustering, please take a look at documentation at:
           /docs/cluster-howto.html  (simple how to)

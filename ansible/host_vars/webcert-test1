@@ -7,5 +7,7 @@ tomcat_server_port: 8005
 tomcat_http_port: 8081
 tomcat_https_port: 8182
 
+tomcat_jvm_route: 1
+
 # Apache
 domain: "webcert"

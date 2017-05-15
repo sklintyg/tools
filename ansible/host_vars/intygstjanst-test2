@@ -7,5 +7,7 @@ tomcat_server_port: 8010
 tomcat_http_port: 8086
 tomcat_https_port: 8187
 
+tomcat_jvm_route: 2
+
 # Apache
 domain: "intygstjanst"

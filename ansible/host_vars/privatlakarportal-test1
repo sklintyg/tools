@@ -5,5 +5,7 @@ tomcat_server_port: 8011
 tomcat_http_port: 8087
 tomcat_https_port: 8188
 
+tomcat_jvm_route: 1
+
 # Apache
 domain: "privatlakarportal"

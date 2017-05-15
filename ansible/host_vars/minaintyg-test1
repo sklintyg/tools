@@ -7,5 +7,7 @@ tomcat_server_port: 8007
 tomcat_http_port: 8083
 tomcat_https_port: 8184
 
+tomcat_jvm_route: 1
+
 # Apache
 domain: "minaintyg"
