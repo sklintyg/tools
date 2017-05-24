@@ -15,6 +15,11 @@ DirectoryIndex index.php index.html
   </Directory>
 {% endif %}
 
+{% for host in groups.activemq %}
+  ProxyPass        /admin http://localhost:8161/admin
+  ProxyPassReverse /admin http://localhost:8161/admin
+{% endfor %}
+
 {% for host in groups.tomcat %}
 {% if not hostvars[host]['use_proxy'] %}
   ProxyPass        {{ hostvars[host]['proxy_dir'] }} http://localhost:{{ hostvars[host]['tomcat_http_port'] }}{{ hostvars[host]['proxy_dir'] }}
@@ -71,6 +76,11 @@ DirectoryIndex index.php index.html
     Allow from all
   </Directory>
 {% endif %}
+
+{% for host in groups.activemq %}
+  ProxyPass        /admin http://localhost:8161/admin
+  ProxyPassReverse /admin http://localhost:8161/admin
+{% endfor %}
 
 {% for host in groups.tomcat %}
 {% if not hostvars[host]['use_proxy'] %}

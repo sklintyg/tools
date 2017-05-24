@@ -1,5 +1,9 @@
 ---
-
+- name: Ensure libselinux-python is installed.
+  yum:
+    name: libselinux-python
+    state: present
+    
 - name: Create {{ inera_root }} directory
   file:
     state: directory
@@ -14,7 +18,7 @@
 
 - name: Download Oracle JRE
   get_url:
-    url: "http://download.oracle.com/otn-pub/java/jdk/{{ java_remote_dir }}/{{ jre_tarball }}"
+    url: "http://download.oracle.com/otn-pub/java/jdk/{{ java_remote_dir }}/d54c1d3a095b4ff2b6607d096fa80163/{{ jre_tarball }}"
     dest: "{{ archive_dir }}/{{ jre_tarball }}"
     headers: "Cookie:oraclelicense=accept-securebackup-cookie"
 

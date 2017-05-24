@@ -6,9 +6,9 @@ archive_dir: "{{ inera_root }}/archives"
 
 # Java
 java_home: "{{ inera_root }}/jre8"
-java_remote_dir: 8u112-b15 # The directory name in the download url
-java_local_dir: jre1.8.0_112 # The directory name created when untarred
-jre_tarball: jre-8u112-linux-x64.tar.gz
+java_remote_dir: 8u131-b11 # The directory name in the download url
+java_local_dir: jre1.8.0_131 # The directory name created when untarred
+jre_tarball: jre-8u131-linux-x64.tar.gz
 
 # Tomcat
 tomcat7_version: 7.0.57
