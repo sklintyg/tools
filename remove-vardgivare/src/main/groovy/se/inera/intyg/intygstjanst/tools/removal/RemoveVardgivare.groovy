@@ -28,7 +28,7 @@ class RemoveVardgivare {
     static void main(String[] args) {
 
         if (args.length == 0) {
-            println "USAGE IS java -jar <jar> <hasId> [<numberOfThreads>]"
+            println "USAGE IS java -jar <jar> <hsaId> [<numberOfThreads>]"
             return
         }
         String hsaId = args[0]
