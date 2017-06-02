@@ -15,10 +15,12 @@ DirectoryIndex index.php index.html
   </Directory>
 {% endif %}
 
-{% for host in groups.activemq %}
-  ProxyPass        /admin http://localhost:8161/admin
-  ProxyPassReverse /admin http://localhost:8161/admin
-{% endfor %}
+{% if groups.activemq is defined %}
+  {% for host in groups.activemq %}
+    ProxyPass        /admin http://localhost:8161/admin
+    ProxyPassReverse /admin http://localhost:8161/admin
+  {% endfor %}
+{% endif %}
 
 {% for host in groups.tomcat %}
 {% if not hostvars[host]['use_proxy'] %}
@@ -77,10 +79,12 @@ DirectoryIndex index.php index.html
   </Directory>
 {% endif %}
 
-{% for host in groups.activemq %}
-  ProxyPass        /admin http://localhost:8161/admin
-  ProxyPassReverse /admin http://localhost:8161/admin
-{% endfor %}
+{% if groups.activemq is defined %}
+  {% for host in groups.activemq %}
+    ProxyPass        /admin http://localhost:8161/admin
+    ProxyPassReverse /admin http://localhost:8161/admin
+  {% endfor %}
+{% endif %}
 
 {% for host in groups.tomcat %}
 {% if not hostvars[host]['use_proxy'] %}
