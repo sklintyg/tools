@@ -10,3 +10,13 @@
   file:
     path: "/var/log/{{ tomcat7_service }}"
     state: absent
+
+- name: "Remove {{ inera_root }}/{{ inventory_hostname }}-tomcat"
+  file:
+    path: "{{ inera_root }}/{{ inventory_hostname }}-tomcat"
+    state: absent
+
+- name: "Remove {{ tomcat7_install_dir }}"
+  file:
+    path: "{{ tomcat7_install_dir }}"
+    state: absent

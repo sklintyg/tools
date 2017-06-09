@@ -6,20 +6,6 @@
     state: stopped
     pattern: httpd
 
-- name: "Remove {{ inera_root }}/{{ item }}-tomcat"
-  file:
-    path: "{{ inera_root }}/{{ item }}-tomcat"
-    state: absent
-  with_items:
-    groups.tomcat
-
-- name: "Remove {{ tomcat7_install_dir }}"
-  file:
-    path: "{{ inera_root }}/apache-tomcat-{{ tomcat7_version }}-{{ item }}"
-    state: absent
-  with_items:
-    groups.tomcat
-
 - name: "Remove apache config for {{ domain }}"
   file:
     path: "/etc/httpd/conf.d/{{ domain }}.conf"
