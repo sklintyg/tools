@@ -15,3 +15,8 @@
   mysql_db:
     name: "{{ domain }}"
     state: absent
+
+- name: "Remove {{ domain }}-konfiguration"
+  file:
+    path: "{{ inera_root }}/{{ domain }}-konfiguration"
+    state: absent

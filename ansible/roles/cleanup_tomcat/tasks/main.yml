@@ -19,4 +19,9 @@
 - name: "Remove {{ tomcat7_install_dir }}"
   file:
     path: "{{ tomcat7_install_dir }}"
+    state: abent
+
+- name: "Remove {{ inventory_hostname }}-resources"
+  file:
+    path: "{{ inera_root }}/{{ inventory_hostname }}-resources"
     state: absent
