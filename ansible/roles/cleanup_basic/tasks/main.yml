@@ -6,9 +6,9 @@
     state: stopped
     pattern: httpd
 
-- name: "Remove {{ inera_root }}/{{ item }}"
+- name: "Remove {{ inera_root }}/{{ hostvars[item] }}"
   file:
-    path: "{{ inera_root }}/{{ item }}"
+    path: "{{ inera_root }}/{{ hostvars[item] }}"
     state: absent
   with_items:
     groups['tomcat']
