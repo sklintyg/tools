@@ -6,10 +6,12 @@
     state: stopped
     pattern: httpd
 
-- name: "Remove {{ inera_root }}"
+- name: "Remove {{ inera_root }}/{{ item }}"
   file:
-    path: "{{ inera_root }}"
+    path: "{{ inera_root }}/{{ item }}"
     state: absent
+  with_items:
+    groups['tomcat']
 
 - name: "Remove apache config for {{ domain }}"
   file:
