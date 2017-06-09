@@ -19,7 +19,7 @@
 - name: "Remove {{ tomcat7_install_dir }}"
   file:
     path: "{{ tomcat7_install_dir }}"
-    state: abent
+    state: absent
 
 - name: "Remove {{ inventory_hostname }}-resources"
   file:
