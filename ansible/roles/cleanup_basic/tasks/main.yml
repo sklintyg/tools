@@ -5,11 +5,13 @@
     name: httpd
     state: stopped
     pattern: httpd
+  when: "'demo' not in inventory_hostname"
 
 - name: "Remove apache config for {{ domain }}"
   file:
     path: "/etc/httpd/conf.d/{{ domain }}.conf"
     state: absent
+  when: "'demo' not in inventory_hostname"
 
 - name: "Drop database for {{ domain }}"
   mysql_db:
