@@ -1,0 +1,12 @@
+---
+
+- name: "Shut down Apache"
+  service:
+    name: httpd
+    state: stopped
+    pattern: httpd
+
+- name: "Remove apache config for {{ domain }}"
+  file:
+    path: "/etc/httpd/conf.d/{{ domain }}.conf"
+    state: absent
