@@ -54,11 +54,8 @@
     state: yes
     persistent: yes
 
-#- name: Ensure Apache is started and enabled on boot.
-#  service:
-#    name: httpd
-#    state: restarted
-#    enabled: yes
-
-- name: Restart Apache
-  command: service httpd restart
+- name: Ensure Apache is started and enabled on boot.
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
