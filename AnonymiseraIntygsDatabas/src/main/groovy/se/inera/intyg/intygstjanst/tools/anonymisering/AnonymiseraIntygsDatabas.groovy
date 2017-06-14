@@ -55,32 +55,53 @@ class AnonymiseraIntygsDatabas {
                                 username: config.dataSource.username, password: config.dataSource.password,
                                 initialSize: numberOfThreads, maxTotal: numberOfThreads)
         def bootstrapSql = new Sql(dataSource)
-        def certificateIds = bootstrapSql.rows("select ID from CERTIFICATE")
+
+        // For now, just get fk7263
+        def desiredTypes = ["fk7263"]
+
+        // Arende is not anonymized, so purge the whole table
+        bootstrapSql.execute("TRUNCATE ARENDE")
+
+        def certificateIds = bootstrapSql.rows("select ID, CERTIFICATE_TYPE from CERTIFICATE")
+
         bootstrapSql.close()
         println "${certificateIds.size()} certificates found to anonymize"
         final AtomicInteger count = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
+
         def output
         GParsPool.withPool(numberOfThreads) {
             output = certificateIds.collectParallel {
                 StringBuffer result = new StringBuffer() 
                 def id = it.ID
+                def currentType = it.CERTIFICATE_TYPE
                 Sql sql = new Sql(dataSource)
                 try {
                     sql.withTransaction {
-                        // Anonymisera alla befintliga intyg, och deras original-meddelanden
-                        def intyg = sql.firstRow( 'select DOCUMENT, CIVIC_REGISTRATION_NUMBER, SIGNING_DOCTOR_NAME from CERTIFICATE where ID = :id' , [id : id])
-                        String jsonDoc = new String(intyg.DOCUMENT, 'UTF-8')
-                        String civicRegistrationNumber = anonymiseraPersonId.anonymisera(intyg.CIVIC_REGISTRATION_NUMBER)
-                        String signingDoctorName = AnonymizeString.anonymize(intyg.SIGNING_DOCTOR_NAME)
-                        String anonymiseradJson = anonymiseraJson.anonymiseraIntygsJson(jsonDoc, civicRegistrationNumber)
-                        sql.executeUpdate('update CERTIFICATE set DOCUMENT = :document, CIVIC_REGISTRATION_NUMBER = :civicRegistrationNumber, SIGNING_DOCTOR_NAME = :signingDoctorName where ID = :id',
-                                              [document: anonymiseradJson.getBytes('UTF-8'), civicRegistrationNumber: civicRegistrationNumber, signingDoctorName: signingDoctorName, id: id])
-                        def original = sql.firstRow( 'select DOCUMENT from ORIGINAL_CERTIFICATE where CERTIFICATE_ID = :id' , [id : id])
-                        String xmlDoc = original?.DOCUMENT ? new String(original.DOCUMENT, 'UTF-8') : null
-                        String anonymiseradXml = xmlDoc ? anonymiseraXml.anonymiseraIntygsXml(xmlDoc, civicRegistrationNumber) : null
-                        if (anonymiseradXml) sql.executeUpdate('update ORIGINAL_CERTIFICATE set DOCUMENT = :document where CERTIFICATE_ID = :id',
-                                              [document: anonymiseradXml.getBytes('UTF-8'), id : id])
+                        if (currentType in desiredTypes) {
+                            // Anonymisera alla befintliga intyg, och deras original-meddelanden
+                            def intyg = sql.firstRow('select CIVIC_REGISTRATION_NUMBER, SIGNING_DOCTOR_NAME from CERTIFICATE where ID = :id', [id: id])
+
+                            String civicRegistrationNumber = anonymiseraPersonId.anonymisera(intyg.CIVIC_REGISTRATION_NUMBER)
+                            String signingDoctorName = AnonymizeString.anonymize(intyg.SIGNING_DOCTOR_NAME)
+
+                            sql.executeUpdate('update CERTIFICATE set CIVIC_REGISTRATION_NUMBER = :civicRegistrationNumber, SIGNING_DOCTOR_NAME = :signingDoctorName where ID = :id',
+                                    [civicRegistrationNumber: civicRegistrationNumber, signingDoctorName: signingDoctorName, id: id])
+
+                            def original = sql.firstRow('select DOCUMENT from ORIGINAL_CERTIFICATE where CERTIFICATE_ID = :id', [id: id])
+                            String xmlDoc = original?.DOCUMENT ? new String(original.DOCUMENT, 'UTF-8') : null
+                            String anonymiseradXml = xmlDoc ? anonymiseraXml.anonymiseraIntygsXml(xmlDoc, civicRegistrationNumber) : null
+                            if (anonymiseradXml) sql.executeUpdate('update ORIGINAL_CERTIFICATE set DOCUMENT = :document where CERTIFICATE_ID = :id',
+                                    [document: anonymiseradXml.getBytes('UTF-8'), id: id])
+                        } else {
+                            // We are not anonymizing this type of intyg, thus it has to be purged from the database
+                            sql.execute("DELETE FROM SJUKFALL_CERT_WORK_CAPACITY WHERE CERTIFICATE_ID=:id", [id: id])
+                            sql.execute("DELETE FROM SJUKFALL_CERT WHERE ID=:id", [id: id])
+
+                            sql.execute("DELETE FROM ORIGINAL_CERTIFICATE WHERE CERTIFICATE_ID=:id", [id: id])
+                            sql.execute("DELETE FROM CERTIFICATE_STATE WHERE CERTIFICATE_ID=:id", [id: id])
+                            sql.execute("DELETE FROM CERTIFICATE WHERE ID=:id", [id: id])
+                        }
                     }
                     int current = count.addAndGet(1)
                     if (current % 10000 == 0) {
@@ -99,6 +120,7 @@ class AnonymiseraIntygsDatabas {
         output.each {line ->
             if (line) println line
         }
+
         println "Done! ${count} certificates anonymized with ${errorCount} errors in ${(int)((end-start) / 1000)} seconds"
     }
 }

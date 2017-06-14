@@ -1,8 +1,10 @@
 apply plugin: 'groovy'
+apply plugin: 'application'
 apply plugin: 'maven'
 
 group = 'se.inera.intyg.tools'
 version = "2.1.4"
+mainClassName = 'se.inera.intyg.intygstjanst.tools.anonymisering.AnonymiseraIntygsDatabas'
 
 uploadArchives {
   repositories {
@@ -19,6 +21,7 @@ dependencies {
   compile 'org.codehaus.groovy:groovy-all:2.4.7'
   compile 'org.apache.commons:commons-dbcp2:2.0'
   compile 'org.codehaus.gpars:gpars:1.1.0'
+  compile "mysql:mysql-connector-java:5.1.40"
 }
 
 repositories {
@@ -26,4 +29,9 @@ repositories {
   maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
   maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
   maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+jar {
+  from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+  manifest.attributes('Main-Class' : mainClassName)
 }
