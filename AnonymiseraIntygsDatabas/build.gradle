@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 
 group = 'se.inera.intyg.tools'
-version = "2.1.4"
+version = "2.2.0"
 mainClassName = 'se.inera.intyg.intygstjanst.tools.anonymisering.AnonymiseraIntygsDatabas'
 
 uploadArchives {
