@@ -11,5 +11,8 @@ tomcat_server_port: 8012
 tomcat_http_port: 8189
 tomcat_https_port: 8106
 
+tomcat7_user: ine-app
+tomcat7_group: ine-app
+
 # Apache
 domain: "rehabstod"

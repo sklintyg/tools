@@ -4,6 +4,9 @@ tomcat_server_port: 8013
 tomcat_http_port: 8190
 tomcat_https_port: 8107
 
+tomcat7_user: ine-app
+tomcat7_group: ine-app
+
 proxy_env:
   http_proxy: http://bf-proxy.sth:8888
   https_proxy: http://bf-proxy.sth:8888

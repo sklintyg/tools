@@ -11,5 +11,8 @@ tomcat_server_port: 8008
 tomcat_http_port: 8184
 tomcat_https_port: 8104
 
+tomcat7_user: ine-app
+tomcat7_group: ine-app
+
 # Apache
 domain: "privatlakarportal"

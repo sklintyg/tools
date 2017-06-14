@@ -11,5 +11,8 @@ tomcat_server_port: 8006
 tomcat_http_port: 8182
 tomcat_https_port: 8081
 
+tomcat7_user: ine-app
+tomcat7_group: ine-app
+
 # Apache
 domain: "webcert"
