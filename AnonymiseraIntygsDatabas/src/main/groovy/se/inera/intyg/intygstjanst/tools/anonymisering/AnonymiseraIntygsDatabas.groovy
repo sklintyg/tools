@@ -61,6 +61,9 @@ class AnonymiseraIntygsDatabas {
 
         // Arende is not anonymized, so purge the whole table
         bootstrapSql.execute("TRUNCATE ARENDE")
+        bootstrapSql.execute("TRUNCATE CONSENT")
+        bootstrapSql.execute("TRUNCATE SJUKFALL_CERT_WORK_CAPACITY")
+        bootstrapSql.execute("TRUNCATE SJUKFALL_CERT")
 
         def certificateIds = bootstrapSql.rows("select ID, CERTIFICATE_TYPE from CERTIFICATE")
 
@@ -95,9 +98,6 @@ class AnonymiseraIntygsDatabas {
                                     [document: anonymiseradXml.getBytes('UTF-8'), id: id])
                         } else {
                             // We are not anonymizing this type of intyg, thus it has to be purged from the database
-                            sql.execute("DELETE FROM SJUKFALL_CERT_WORK_CAPACITY WHERE CERTIFICATE_ID=:id", [id: id])
-                            sql.execute("DELETE FROM SJUKFALL_CERT WHERE ID=:id", [id: id])
-
                             sql.execute("DELETE FROM ORIGINAL_CERTIFICATE WHERE CERTIFICATE_ID=:id", [id: id])
                             sql.execute("DELETE FROM CERTIFICATE_STATE WHERE CERTIFICATE_ID=:id", [id: id])
                             sql.execute("DELETE FROM CERTIFICATE WHERE ID=:id", [id: id])
