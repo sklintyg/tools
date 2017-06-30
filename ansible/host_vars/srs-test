@@ -1,0 +1,6 @@
+---
+
+proxy_name: "srs.inera.nordicmedtest.se"
+
+# Apache
+domain: "srs"

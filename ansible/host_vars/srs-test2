@@ -1,0 +1,13 @@
+---
+
+# Tomcat
+proxy_name: "srs.inera.nordicmedtest.se"
+
+tomcat_server_port: 8014
+tomcat_http_port: 8090
+tomcat_https_port: 8191
+
+tomcat_jvm_route: 2
+
+# Apache
+domain: "srs"
