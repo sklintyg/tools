@@ -1,0 +1,23 @@
+PARM{include:/head.html?title=text-genericerror}
+<style>
+    .wordwrap { 
+        white-space: pre-wrap;      /* CSS3 */   
+        white-space: -moz-pre-wrap; /* Firefox */    
+        white-space: -pre-wrap;     /* Opera <7 */   
+        white-space: -o-pre-wrap;   /* Opera 7 */    
+        word-wrap: break-word;      /* IE */
+        /*text-align: left;*/
+
+    }
+</style>
+</head>
+<body id="errorbody">
+
+PARM{include:/header.html}
+
+    <h1>Ett fel har inträffat</h1>
+    <p class="wordwrap">PARM{message}</p>
+    <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
+    <p class="wordwrap"><a href="/">PARM{text-clickhereformainpage}</a></p>
+
+PARM{include:/footer.html}

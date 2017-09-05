@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<!--Vid problem ange referens: (PARM{refid})-->
+  <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
+  <title>PARM{text-logintomg}</title>
+  <link href="/common.css" rel="stylesheet" type="text/css">
+  <!--[if IE 7]>
+    <link href="/ie.css" rel="stylesheet" type="text/css">
+  <![endif]-->
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
+  <meta http-equiv="refresh" content="500;url=PARM{prop-saml.sploginurl}">
+
+</head>
+
+<!--
+<script language="javascript" type="text/javascript">
+function setFocus(){document.form.ssn.focus();}
+</script>
+-->
+
+<!-- <body id="commonbody" onLoad="setFocus()"> -->
+<body id="commonbody" style="margin: 0;">
+  PARM{include:/header.html}
+        <h1>Mobilt BankID</h1>
+        <form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
+            <span class="ssndesc">Ditt personnummer<!--PARM{text-mbi-ssn}--></span><br> <input type="tel" name="ssn" placeholder="ÅÅÅÅMMDD-NNNN"> <input type="submit" value="Fortsätt"><br>
+            <p class="errortxt">PARM{error-message}</p>
+        </form>
+        <p><a class='button' href="/">Avbryt</a></p>
+  PARM{include:/footer.html}
+<!--
+   <form method=post action="/mg-localPARM{form-url}" name=form accept-charset="UTF-8">
+    <table cellpadding=2 cellspacing=0 border=0 width="100%">
+        <tr>
+            <td colspan=2 style="color:red;">
+                PARM{error-message}
+            </td>
+            <td colspan=2>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td nowrap align=right valign=middle width="35%">
+                PARM{text-mbi-ssn}:
+            </td>
+            <td valign=middle width="50%">
+                <input type=text name=ssn>
+            </td>
+            <td align=left width="15%" valign=middle nowrap>
+                <input type=submit value=OK>
+            </td>
+        </tr>
+    </table>
+    </form>
+    <br>
+-->
+ 

@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <!--Vid problem ange referens: (PARM{refid}-grp)-->
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
+    <title>PARM{text-logintomg}</title>
+    <link href="/common.css" rel="stylesheet" type="text/css">
+    <link href="/fonts/css/fontello.css" rel="stylesheet" type="text/css">
+    <!--[if IE 7]>
+    <link href="/ie.css" rel="stylesheet" type="text/css">
+  <![endif]-->
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+    <meta http-equiv="refresh" content="500;url=PARM{prop-saml.sploginurl}">
+</head>
+
+<body id="commonbody" style="margin: 0">
+
+    PARM{include:/header.html}
+
+    <div id="loginLinksWrp" style="display:PARM{showidp}">
+        <h1>Välj inloggning</h1>
+        <ul id="loginLinks">
+            PARM{viewsccp11}<li class=indexlist><a class="external" href="/mg-local/login?type=ccp11">Mobilt BankID</a></li>PARM{vieweccp11}
+            PARM{viewsccp10}<li class=indexlist><a class="external" href="/mg-local/login?type=ccp10">BankID</a></li>PARM{vieweccp10}
+            PARM{viewsccp5}<li class=indexlist><a class="external" href="/mg-local/login?type=ccp5">PARM{nameccp5}</a></li>PARM{vieweccp5}
+            PARM{viewsccp8}<li class=indexlist><a class="external" href="/mg-local/login?type=ccp8">Telia</a></li>PARM{vieweccp8}
+        </ul>
+    </div>
+
+    PARM{include:/footer.html}
+
+</body>
+
+</html>

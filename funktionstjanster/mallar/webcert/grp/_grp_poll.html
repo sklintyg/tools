@@ -1,0 +1,30 @@
+PARM{include:/head.html?title=text-mbi-loginusingmbi}
+<!-- Page used for MBI Authentication Poll -->
+PARM{meta-header}
+<!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
+<script type="text/javascript" src="/mg-local/poll.min.js"></script>
+PARM{include:/grp/grppoll-script.html}
+</head>
+<body id="commonbody" onload="polling_start()">
+
+  PARM{include:/header.html}
+
+  <h1>Inloggning med Mobilt BankID</h1>
+
+  <div id="infotext">PARM{message}</div>
+
+  <img class="progressRotation" src="/mg-local/mg-gfx/rotation.gif" alt="In progress-icon">
+
+  <div id='nojavascript'>
+    <p>
+      PARM{text-automaticupdate}
+    </p>
+    <p>
+      <a class='button' href="PARM{poll-url}">PARM{text-update}</a>
+    </p>
+  </div>
+
+  <a href="/">PARM{text-clickhereformainpage}</a>
+<br>
+
+PARM{include:/footer.html}
