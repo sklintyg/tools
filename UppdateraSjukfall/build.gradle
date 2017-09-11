@@ -1,6 +1,7 @@
 apply plugin: 'groovy'
-apply plugin:'application'
-version = '0-SNAPSHOT'
+apply plugin: 'application'
+apply plugin: 'maven'
+
 group = 'se.inera.intyg.tools'
 mainClassName = 'se.inera.intyg.tools.sjukfall.UppdateraSjukfall'
 
@@ -22,4 +23,9 @@ dependencies {
 jar {
   from configurations.runtime.asFileTree.files.collect { zipTree(it) }
   manifest.attributes('Main-Class' : mainClassName)
+}
+uploadArchives.repositories.mavenDeployer {
+    repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
+        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+    }
 }
