@@ -2,5 +2,9 @@
 
 proxy_name: "srs.inera.nordicmedtest.se"
 
+tomcat_server_port: 8013
+tomcat_http_port: 8089
+tomcat_https_port: 8190
+
 # Apache
 domain: "srs"
