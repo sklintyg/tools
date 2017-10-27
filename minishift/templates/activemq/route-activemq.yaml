@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: activemq-route
+  namespace: intygstjanster-test
+spec:
+  host: activemq-route-intygstjanster-test.192.168.99.100.nip.io
+  path: /admin
+  port:
+    targetPort: 8161-tcp
+  to:
+    kind: Service
+    name: activemq
+    weight: 100
+  wildcardPolicy: None
