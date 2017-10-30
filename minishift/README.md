@@ -114,7 +114,7 @@ These files should later be integrated into Ansible playbooks with parameter sub
 ### Installing MySQL as a service
 
 1) In the admin GUI, choose "Import YAML / Json".
-2) Copy-paste _deploymentconfig-mysql.sql_ into the textarea.
+2) Copy-paste _deploymentconfig-mysql.yaml_ into the textarea.
 3) Do the same with _service-mysql.yaml_.
 4) Note that the mysql-image contains users and empty databases for all our applications.
 
@@ -122,7 +122,7 @@ These files should later be integrated into Ansible playbooks with parameter sub
 ### Installing ActiveMQ as a service
 
 1) In the admin GUI, choose "Import YAML / Json".
-2) Copy-paste _deploymentconfig-activemq.sql_ into the textarea.
+2) Copy-paste _deploymentconfig-activemq.yaml_ into the textarea.
 3) Do the same with _service-activemq.yaml_.
 4) Do the same with _route-activemq.yaml_.
 5) ActiveMQ admin should be reachable on _http://activemq-route-intygstjanster-test.192.168.99.100.nip.io/admin/_
