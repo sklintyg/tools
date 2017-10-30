@@ -6,25 +6,25 @@ Work-in-progress conceptual overview of an OpenShift cluster for test purposes r
 
 ![img1](docs/openshift-intygsapplikationer.png)
 
-Each container should only container web server + .war file and any static resources needed to execute. A container image should be runnable from local dev environment to production, i.e. all environment specifics such as configuration properties, certificates, SAML-metadata, logback-files, dynamic text resources etc must be injected our mounted at runtime.
+Each container should only container web server + .war file and any static resources needed to execute. A container image should be runnable from local dev environment to production, i.e. all environment specifics such as configuration properties, certificates, SAML-metadata, logback-files, dynamic text resources etc must be injected or mounted at runtime.
 
 ### OpenShift anatomy
 Openshift is a PaaS (Platform as a Service) built on top of the CaaS (Container orchestration as a Service) Kubernetes (K8S). OpenShift and K8S introduces a number of abstractions on top of traditional containers to provide orchestration, routing, resilience, configuration etc.
  
 ![img2](docs/openshift-hierarchy.png)
 
-- A cluster is backed by one or more *nodes*. A _node_ is a physical or virtualized OS running a OpenShift master or worker. As developers, we should _never_ have to concern ourselves with actual nodes, this is something NMT or BF will provide and configure for us.
-- A cluster always backs at least one *project*. A _project_ is typically declared for a number of related applications and their services in a given environment and provides the basis for multi-tenancy in OpenShift. In intygstjänster, we'll typically declare a _project_ for an environment running our applications such as:
- - test
- - demo
- - perf
- - qa
- - staging
- - prod
-- Inside a _project_ we can deploy our applications as declared by a *deployment configuration*, typically defining a _container image_ for the application we want to deploy, number of replicas, ports to expose etc.
-- A launched _deployment configuration_ will create a *pod* that may run one or more *containers* for the given _container image_.
-- If we want our container(s) within a _pod_ to be visible _within_ the cluster, we need to define a *service* that provides an internal DNS name so our applications can talk to each other. The _service_ abstraction provides internal load-balancing, e.g. if we have one _pod_ running three instances of the _intygstjanst_ container image, requests for the logical service name "intygstjanst" will be load-balanced automatically amongst the three instances.
-- If we want a _service_ (for example Webcert) to be accessible from outside of the cluster, we need to declare a *route* connecting the service to the outside world, including a port mapping and possibly an external hostname.
+- A cluster is backed by one or more **nodes**. A _node_ is a physical or virtualized OS running a OpenShift master or worker. As developers, we should _never_ have to concern ourselves with actual nodes, this is something NMT or BF will provide and configure for us.
+- A cluster always backs at least one **project**. A _project_ is typically declared for a number of related applications and their services in a given environment and provides the basis for multi-tenancy in OpenShift. In intygstjänster, we'll typically declare a _project_ for an environment running our applications such as:
+    - test
+    - demo
+     - perf
+     - qa
+     - staging
+     - prod
+- Inside a _project_ we can deploy our applications as declared by a **deployment configuration**, typically defining a _container image_ for the application we want to deploy, number of replicas, ports to expose etc.
+- A launched _deployment configuration_ will create a **pod** that may run one or more **containers** for the given _container image_.
+- If we want our container(s) within a _pod_ to be visible _within_ the cluster, we need to define a **service** that provides an internal DNS name so our applications can talk to each other. The _service_ abstraction provides internal load-balancing, e.g. if we have one _pod_ running three instances of the _intygstjanst_ container image, requests for the logical service name "intygstjanst" will be load-balanced automatically amongst the three instances.
+- If we want a _service_ (for example Webcert) to be accessible from outside of the cluster, we need to declare a **route** connecting the service to the outside world, including a port mapping and possibly an external hostname.
 
 ## Minishift on Mac instructions
 This folder contains some work-in-progress instructions and notes on how to get OpenShift Origin running using "minishift" on a local virtualbox virtual machine.
