@@ -9,7 +9,7 @@
     <link href="/ie.css" rel="stylesheet" type="text/css">
   <![endif]-->
   <script type="text/javascript" src="/js/base64.js"></script>
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8"> 
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
 
 </head>
@@ -18,11 +18,16 @@
 
   PARM{include:/header.html}
 
+        <div class="backlink">
+          <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+        </div>
+
         <h1 >PARM{text-eiderror}</h1>
-        <p >PARM{message}</p>
-        <p >PARM{text-logica-refidmsg} PARM{refid}</p>
-        <p ><a href="/">PARM{text-clickhereformainpage}</a></p>
-  
+        <div class="alert alert-danger">
+          <p >PARM{message}</p>
+          <p >PARM{text-logica-refidmsg} PARM{refid}</p>
+        </div>
+
   PARM{include:/footer.html}
 
   </body>

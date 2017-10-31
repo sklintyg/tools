@@ -2,6 +2,34 @@
 <div class="clearFloat"></div>
 </div>
 </div>
+
+<div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="cookieModalLabel">Om kakor (cookies)</h4>
+      </div>
+      <div class="modal-body">
+        <p>En kaka är en textfil som webbsidan begär att få spara på din dator för att möjliggöra automatisk inloggning i olika e-tjänster under 60 minuter efter det du identifierat dig med en e-legitimation.</p>
+        <p>Den här webbsidan innehåller två så kallade kakor (cookies):</p>
+        <ul>
+          <li>En sessionskaka som innehåller ett unikt slumptal för att identifiera just din inloggning och försvinner när webbläsaren stängs av.</li>
+          <li>En informationskaka om vilken av servrarna på vår webbplats som hanterade din inloggning och den kakan finns kvar i webbläsaren även efter omstart.</li>
+        </ul>
+        <p>Dessa två kakor behövs för att på ett säkert sätt låta dig komma åt olika e-tjänster som en inloggad och identifierad användare. Kakorna i sig innehåller inga personliga uppgifter och används inte av någon annan.</p>
+        <h3>Undvika kakor</h3>
+        <p>Vill du inte acceptera kakor kan din webbläsare ställas in så att du automatiskt nekar till lagring av kakor eller informeras varje gång en webbplats begär att få lagra en kaka. Genom webbläsaren kan också tidigare lagrade kakor raderas. Se webbläsarens hjälpsidor för mer information.</p>
+        <p>Väljer du att inte acceptera kakor så kan du inte identifiera dig med e-legitimation i denna e-tjänst.</p>
+        <p>Mer information om kakor kan du finna på <a href="https://www.pts.se/sv/Privat/Internet/Skydd-av-uppgifter/Fragor-och-svar-om-kakor-for-anvandare1/" target="_blank">Kommunikationsmyndigheten PTS sida om kakor</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Stäng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="footer">
     <div class="container">
         <div class="col">
@@ -25,10 +53,12 @@
                     CGI Sverige AB, leverantör av säker inloggning.
                 </li>
                 <li>
-                    <a target="_blank" href="http://www.cgi.se">Om tjänsten <i class="icon-external_link"></i></a> &nbsp;|&nbsp;
-                    <a href="/cookieinfo.html">Om kakor (cookies)</a>
+                    <a target="_blank" href="http://www.cgi.se">Om tjänsten <i class="icon-external_link"></i></a>
                 </li>
             </ul>
+        </div>
+        <div>
+          Mina intyg använder kakor (cookies): <a href="#" data-toggle="modal" data-target="#cookieModal">Läs mer här</a>
         </div>
     </div>
 </div>

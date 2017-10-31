@@ -1,10 +1,10 @@
 PARM{include:/head.html?title=text-genericerror}
 <style>
-    .wordwrap { 
-        white-space: pre-wrap;      /* CSS3 */   
-        white-space: -moz-pre-wrap; /* Firefox */    
-        white-space: -pre-wrap;     /* Opera <7 */   
-        white-space: -o-pre-wrap;   /* Opera 7 */    
+    .wordwrap {
+        white-space: pre-wrap;      /* CSS3 */
+        white-space: -moz-pre-wrap; /* Firefox */
+        white-space: -pre-wrap;     /* Opera <7 */
+        white-space: -o-pre-wrap;   /* Opera 7 */
         word-wrap: break-word;      /* IE */
         /*text-align: left;*/
 
@@ -15,9 +15,14 @@ PARM{include:/head.html?title=text-genericerror}
 
 PARM{include:/header.html}
 
-    <h1>Ett fel har inträffat</h1>
-    <p class="wordwrap">PARM{message}</p>
-    <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
-    <p class="wordwrap"><a href="/">PARM{text-clickhereformainpage}</a></p>
+    <div class="backlink">
+      <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+    </div>
+
+    <h2>Inloggningen misslyckades</h2>
+    <div class="alert alert-danger">
+      <p class="wordwrap">PARM{message}</p>
+      <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
+    </div>
 
 PARM{include:/footer.html}

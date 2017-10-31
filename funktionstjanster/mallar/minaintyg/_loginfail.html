@@ -8,26 +8,30 @@
   <!--[if IE 7]>
     <link href="/ie.css" rel="stylesheet" type="text/css">
   <![endif]-->
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8"> 
-  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/> 
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
 </head>
 <body id="firstbody" style="margin: 0;">
 
 
   PARM{include:/header.html}
 
-      <h1 >PARM{text-loginfail}</h1>
+  <div class="backlink">
+    <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+  </div>
 
-      <p >PARM{text-suppliedincorrect}</p>
+      <h2>PARM{text-loginfail}</h2>
 
-      <p >PARM{text-notusemethod}</p>
+      <div class="alert alert-danger">
+        <p >PARM{text-suppliedincorrect}</p>
 
-      <p >PARM{text-iferrorpersist}</p>
-      <p >PARM{text-logica-refidmsg} PARM{refid}</p>
+        <p >PARM{text-notusemethod}</p>
 
-      <p ><a href="/">PARM{text-clickheretomain}.</a></p>
+        <p >PARM{text-iferrorpersist}</p>
+        <p >PARM{text-logica-refidmsg} PARM{refid}</p>
+      </div>
 
   PARM{include:/footer.html}
-  
+
   </body>
 </html>

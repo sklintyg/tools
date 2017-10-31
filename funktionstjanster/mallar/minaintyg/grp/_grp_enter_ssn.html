@@ -1,13 +1,16 @@
- PARM{include:/header.html}
-<h1>Mobilt BankID</h1>
+PARM{include:/header.html}
+<div class="backlink">
+  <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+</div>
+<h2>Inloggning med Mobilt BankID</h2>
 <form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
     <p>
-        <span class="ssndesc">Ange ditt personnummer<!--PARM{text-mbi-ssn}--></span><br>
+        <h3>Ange ditt personnummer<!--PARM{text-mbi-ssn}--></h3>
         <input type="tel" name="ssn" placeholder="ÅÅÅÅMMDD-NNNN">
+        <input class="btn btn-primary" type="submit" value="Fortsätt">
     </p>
-    <p><input class="btn btn-primary" type="submit" value="Fortsätt"><a class='btn btn-secondary' href="/">Avbryt</a></p>
 
-    <p class="errortxt">PARM{error-message}</p>
+    <p class="alert alert-danger errortxt">PARM{error-message}</p>
 </form>
 
 PARM{include:/footer.html}

@@ -9,21 +9,24 @@
     <link href="/ie.css" rel="stylesheet" type="text/css">
   <![endif]-->
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/> 
- 
+  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
+
 </head>
 <body id="firstbody" style="margin: 0;">
 
   PARM{include:/header.html}
 
-      <h1 >PARM{message}</h1>
-      <p >PARM{text-genericerror}</p>
-      <p >PARM{text-logica-refidmsg} PARM{refid}</p>
-      <p><a href="/">PARM{text-clickhereformainpage}</a></p>
+  <div class="backlink">
+    <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+  </div>
+
+      <h2>PARM{message}</h2>
+      <div class="alert alert-danger">
+        <p >PARM{text-genericerror}</p>
+        <p >PARM{text-logica-refidmsg} PARM{refid}</p>
+      </div>
 
   PARM{include:/footer.html}
-  
+
   </body>
 </html>
-
-

@@ -8,7 +8,7 @@
   <!--[if IE 7]>
     <link href="/ie.css" rel="stylesheet" type="text/css">
   <![endif]-->
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8"> 
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
 
         PARM{include:/eid/_netid_scripts.html}
@@ -16,6 +16,10 @@
 <body id="commonbody" style="margin: 0; padding: 0" onLoad="run();">
 
   PARM{include:/header.html}
+
+        <div class="backlink">
+          <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+        </div>
 
         <h1>PARM{text-telia}</h1>
         <div align="left" id="mainbiddiv">
@@ -25,8 +29,6 @@
           <div id="noscript">
               PARM{text-require-javascript}
           </div>
-          <br />
-          <a href="PARM{reloginurl}">PARM{text-clicktogetbackloginpage} </a>    
         </noscript>
 
         <form name="form" action="/mg-local/auth/ccpPARM{providerid}/result" method="post">
@@ -37,6 +39,6 @@
         </form>
 
   PARM{include:/footer.html}
-  
+
 </body>
 </html>
