@@ -111,8 +111,50 @@ Inside the "templates" folder we have some YAML files for setting up:
 
 These files should later be integrated into Ansible playbooks with parameter substitution so we can use Jenkins jobs to provision a whole cluster or individual applications from scratch.
 
-### Installing MySQL as a service
+### A note on supporting services
+Please note that running MySQL and ActiveMQ as containers with mounted storage is _not_ suitable for production usages. Most users of container orchestrators runs their Database and Messaging backends on dedicated hardware outside the cluster - just like BF does for us currently.
 
+From the point of view of our applications, this shouldn't matter since all we need to know about is URLs and possible user credentials. For dev, test, demo purposes it's fine running these services inside the cluster.
+
+### Installing MySQL using CLI
+Create (1) persistent volume claim, (2) deployment configuration and (3) service  
+
+From this directory (/tools/minishift):
+    
+    oc create -f templates/mysql/persistentvolumeclaim-mysql.yaml
+    oc create -f templates/mysql/deploymentconfig-mysql.yaml
+    oc create -f templates/mysql/service-mysql.yaml
+    
+    
+### Installing ActiveMQ using CLI    
+Create (1) config map, (2) deployment configuration , (3) service and (4) route. 
+
+From this directory (/tools/minishift):
+    
+    oc create -f templates/activemq/configmap-activemq.yaml
+    oc create -f templates/activemq/deploymentconfig-activemq.yaml
+    oc create -f templates/activemq/service-activemq.yaml    
+    oc create -f templates/activemq/route-activemq.yaml 
+
+### Installing the Spring Boot version of Logsender using CLI
+
+There's a container image with a Spring Boot version of our "logsender" application on docker hub: _eriklupander/logsender-boot_.
+
+It's configured to use two mounted resources:
+
+- /config/application.yaml - Config map. This resource overrides some of the defaults of the _application.yaml_ baked into the .jar artifact.
+- /opt/inera/logsender-konfiguration - Secret. This resource contains a _credentials.properties_ file as well as _keystore.jks_ and _truststore.jks_.
+
+Use the following sequence of commands to deploy a functional pod with logsender:
+
+    oc create -f templates/logsender/configmap-logsender.yaml
+    oc create -f templates/logsender/secrets-logsender.yaml
+    oc create -f templates/logsender/deploymentconfig-logsender.yaml
+
+There are files for _service_ and _route_ but those aren't needed.
+
+### Installing MySQL as a service using GUI
+_(deprecated)_
 1) In the admin GUI, choose "Import YAML / Json".
 2) Copy-paste _deploymentconfig-mysql.yaml_ into the textarea.
 3) Do the same with _service-mysql.yaml_.
@@ -120,7 +162,7 @@ These files should later be integrated into Ansible playbooks with parameter sub
 
 
 ### Installing ActiveMQ as a service
-
+_(deprecated)_
 1) In the admin GUI, choose "Import YAML / Json".
 2) Copy-paste _deploymentconfig-activemq.yaml_ into the textarea.
 3) Do the same with _service-activemq.yaml_.
