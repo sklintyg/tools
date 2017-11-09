@@ -29,7 +29,7 @@ spec:
           value: test-1
         - name: LOGSENDER_ENV_2
           value: test-2
-        image: eriklupander/logsender-boot
+        image: eriklupander/logsender-boot:latest
         imagePullPolicy: IfNotPresent
         name: logsender
         ports:

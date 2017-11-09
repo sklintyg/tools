@@ -5,9 +5,9 @@ metadata:
   namespace: intygstjanster-test
 spec:
   host: logsender-route-intygstjanster-test.192.168.99.100.nip.io
-  path: /admin
+  path: /logsender
   port:
-    targetPort: 8161-tcp
+    targetPort: 9099-tcp
   to:
     kind: Service
     name: logsender
