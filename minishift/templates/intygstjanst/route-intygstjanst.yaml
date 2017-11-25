@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: intygstjanst-route
+  namespace: intygstjanster-test
+spec:
+  host: intygstjanst-route-intygstjanster-test.192.168.99.100.nip.io
+  path: /
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: intygstjanst
+    weight: 100
+  wildcardPolicy: None

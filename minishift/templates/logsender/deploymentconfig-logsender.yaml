@@ -2,7 +2,7 @@ apiVersion: v1
 kind: DeploymentConfig
 metadata:
   annotations:
-    openshift.io/generated-by: EriksFetaTemplate
+    openshift.io/generated-by: EriksFinaTemplate
   creationTimestamp: null
   generation: 1
   labels:
@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        openshift.io/generated-by: EriksFetaTemplate
+        openshift.io/generated-by: EriksFinaTemplate
       labels:
         app: logsender
         deploymentconfig: logsender

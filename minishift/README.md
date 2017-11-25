@@ -99,7 +99,11 @@ Run that export:
 ##### 7. Change project and grant root so we can run stuff like mysql and activemq    
     > oc project intygstjanster-test
     > oc adm policy add-scc-to-user anyuid -z default
-    
+
+##### 8. Fix Docker path
+It's very convenient to use the minishift's docker engine for building images locally. Run this:
+
+    > eval $(minishift docker-env)    
 
          
 ## YAML OpenShift templates
@@ -170,3 +174,14 @@ _(deprecated)_
 5) ActiveMQ admin should be reachable on _http://activemq-route-intygstjanster-test.192.168.99.100.nip.io/admin/_
 
 
+## Generating config maps
+Config maps can conveniently be created for all files in a given directory. Make sure you don't include a "credentials.properties" file with secret passwords or real certificates!! Those go into secrets.
+
+If you're in our /tools folder:
+
+    oc create configmap intygstjanst-konfiguration-test --from-file=intygstjanst-konfiguration/test
+
+## Generating secrets
+Secrets can also be created for files in a given directory. They are then encrypted so they can be stored externally.
+
+    oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
