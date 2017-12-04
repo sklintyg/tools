@@ -185,3 +185,38 @@ If you're in our /tools folder:
 Secrets can also be created for files in a given directory. They are then encrypted so they can be stored externally.
 
     oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
+
+
+## REST examples
+
+#### Set some ENV-vars
+    oc login -u system -p admin
+    TOKEN=$(oc whoami -t)
+    ENDPOINT=$(oc config current-context | cut -d/ -f2 | tr - .)
+    NAMESPACE=$(oc config current-context | cut -d/ -f1)
+
+#### Call service
+
+    curl -k \
+        -H "Authorization: Bearer $TOKEN" \
+        -H 'Accept: application/json' \
+        https://$ENDPOINT/api/v1/namespaces/$NAMESPACE/pods
+
+
+## Using a unified YAML file to C(R)UD an application
+
+A convenient way to fully bootstrap an entire application including its configuration, secrets, service etc. is to use a YAML file containing definitions for all participating components.
+
+See templates/intygstjanst/intygstjanst.yaml
+
+##### Create
+
+    oc create -f templates/intygstjanst/intygstjanst.yaml
+    
+##### Update
+
+    oc update -f templates/intygstjanst/intygstjanst.yaml
+    
+##### Delete
+
+    oc delete -f templates/intygstjanst/intygstjanst.yaml
