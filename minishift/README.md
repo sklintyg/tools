@@ -220,3 +220,18 @@ See templates/intygstjanst/intygstjanst.yaml
 ##### Delete
 
     oc delete -f templates/intygstjanst/intygstjanst.yaml
+
+
+## Creating a builder-image for .jar files
+
+In gradle-s2i folder there's source for a sample S2I builder image for gradle. It's derived from https://github.com/luiscoms/s2i-java
+
+Basically, in the hidden /.s2i/bin folder one puts the scripts (bash) that shall be executed when a buildconfig based on the builder image executes inside OpenShift.
+
+The content of the builder image is just those scripts and the JVM + gradle installation downloaded and installed by the _Dockerfile_.
+
+For example, its been built and pushed to docker hub as _eriklupander/builder-gradle_ 
+
+Install the image into openshift:
+
+    oc import-image eriklupander/builder-gradle --confirm

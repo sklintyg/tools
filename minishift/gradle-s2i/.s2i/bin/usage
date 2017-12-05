@@ -1,0 +1,4 @@
+#!/bin/bash -e
+cat <<EOF
+This is the sklintyg/builder-gradle S2I image
+EOF

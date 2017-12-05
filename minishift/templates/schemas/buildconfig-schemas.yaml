@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: schemas-support
+  name: schemas-support
+spec:
+  resources: {}
+  source:
+    git:
+      ref: develop
+      uri: https://github.com/sklintyg/schemas.git
+    contextDir: /support
+    type: Git
+  strategy:
+    sourceStrategy:
+        from:
+          kind: "ImageStreamTag"
+          name: "builder-gradle:latest"
+        forcePull: true
