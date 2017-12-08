@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Derived from the jboss-webserver-3/webserver30-tomcat8-openshift run script
+
+# Set environment variables needed by our application
+export JAVA_OPTS="$JAVA_OPTS -Dintyg.db.username=$INTYG_DB_USERNAME -Dintyg.db.password=$INTYG_DB_PASSWORD -Dspring.profiles.active=test -Dcredentials.file=/opt/inera/intygstjanst-konfiguration/credentials.properties -Dcertificate.config.folder=/opt/inera -Dcertificate.config.file=/opt/inera/intygstjanst-konfiguration/certificate.properties -Dcertificate.logback.file=/opt/inera/intygstjanst-konfiguration/certificate-logback.xml -Drecipient.config.file=/opt/inera/intygstjanst-konfiguration/recipients.json"
+
+# Start JBossWeb (aka Tomcat)
+exec $JWS_HOME/bin/launch.sh

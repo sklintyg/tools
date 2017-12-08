@@ -1,0 +1,405 @@
+apiVersion: v1
+data:
+  certificate-logback.xml: |
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <configuration scan="true" scanPeriod="30 seconds">
+      <jmxConfigurator />
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+            <markers>Validation, Monitoring</markers>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+          <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <!--Daily rolling file appender -->
+      <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+            <markers>Validation, Monitoring</markers>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <file>${catalina.base}/logs/certificate.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>${catalina.base}/logs/certificate.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+          <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <!--Daily rolling file appender for validation messages -->
+      <appender name="VALIDATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+            <marker>Validation</marker>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${catalina.base}/logs/validation.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>${catalina.base}/logs/validation.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+          <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <!--Daily rolling file appender for validation messages -->
+      <appender name="MONITORING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="se.inera.intyg.common.util.logging.MarkerFilter">
+            <marker>Monitoring</marker>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${catalina.base}/logs/monitoring.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>${catalina.base}/logs/monitoring.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+          <pattern>%date{ISO8601} %-5level - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <logger name="org.springframework" level="error" />
+
+      <logger name="org.hibernate" level="error" />
+      <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="off" />
+
+      <logger name="org.apache.camel" level="WARN" />
+      <logger name="org.apache.cxf" level="error" />
+
+      <logger name="se.inera.intyg.intygstjanst" level="warn" />
+      <logger name="se.inera.intyg.intygstjanst.web.integration" level="info" />
+      <logger name="se.inera.intyg.intygstjanst.web.service.impl.StatisticsServiceImpl" level="info" />
+
+      <logger name="se.inera.intyg.intygstjanst.web.service.MonitoringLogService" level="info" />
+
+      <root>
+        <level value="error" />
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="VALIDATION" />
+        <appender-ref ref="MONITORING" />
+      </root>
+
+    </configuration>
+  certificate.properties: >
+    # Configuration and resource folders
+
+    root.config.dir=${certificate.config.folder}
+    config.dir=${certificate.config.folder}/intygstjanst-konfiguration
+
+    # NTjP SSL config
+
+    ntjp.ws.certificate.file=${root.config.dir}/certifikat/test-keystore.jks
+
+    ntjp.ws.certificate.type=JKS
+
+    ntjp.ws.truststore.file=${root.config.dir}/certifikat/empty-truststore.jks
+
+    ntjp.ws.truststore.type=JKS
+
+
+    localhost.url=http://localhost:8186
+
+    # Endpoints for communicating with FK
+
+    registermedicalcertificatev3.endpoint.url=${localhost.url}/inera-certificate/register-medical-certificate-stub
+
+    sendmedicalcertificatequestionv1.endpoint.url=${localhost.url}/inera-certificate/send-certificate-question-stub
+
+    sendmessagetocarev2.endpoint.url=${localhost.url}/inera-certificate/send-message-to-care-stub
+
+    sendmessagetorecipientv2.endpoint.url=${localhost.url}/inera-certificate/send-message-to-recipient-stub
+
+    registercertificatev1.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub
+
+    revokemedicalcertificatev1.endpoint.url =
+    ${localhost.url}/inera-certificate/revoke-medical-certificate-stub
+
+    registercertificatev3.endpoint.url =
+    ${localhost.url}/inera-certificate/register-certificate-stub-fk-parent
+
+    revokecertificatev2.endpoint.url =
+    ${localhost.url}/inera-certificate/revoke-certificate-rivta-stub
+
+
+    # In this env a test jms receiver is used for integration tests
+
+    statistics.enabled = true
+
+
+    ################################################
+
+    #
+
+    # HSA-Integration Configurations
+
+    #
+
+    ################################################
+
+
+    infrastructure.directory.authorizationmanagement.getcredentialsforpersonincludingprotectedpersonresponderinterface.endpoint.url=${localhost.url}/inera-certificate/hsa-authorization
+
+    infrastructure.directory.organization.getunit.endpoint.url=${localhost.url}/inera-certificate/hsa-unit
+
+    infrastructure.directory.organization.gethealthcareunit.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit
+
+    infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit-members
+
+    infrastructure.directory.employee.getemployee.endpoint.url=${localhost.url}/inera-certificate/hsa-employee
+
+
+    infrastructure.directory.logicalAddress=
+
+
+    ################################################
+
+    #
+
+    # HSA/PU ignite cache settings
+
+    #
+
+    ################################################
+
+    cache.ipaddresses=127.0.0.1:47530..47539
+
+    cache.default.expiration.seconds=3600
+
+    cache.bindport=47530
+
+    hsa.unit.cache.expiry=3600
+
+    hsa.healthcareunit.cache.expiry=3600
+
+    hsa.healhcareunitmembers.cache.expiry=3600
+
+
+    ################################################
+
+    #
+
+    # Recipient properties
+
+    #
+
+    ################################################
+
+    recipients.update.cron = 0 0 * * * *
+
+    recipient.file = ${recipient.config.file}
+  credentials.properties: |
+    # NTjP SSL config
+    ntjp.ws.certificate.password = password
+    ntjp.ws.key.manager.password = password
+    ntjp.ws.truststore.password = password
+  recipients.json: |
+    [
+      {
+        "id": "FKASSA",
+        "name": "F\u00F6rs\u00E4kringskassan",
+        "logicalAddress": "FKORG",
+        "certificateTypes": [
+          "fk7263",
+          "luse",
+          "lisjp",
+          "luae_fs",
+          "luae_na"
+        ],
+        "active" : true,
+        "trusted": true
+      },
+      {
+        "id" : "FBA",
+        "name" : "F\u00F6rs\u00E4kringsbolaget AB",
+        "logicalAddress" : "fail-adress",
+        "certificateTypes" : [
+          "lisjp"
+        ],
+        "active" : true,
+        "trusted": false
+      },
+      {
+        "id" : "TRANSP",
+        "name" : "Transportstyrelsen",
+        "logicalAddress" : "tsTestAdress",
+        "certificateTypes" : [
+          "ts-bas",
+          "ts-diabetes"
+        ],
+        "active" : true,
+        "trusted": true
+      },
+      {
+        "id" : "HSVARD",
+        "name" : "Hälso- och sjukvården",
+        "logicalAddress" : "hsvardAdress",
+        "certificateTypes" : [
+          "ts-bas",
+          "ts-diabetes",
+          "fk7263",
+          "lisjp",
+          "luse",
+          "luae_na",
+          "luae_fs"
+        ],
+        "active" : true,
+        "trusted": true
+      },
+      {
+        "id" : "INVANA",
+        "name" : "Invånaren",
+        "logicalAddress" : "miAdress",
+        "certificateTypes" : [
+          "ts-bas",
+          "ts-diabetes",
+          "fk7263",
+          "lisjp",
+          "luse",
+          "luae_na",
+          "luae_fs"
+        ],
+        "active" : true,
+        "trusted": true
+      },
+      {
+        "id": "SKV",
+        "name": "Skatteverket",
+        "logicalAddress": "Skatteverket",
+        "certificateTypes" : [
+          "db"
+        ],
+        "active" : true
+      },
+      {
+        "id": "SOS",
+        "name": "Socialstyrelsen",
+        "logicalAddress": "SOS",
+        "certificateTypes" : [
+          "doi"
+        ],
+        "active" : true
+      }
+    ]
+kind: ConfigMap
+metadata:
+  name: intygstjanst-konfiguration-test
+
+---
+
+apiVersion: v1
+data:
+  empty-truststore.jks: /u3+7QAAAAIAAAAA5yXvSDt11bGXyBA9M2iy0/5i1Tg=
+  test-keystore.jks: >-
+    /u3+7QAAAAIAAAABAAAAAQAWdGVzdC5pbnR5Z3N0amFuc3Rlci5zZQAAAUv/P+WbAAABjzCCAYswDgYKKwYBBAEqAhEBAQUABIIBd+T2NNnUABFwCK0Pf1Ypibd2p7csLAA0acIDbqQX0xDTZ+0Qrihjm8Eu+2vrPEJWOrVxLUKtaast8TjqMvzIPnYjhsXeRcot1FWD8H2OQVlaC3QFFzVTvUMzLQoElq6myR+cSYgeNLPPk3nl1mpbRh29QZQtViqUdTJKy6sHRSjzqQO2W/Qh6+do1/cJpFVur/JBjDISq/quG3l4AUT7OTkUvXGjtyTkgxIYNhxVO4nFEI6rH3A5m0MD5X2VsVy57m+KLWqb82ZwL8z6lNmVnhAyqfJCgiSPeAllru/+U2J2rCSgwEHElX5mF/HsR1lDJxDUp2673z0oSvzn7inVeEeRbfGAAaKhwFuPKPsLH75Pie0Wqyw1AjVtZ045+VhyAcQAsPexPlehKpIB55xLZCkvWaMzy2WBP00bVH+ii30IFN3KIaBvR1/VGRv/5+bxz+sdnpvQvVa71KqsvN2etH7Zp0c4QcQN9FMGbV2McL64S2nkpndvswAAAAEABVguNTA5AAADUDCCA0wwggMKoAMCAQICBHNOTycwCwYHKoZIzjgEAwUAMHgxCzAJBgNVBAYTAlNFMRAwDgYDVQQIEwdTdmVyaWdlMRIwEAYDVQQHEwlTdG9ja2hvbG0xETAPBgNVBAoTCEluZXJhIEFCMRcwFQYDVQQLEw5JbnR5Z3N0amFuc3RlcjEXMBUGA1UEAxMOSW50eWdzdGphbnN0ZXIwHhcNMTUwMzA5MTU1NTUxWhcNMTUwNjA3MTU1NTUxWjB4MQswCQYDVQQGEwJTRTEQMA4GA1UECBMHU3ZlcmlnZTESMBAGA1UEBxMJU3RvY2tob2xtMREwDwYDVQQKEwhJbmVyYSBBQjEXMBUGA1UECxMOSW50eWdzdGphbnN0ZXIxFzAVBgNVBAMTDkludHlnc3RqYW5zdGVyMIIBtzCCASwGByqGSM44BAEwggEfAoGBAP1/U4EddRIpUt9KnC7s5Of2EbdSPO9EAMMeP4C2USZpRV1AIlH7WT2NWPq/xfW6MPbLm1Vs14E7gB00b/JmYLdrmVClpJ+f6AR7ECLCT7up1/63xhv4O1fnxqimFQ8E+4P208UewwI1VBNaFpEy9nXzrith1yrv8iIDGZ3RSAHHAhUAl2BQjxUjC8yykrmCouuEC/BYHPUCgYEA9+GghdabPd7LvKtcNrhXuXmUr7v6OuqC+VdMCz0HgmdRWVeOutRZT+ZxBxCBgLRJFnEj6EwoFhO3zwkyjMim4TwWeotUfI0o4KOuHiuzpnWRbqN/C/ohNWLx+2J6ASQ7zKTxvqhRkImog9/hWuWfBpKLZl6Ae1UlZAFMO/7PSSoDgYQAAoGAaeFHrf39OYP3IuNw9PIxZutgjxqtystRljgLK0VviCFDPYWJSTbdd9K6jpTR7G5iMgXQ/oHNQWCcOQ2uoy2pGRNVi6CvSrZiqhdwABxyKHraGSV7vTAt0G0FEKDc69/u52LkyakwNklFxRu+HTNl22raWzcO2melMjEy21WNIyejITAfMB0GA1UdDgQWBBTfYLon75fPg+Ak6kfh5oQhzkjk2TALBgcqhkjOOAQDBQADLwAwLAIUOnhRqW9TkVwfgLsseiUgkJ0rWPQCFGMrxMJ9VCHQGufoyOnzVIhWJS3uolbiWOQwYzds2dGfaprGj2DtpVU=
+kind: Secret
+metadata:
+  name: intygstjanst-test-certifikat
+type: Opaque
+
+---
+
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: EriksFinaTemplate
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: intygstjanst
+    environment: test
+  name: intygstjanst
+spec:
+  replicas: 1
+  selector:
+    app: intygstjanst
+    deploymentconfig: intygstjanst
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: EriksFinaTemplate
+      labels:
+        app: intygstjanst
+        deploymentconfig: intygstjanst
+        environment: test
+    spec:
+      containers:
+      - env:
+        - name: SPRING_ACTIVE_PROFILES
+          value: test
+        - name: INTYG_DB_USERNAME
+          value: intyg
+        - name: INTYG_DB_PASSWORD
+          value: intyg
+        - name: NTJP_URL
+          value: intyg
+        image: eriklupander/intygstjanst:latest
+        imagePullPolicy: IfNotPresent
+        name: intygstjanst
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8085
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+         - mountPath: /opt/inera/intygstjanst-konfiguration
+           name: intygstjanst-konfiguration-test
+           readOnly: true
+         - mountPath: /opt/inera/certifikat
+           name: intygstjanst-test-certifikat
+           readOnly: true
+
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+       - configMap:
+           defaultMode: 420
+           name: intygstjanst-konfiguration-test
+         name: intygstjanst-konfiguration-test
+       - name: intygstjanst-test-certifikat
+         secret:
+           defaultMode: 420
+           secretName: intygstjanst-test-certifikat
+  test: false
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: ErikDiskett
+  labels:
+    app: intygstjanst
+    environment: test
+  name: intygstjanst
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8085
+  selector:
+    deploymentconfig: intygstjanst
+  sessionAffinity: None
+  type: ClusterIP
+

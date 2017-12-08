@@ -105,6 +105,10 @@ It's very convenient to use the minishift's docker engine for building images lo
 
     > eval $(minishift docker-env)    
 
+##### 9. Stopping minishift
+Why would you want to do that? Well, just in case:
+
+    > minishift stop
          
 ## YAML OpenShift templates
 Inside the "templates" folder we have some YAML files for setting up:
@@ -235,3 +239,96 @@ For example, its been built and pushed to docker hub as _eriklupander/builder-gr
 Install the image into openshift:
 
     oc import-image eriklupander/builder-gradle --confirm
+
+
+
+## About S2I scripts
+
+##### Assemble step
+
+    S2I uses an assemble script to do the work of copying the application source code into the correct location and then installing any dependencies which the application may require.
+
+The quote above describes the work done by the _assemble_ script, e.g. it should do the same stuff that you'd typically do using Ansible or as COPY / ADD / RUN commands in a Dockerfile. The purpose seems to be that the Dockerfile of the base S2I image can be kept relatively clean, and the complexity goes into the _assemble_ script. Those scripts are typically bash, but it might be possible to use other scripting languages as well.
+    
+##### Run step    
+
+    The S2I process sets up the final application image such that the CMD for the image will execute the corresponding run script.
+
+This is quite simple: Everything you need to do at container startup goes into the _run_ script. Instead of brewing your own "starup.sh" which you'd then pass using CMD ["start.sh"], you put that stuff into _run_. This could be setting environment variables, running liquibase and of course the actual command to start the service such as _catalina.sh run_ or a _java -jar mybootapp.jar_.
+
+
+### What does the above mean for us?
+
+Let's start by defining a task: We want to be able to build intygstjanst.war in a S2I and package it into a Tomcat. The S2I builder image *must* be generic enough to be able to package webcert, intygstjansten or rehabstod using the same base S2I image and parameterized _assemble_ and _run_ scripts.
+
+##### Some context: BuildConfig
+Remember that such as builder image is the starting point for a BuildConfig such as this:
+
+    apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        app: intygstjanst
+      name: intygstjanst
+    spec:
+      resources: {}
+      source:
+        git:
+          ref: develop
+          uri: https://github.com/sklintyg/intygstjanst.git     <--- 1. NOTE THIS 
+        contextDir: /
+        type: Git
+      strategy:
+        sourceStrategy:
+            from:
+              kind: "ImageStreamTag"
+              name: "sklintyg-gradle-tomcat-builder:latest"      <--- 2. NOTE THIS 
+            forcePull: true
+
+Note two things:
+
+- 1: Here we specify where to get the source code for what we're building.
+- 2: Here we specify the S2I builder image to use. Note that this image is what we're actually trying to set up here! 
+
+##### Base Dockerfile
+In order to be able to assemble and build something, we need some basic building blocks such as a JDK and Gradle installation. This is typically handled in the Dockerfile, but could also be handled in the _assemble_ script I guess:
+
+    FROM openshift/base-centos7
+    
+    MAINTAINER Erik Lupander <erik.lupander@callistaenterprise.se>
+    
+    # EXPOSE 8080
+    
+    ENV JAVA_VERSION 1.8.0
+    
+    LABEL io.k8s.description="Platform for building plain .jar files using gradle" \
+          io.k8s.display-name="Gradle Builder Image" \
+          io.openshift.tags="builder,java,java8,gradle,springboot"
+    
+    RUN yum update -y && \
+      yum install -y curl && \
+      yum install -y java-$JAVA_VERSION-openjdk java-$JAVA_VERSION-openjdk-devel && \
+      yum clean all
+    
+    ENV JAVA_HOME /usr/lib/jvm/java
+    
+    ENV GRADLE_VERSION 4.2
+    RUN curl -sL -0 https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o /tmp/gradle-${GRADLE_VERSION}-bin.zip && \
+        unzip /tmp/gradle-${GRADLE_VERSION}-bin.zip -d /usr/local/ && \
+        rm /tmp/gradle-${GRADLE_VERSION}-bin.zip && \
+        mv /usr/local/gradle-${GRADLE_VERSION} /usr/local/gradle && \
+        ln -sf /usr/local/gradle/bin/gradle /usr/local/bin/gradle
+    
+    COPY ./.s2i/bin/ $STI_SCRIPTS_PATH
+    
+    RUN chown -R 1001:1001 /opt/app-root
+    
+    USER 1001
+    
+    CMD $STI_SCRIPTS_PATH/usage
+    
+The Dockerfile above is based on an official openshift CentOS base image which has some S2I stuff pre-packaged into it. 
+We add a JDK using yum and Gradle using curl. Do note that we probably could use docker multi-stage builds here as well.
+Also note that we're _not_ installing Tomcat, which actually could be a quite good idea to do since we know that this S2I image should be used for all our .war-based applications deployd on Tomcat. Multi-stage builds is definitely an option here as well - maybe pull in a standard tomcat7 image and copy the relevant parts into the final image? Could we install Ansible in our base builder image and then use Ansible playbooks to install Tomcat in the assemble script? 
+
+
