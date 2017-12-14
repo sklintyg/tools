@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'maven'
 
 group = 'se.inera.intyg.tools'
-version = "2.1.4"
+version = "2.1.5"
 mainClassName = 'se.inera.intyg.tools.anonymisering.AnonymiseraIntygForSRS'
 
 ext {
