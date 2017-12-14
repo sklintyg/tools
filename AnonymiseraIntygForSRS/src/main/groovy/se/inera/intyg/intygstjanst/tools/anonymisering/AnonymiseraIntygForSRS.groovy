@@ -19,12 +19,15 @@
 
 package se.inera.intyg.tools.anonymisering
 
+
 import groovy.sql.Sql
 import groovyx.gpars.GParsPool
-import org.xml.sax.SAXException
 
+import org.xml.sax.SAXException
+import groovy.json.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.xpath.XPathExpressionException
+
 import java.sql.Blob
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -34,6 +37,7 @@ import se.inera.intyg.common.tools.anonymisering.AnonymiseraDatum
 import se.inera.intyg.common.tools.anonymisering.AnonymiseraHsaId
 import se.inera.intyg.common.tools.anonymisering.AnonymiseraConsistentPersonId
 import se.inera.intyg.common.tools.anonymisering.AnonymiseraXmlForSRS
+
 
 class AnonymiseraIntygForSRS {
     static File file = new File("output.csv")
@@ -81,9 +85,21 @@ class AnonymiseraIntygForSRS {
             new BasicDataSource(driverClassName: config.dataSource.driver, url: config.dataSource.url,
                                 username: config.dataSource.username, password: config.dataSource.password,
                                 initialSize: numberOfThreads, maxTotal: numberOfThreads)
+
+
+        File queryParamFile = new File("queryParameters.json")
+        def queryParameters = new JsonSlurper().parseText(queryParamFile.text)
+
+        def certIds = queryParameters.certificateIds.collect {"'$it'"}.join(', ')
+        def hsaIds = queryParameters.hsaIds.collect {"'$it'"}.join(', ')
+
         def bootstrapSql = new Sql(dataSource)
-        def certificateIds = bootstrapSql.rows("select ID from CERTIFICATE where CERTIFICATE_TYPE = :type", [type : type])
+        def certificateIds = bootstrapSql.rows(
+                "select ID from CERTIFICATE where CERTIFICATE_TYPE = :type and ID in ($certIds) and CARE_UNIT_ID in ($hsaIds)",
+                [type : type])
+
         bootstrapSql.close()
+
         println "${certificateIds.size()} certificates found to anonymize"
         final AtomicInteger count = new AtomicInteger(0)
         final AtomicInteger errorCount = new AtomicInteger(0)
