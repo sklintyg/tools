@@ -12,9 +12,21 @@ spec:
   resources: {}
   source:
     git:
-      ref: master
-      uri: https://github.com/eriklupander/openshift-example-project.git
+      ref: develop
+      uri: https://github.com/sklintyg/intygstjanst.git
     contextDir: /
     type: Git
   strategy:
-    type: Docker
+    sourceStrategy:
+      env:
+      - name: commonVersion
+        value: 3.6.0.23
+      - name: infraVersion
+        value: 3.6.0.1
+      - name: buildVersion
+        value: 3.6.0.0-OPENSHIFT
+      from:
+        kind: "ImageStreamTag"
+        name: "jws-gradle-builder:latest"
+      forcePull: true
+

@@ -9,5 +9,3 @@ metadata:
 spec:
   lookupPolicy:
     local: false
-status:
-  dockerImageRepository: '172.30.1.1:5000/intygstjanster-test/intygstjanst'

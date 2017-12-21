@@ -226,21 +226,6 @@ See templates/intygstjanst/intygstjanst.yaml
     oc delete -f templates/intygstjanst/intygstjanst.yaml
 
 
-## Creating a builder-image for .jar files
-
-In gradle-s2i folder there's source for a sample S2I builder image for gradle. It's derived from https://github.com/luiscoms/s2i-java
-
-Basically, in the hidden /.s2i/bin folder one puts the scripts (bash) that shall be executed when a buildconfig based on the builder image executes inside OpenShift.
-
-The content of the builder image is just those scripts and the JVM + gradle installation downloaded and installed by the _Dockerfile_.
-
-For example, its been built and pushed to docker hub as _eriklupander/builder-gradle_ 
-
-Install the image into openshift:
-
-    oc import-image eriklupander/builder-gradle --confirm
-
-
 
 ## About S2I scripts
 
@@ -291,44 +276,196 @@ Note two things:
 - 2: Here we specify the S2I builder image to use. Note that this image is what we're actually trying to set up here! 
 
 ##### Base Dockerfile
-In order to be able to assemble and build something, we need some basic building blocks such as a JDK and Gradle installation. This is typically handled in the Dockerfile, but could also be handled in the _assemble_ script I guess:
+In order to be able to assemble and build something, we need some basic building blocks such as a JDK and a Gradle installation. This is typically handled in the Dockerfile, but could also be handled in the _assemble_ script I guess:
 
-    FROM openshift/base-centos7
+    FROM registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift
     
-    MAINTAINER Erik Lupander <erik.lupander@callistaenterprise.se>
-    
-    # EXPOSE 8080
-    
-    ENV JAVA_VERSION 1.8.0
-    
-    LABEL io.k8s.description="Platform for building plain .jar files using gradle" \
-          io.k8s.display-name="Gradle Builder Image" \
-          io.openshift.tags="builder,java,java8,gradle,springboot"
-    
-    RUN yum update -y && \
-      yum install -y curl && \
-      yum install -y java-$JAVA_VERSION-openjdk java-$JAVA_VERSION-openjdk-devel && \
-      yum clean all
-    
-    ENV JAVA_HOME /usr/lib/jvm/java
-    
+    # Note: $JWS_HOME is /opt/webserver
+    # Install gradle
+    USER root
     ENV GRADLE_VERSION 4.2
-    RUN curl -sL -0 https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o /tmp/gradle-${GRADLE_VERSION}-bin.zip && \
-        unzip /tmp/gradle-${GRADLE_VERSION}-bin.zip -d /usr/local/ && \
-        rm /tmp/gradle-${GRADLE_VERSION}-bin.zip && \
-        mv /usr/local/gradle-${GRADLE_VERSION} /usr/local/gradle && \
-        ln -sf /usr/local/gradle/bin/gradle /usr/local/bin/gradle
+    RUN curl -sL -0 https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o /tmp/gradle-${GRADLE_VERSION}-bin.zip
+    RUN unzip /tmp/gradle-${GRADLE_VERSION}-bin.zip -d /usr/local/
+    RUN rm /tmp/gradle-${GRADLE_VERSION}-bin.zip
+    RUN mv /usr/local/gradle-${GRADLE_VERSION} /usr/local/gradle
+    RUN ln -sf /usr/local/gradle/bin/gradle /usr/local/bin/gradle
     
-    COPY ./.s2i/bin/ $STI_SCRIPTS_PATH
+    # Download extra libs into tomcat/lib
+    USER 185
+    ADD http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.40/mysql-connector-java-5.1.40.jar $JWS_HOME/lib
+    ADD http://repo1.maven.org/maven2/org/apache/activemq/activemq-client/5.13.0/activemq-client-5.13.0.jar $JWS_HOME/lib
+    ADD http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar $JWS_HOME/lib
+    ADD http://repo1.maven.org/maven2/org/fusesource/hawtbuf/hawtbuf/1.9/hawtbuf-1.9.jar $JWS_HOME/lib
+    ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar $JWS_HOME/lib
+    ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar $JWS_HOME/lib
     
-    RUN chown -R 1001:1001 /opt/app-root
+    USER root
     
-    USER 1001
+    # Overwrite s2i scripts 
+    COPY ./.s2i/bin/ /usr/local/s2i
     
-    CMD $STI_SCRIPTS_PATH/usage
+    # Fix owner and permissions on libs and scripts
+    RUN chmod -R 775 $JWS_HOME/lib
+    RUN chmod -R 775 /usr/local/s2i       
+    RUN chown -R 185 $JWS_HOME/lib
+    RUN chown -R 185 /usr/local/s2i
     
-The Dockerfile above is based on an official openshift CentOS base image which has some S2I stuff pre-packaged into it. 
-We add a JDK using yum and Gradle using curl. Do note that we probably could use docker multi-stage builds here as well.
-Also note that we're _not_ installing Tomcat, which actually could be a quite good idea to do since we know that this S2I image should be used for all our .war-based applications deployd on Tomcat. Multi-stage builds is definitely an option here as well - maybe pull in a standard tomcat7 image and copy the relevant parts into the final image? Could we install Ansible in our base builder image and then use Ansible playbooks to install Tomcat in the assemble script? 
+    USER 185
 
+    
+The Dockerfile above is based on an official jboss-webserver-3/webserver30-tomcat8-openshift base image which has some S2I stuff pre-packaged into it as well as the Red Hat flavour of Tomcat, installed into /opt/webserver. 
+We add Gradle using curl and add some extra lib files we use into tomcat/lib.
+
+This Dockerfiles defines the base "intyg jws-gradle-s2i" builder image we then should be able to use for all our Tomcat-based .war applications.
+
+
+We also have bash scripts (note without suffix!) in _/.s2i/bin_:
+
+#### assemble
+This is the script OpenShift runs on the container when it's executing a _BuildConfig_ in order to produce a runnable container image. 
+
+    #!/bin/sh
+    . $(dirname $0)/common.sh
+    
+    LOCAL_SOURCE_DIR=/tmp/src
+    mkdir -p $LOCAL_SOURCE_DIR
+    
+    DEPLOY_DIR=$JWS_HOME/webapps
+    
+    # the subdirectory within LOCAL_SOURCE_DIR from where we should copy build artifacts
+    
+    configure_proxy
+    configure_mirrors
+    
+    manage_incremental_build
+    
+    # Restore artifacts from the previous build (if they exist).
+    echo "---> Restoring build artifacts..."
+    if [ "$(ls -A /tmp/artifacts/ 2>/dev/null)" ]; then
+      echo "---> Restoring found build artifacts..."
+      cp -Rf /tmp/artifacts/. ./
+    fi
+    
+    echo "---> Installing application source..."
+    cp -Rf /tmp/src/. ./
+    
+    echo "injected vars: commonVersion: $commonVersion buildVersion: $buildVersion infraVersion: $infraVersion"
+    export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DcommonVersion=$commonVersion -DbuildVersion=$buildVersion -DinfraVersion=$infraVersion"
+    
+    # Start build using gradle.
+    if [ -f "$LOCAL_SOURCE_DIR/build.gradle" ]; then
+     # pushd $LOCAL_SOURCE_DIR &> /dev/null
+    
+      echo "---> Building application from source..."
+      GRADLE_ARGS=${GRADLE_ARGS:-"build"}
+      echo "--> # GRADLE_ARGS = $GRADLE_ARGS"
+    
+        echo "---> Building application with gradle..."
+        /usr/local/gradle/bin/gradle $GRADLE_ARGS
+    
+        ERR=$?
+          if [ $ERR -ne 0 ]; then
+            echo "Aborting due to error code $ERR from Gradle build"
+            exit $ERR
+          fi
+    
+      # optionally clear the local maven repository after the build
+      # clear_maven_repository
+    
+      # popd &> /dev/null
+    fi
+    
+    # Copy to webapps dir
+    ARTIFACT_DIR=/home/jboss/web/build/libs
+    echo "--> # ARTIFACT_DIR = $ARTIFACT_DIR"
+    echo "---> Rename artifact $(find $ARTIFACT_DIR -name *.war)"
+    result_file=$(find $ARTIFACT_DIR -name *.war)
+    if [ -z "$result_file" ]; then
+       echo "---> Build file $result_file could not be found"
+       exit 1
+    fi
+    
+    mv $result_file $DEPLOY_DIR/ROOT.war
+
+
+Approx steps:
+1. OpenShift will download the source code for us into /tmp/source(?) and use /home/jboss as starting folder. 
+2. There's a step where artifacts from previous builds are added from /tmp/artifacts into /home/jboss, though we're not using that functionality at the moment.
+3. We need to pass environment variables to gradle using $JAVA_TOOL_OPTIONS. More explicitly, we're adding:
+
+- commonVersion: Version of our "common" libraries to use (e.g. download from Nexus)
+- infraVersion: Version of our "infra" libraries to use (also downloaded from Nexus)
+- buildVersion: This is the version that goes into the version.txt file, perhaps used for more stuff?
+
+These must be specified as ENV vars by whoever starts a build with a BuildConfig using this S2I image. E.g. Jenkins or manually.
+
+4. We've coded the bash script so it runs "gradle build". This takes an awful amount of time since both gradle plugin dependencies AND all application dependencies has to be download from Maven Central and/or our Nexus on each build.
+5. Finally, we copy any .war file present in /home/jboss/web/builds/lib into the file /opt/webserver/webapps/ROOT.war 
+ 
+Note to seld: Could we install Ansible in our base builder image and then use Ansible playbooks set up stuff using the playbooks we've checked out from our /ansible folder?
+
+
+## Building and running our S2I image
+
+##### Build
+_Note that we may need to set up a "sklintyg" account at Docker Hub unless we fix a private repository for our docker images._
+
+From /minishift/jws-gradle-s2i folder.
+
+    > docker build -t sklintyg/jws-gradle-builder .
+    > docker push sklintyg/jws-gradle-builder
+    > oc import-image sklintyg/jws-gradle-builder --confirm
+
+This should have pushed our builder image to Docker Hub and then we can install it as a (builder) image into our OpenShift environment.
+
+##### Usage in a BuildConfig
+
+Consider the BuildConfig YAML below.
+
+     apiVersion: v1
+     kind: BuildConfig
+     metadata:
+       labels:
+         app: intygstjanst
+       name: intygstjanst
+     spec:
+       output:
+         to:
+           kind: ImageStreamTag
+           name: intygstjanst:latest
+       resources: {}
+       source:
+         git:
+           ref: develop
+           uri: https://github.com/sklintyg/intygstjanst.git
+         contextDir: /
+         type: Git
+       strategy:
+         sourceStrategy:
+           env:
+           - name: commonVersion
+             value: 3.6.0.23
+           - name: infraVersion
+             value: 3.6.0.1
+           - name: buildVersion
+             value: 3.6.0.0-OPENSHIFT
+           from:
+             kind: "ImageStreamTag"
+             name: "jws-gradle-builder:latest"
+           forcePull: true
+     
+It defines the following:
+
+- That the output of the build is an Image to be pushed into the ImageStream named "intygstjanst"
+- The the source code it will check out from git (build be the _assemble_ script) is the develop branch of our intygstjanst.
+- The the sourceStrategy states that we'll use our very own "jws-gradle-builder" builder image.
+- Also note the three hard-coded ENV vars. This is not a very realistic approach but should suffice for educational purposes.
+
+##### Executing a build
+
+This should be very possible to do from the command-line. I have however only done this from the GUI thus far. If you do that, you can pay some attention to the Logs. A build should take several minutes since a lot of dependencies must be downloaded on each build. There exists strategies to cache dependencies using multi-stage builds or mounting a volume with Nexus artifacts into the container... we should take a look at approaches to speed this up.
+
+If a build succeeds, a new "image" should be present in the GUI simply called "intygstjanst".
+
+The built image can then be specified in a _Deployment configuration_.
 
