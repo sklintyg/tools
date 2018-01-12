@@ -90,6 +90,7 @@ data:
     # Configuration and resource folders
 
     root.config.dir=${certificate.config.folder}
+
     config.dir=${certificate.config.folder}/intygstjanst-konfiguration
 
     # NTjP SSL config
@@ -103,7 +104,7 @@ data:
     ntjp.ws.truststore.type=JKS
 
 
-    localhost.url=http://localhost:8186
+    localhost.url=http://localhost:8080
 
     # Endpoints for communicating with FK
 
@@ -117,14 +118,11 @@ data:
 
     registercertificatev1.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub
 
-    revokemedicalcertificatev1.endpoint.url =
-    ${localhost.url}/inera-certificate/revoke-medical-certificate-stub
+    revokemedicalcertificatev1.endpoint.url=${localhost.url}/inera-certificate/revoke-medical-certificate-stub
 
-    registercertificatev3.endpoint.url =
-    ${localhost.url}/inera-certificate/register-certificate-stub-fk-parent
+    registercertificatev3.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub-fk-parent
 
-    revokecertificatev2.endpoint.url =
-    ${localhost.url}/inera-certificate/revoke-certificate-rivta-stub
+    revokecertificatev2.endpoint.url=${localhost.url}/inera-certificate/revoke-certificate-rivta-stub
 
 
     # In this env a test jms receiver is used for integration tests
@@ -149,7 +147,7 @@ data:
 
     infrastructure.directory.organization.gethealthcareunit.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit
 
-    infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit-members
+    infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${localhost.url}/hsa-healthcareunit-members
 
     infrastructure.directory.employee.getemployee.endpoint.url=${localhost.url}/inera-certificate/hsa-employee
 
