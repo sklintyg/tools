@@ -33,6 +33,11 @@ spec:
           value: intyg
         - name: NTJP_URL
           value: intyg
+        - name: APP_JVM_ENV
+          value: -Dcredentials.file=/opt/inera/intygstjanst-konfiguration/credentials.properties -Dcertificate.config.folder=/opt/inera -Dcertificate.config.file=/opt/inera/intygstjanst-konfiguration/certificate.properties -Dcertificate.logback.file=/opt/inera/intygstjanst-konfiguration/certificate-logback.xml -Drecipient.config.file=/opt/inera/intygstjanst-konfiguration/recipients.json
+        - name: ACTIVE_SPRING_PROFILES
+          value: test
+
         image: 172.30.1.1:5000/intygstjanster-test/intygstjanst:latest
         imagePullPolicy: Always
         name: intygstjanst
@@ -42,8 +47,8 @@ spec:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /
-            port: 8085
+            path: /inera-certificate/services
+            port: 8080
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 10

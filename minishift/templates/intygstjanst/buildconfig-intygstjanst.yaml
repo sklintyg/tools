@@ -20,13 +20,13 @@ spec:
     sourceStrategy:
       env:
       - name: commonVersion
-        value: 3.6.0.23
+        value: 3.6.0.+
       - name: infraVersion
-        value: 3.6.0.1
+        value: 3.6.0.+
       - name: buildVersion
         value: 3.6.0.0-OPENSHIFT
       from:
         kind: "ImageStreamTag"
-        name: "jws-gradle-builder:latest"
+        name: "intyg-s2i:latest"
       forcePull: true
 

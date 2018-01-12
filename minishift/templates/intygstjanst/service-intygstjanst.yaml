@@ -12,7 +12,7 @@ spec:
   - name: 8080-tcp
     port: 8080
     protocol: TCP
-    targetPort: 8085
+    targetPort: 8080
   selector:
     deploymentconfig: intygstjanst
   sessionAffinity: None

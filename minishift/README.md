@@ -46,12 +46,12 @@ Also includes some YAML files for setting up ActiveMQ and MySQL for intyg use.
 ##### 3. Start with virtualbox:
 
 
-    > minishift start --vm-driver=virtualbox
+    > minishift start --disk-size=40G --vm-driver=virtualbox
     -- Starting local OpenShift cluster using 'virtualbox' hypervisor ...
     -- Minishift VM will be configured with ...
        Memory:    2 GB
        vCPUs :    2
-       Disk size: 20 GB
+       Disk size: 40 GB
      ........
      OpenShift server started.
      
@@ -469,3 +469,32 @@ If a build succeeds, a new "image" should be present in the GUI simply called "i
 
 The built image can then be specified in a _Deployment configuration_.
 
+# Developing S2I
+
+### 1. Install the S2I binary for your platform
+https://github.com/openshift/source-to-image/releases/tag/v1.1.8
+
+Make sure you add the s2i binary to your PATH.
+
+### 2. From scratch
+See guide here on how to scaffold:
+
+https://blog.openshift.com/create-s2i-builder-image/
+
+### 3. From our own
+In /tools/minishift/tomcat8-gradle-ansible-s2i, there source for a builder image. Using docker build, create it:
+
+    docker build -t eriklupander/intyg-s2i .
+    
+You may name the tag whatever for testing purposes, just remember what you named it as you'll need it in the next step.
+
+To speed up testing and developing of an s2i, make sure you've built the S2I image above then use _s2i build_ to test without uploading to OpenShift etc:
+
+    s2i build -e buildVersion=0.1-dev -e commonVersion=3.6.0.+ -e infraVersion=3.6.0.+ /Users/eriklupander/intyg/intygstjanst eriklupander/intyg-s2i intyg-dev
+    
+The line above tries to do an S2I build using:
+ 
+- Three environment variables so gradle knows which versions of infra and common to use, + which version it's actually building.
+- Uses the source in _/Users/eriklupander/intyg/intygstjanst_ 
+- The builder image identified by _eriklupander/intyg-s2i_
+- What the output image will be named _intyg-dev_.
