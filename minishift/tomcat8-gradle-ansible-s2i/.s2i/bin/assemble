@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# restore maven dependencies downloaded in a previous build,
+# so they do not have to be downloaded again.
+# /opt/s2i/destination/artifacts will only be present in the incremental build scenario
+# in which the target image name is an existing docker image which contains
+# dependencies from a prior build execution.
+function restore_saved_artifacts() {
+  if [ "$(ls -A /opt/s2i/destination/artifacts/ 2>/dev/null)" ]; then
+    echo -n " Restoring saved artifacts from prior build..."
+    mv /opt/s2i/destination/artifacts/.m2/repository $HOME/.m2
+  fi
+}
+
+# Source code provided to S2I is at ${HOME}
+LOCAL_SOURCE_DIR=${HOME}
+mkdir -p $LOCAL_SOURCE_DIR
+
+# the subdirectory within LOCAL_SOURCE_DIR from where we should copy build
+# artifacts (*.war, *.jar)
+# ARTIFACT_DIR=${ARTIFACT_DIR:-target}
+# Changed by INTYG for gradle.
+ARTIFACT_DIR=${ARTIFACT_DIR:-web/build/libs}
+
+
+# Resulting WAR files will be deployed to $CATALINA_HOME/webapps
+DEPLOY_DIR=$CATALINA_HOME/webapps
+mkdir -p $DEPLOY_DIR
+
+# Copy the source for compilation
+cp -Rf /opt/s2i/destination/src/. $LOCAL_SOURCE_DIR
+chgrp -R 0 $LOCAL_SOURCE_DIR
+chmod -R g+rw $LOCAL_SOURCE_DIR
+
+# Start ansible stuff
+echo "Start extra provisioning using Ansible..."
+
+cd ansible-openshift
+ansible-playbook -i "localhost," provision.yml -c local
+cd ..
+echo "Ansible provisioning done"
+
+
+#### START INTYG CUSTOM GRADLE BUILD CODE!!!
+echo "injected vars: commonVersion: $commonVersion buildVersion: $buildVersion infraVersion: $infraVersion"
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DcommonVersion=$commonVersion -DbuildVersion=$buildVersion -DinfraVersion=$infraVersion"
+
+# Start build using gradle.
+if [ -f "$LOCAL_SOURCE_DIR/build.gradle" ]; then
+     # pushd $LOCAL_SOURCE_DIR &> /dev/null
+
+    echo "---> Building application from source..."
+    GRADLE_ARGS=${GRADLE_ARGS:-"build"}
+    echo "--> # GRADLE_ARGS = $GRADLE_ARGS"
+
+    echo "---> Building application with gradle..."
+    ./gradlew $GRADLE_ARGS
+
+    ERR=$?
+      if [ $ERR -ne 0 ]; then
+        echo "Aborting due to error code $ERR from Gradle build"
+        exit $ERR
+      fi
+
+  # optionally clear the local maven repository after the build
+  # clear_maven_repository
+
+  ## DEPLOY AND CLEANUP
+  echo -n "Cleaning $DEPLOY_DIR..."
+    rm -rf $DEPLOY_DIR/*
+    echo " cleaned up"
+
+    result_file=$(find $ARTIFACT_DIR -name *.war)
+    if [ -z "$result_file" ]; then
+       echo "---> Build file $result_file could not be found"
+       exit 1
+    fi
+
+    mv $result_file $DEPLOY_DIR/ROOT.war
+    echo "Copied $result_file to $DEPLOY_DIR/ROOT.war"
+
+    #if [ ! -z `find -name $WAR_NAME` ]
+    #then
+    #  echo "Moving built war file `find -name $WAR_NAME` into $DEPLOY_DIR for later deployment..."
+    #  mv `find -name $WAR_NAME` $DEPLOY_DIR/ROOT.war
+    #else
+    #  echo "Aborting due to error : File not found, moving $WAR_NAME file, maybe it doesn't exist"
+    #  exit 1
+    #fi
+
+    if [[ "$INCREMENTAL" = "false" ]]; then
+      echo -n "INCREMENTAL is set to $INCREMENTAL, we are now cleaning image \"rm -rf . .m2\"..."
+      rm -rf ./* .m2
+      echo " cleaned up"
+    fi
+    # popd &> /dev/null
+fi
+
+
+echo "...done"
+
+exit $rc
