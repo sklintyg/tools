@@ -56,7 +56,8 @@ if [ -f "$LOCAL_SOURCE_DIR/build.gradle" ]; then
     echo "--> # GRADLE_ARGS = $GRADLE_ARGS"
 
     echo "---> Building application with gradle..."
-    ./gradlew $GRADLE_ARGS
+    #./gradlew $GRADLE_ARGS
+    /usr/local/bin/gradle $GRADLE_ARGS
 
     ERR=$?
     if [ $ERR -ne 0 ]; then
@@ -90,6 +91,13 @@ fi
 # Finally, clean maven and gradle installs
 rm -rf /usr/local/gradle
 rm -rf /usr/local/apache-maven-3.5.0
+
+# Clean ansible
+
+
+# Clean source code
+rm -rf $LOCAL_SOURCE_DIR
+rm -rf /opt/s2i/destination/src
 
 echo "...done"
 

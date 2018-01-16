@@ -469,6 +469,57 @@ If a build succeeds, a new "image" should be present in the GUI simply called "i
 
 The built image can then be specified in a _Deployment configuration_.
 
+# Debugging a running container
+
+Sometimes its necessary to troubleshoot stuff in a running container. Luckily, openshift and "oc" provides built-in port-forwarding so it's enough for us to add the necesary JVM args, expose our selected port (such as 5005) using a service and then forward that port from our local host computer.
+
+### Steps
+
+##### 1. Prepend the JVM args for debugging to our APP_JVM_ENV environment variable.
+
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -D..... -D...... 
+  
+
+##### 2. Add debug port to service
+Make sure the service of the container we want to debug has a service that exposes port 5005 or similar.
+
+    spec:
+      ports:
+      - name: 8080-tcp
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+      - name: 5005-tcp             <-- HERE!!
+        port: 5005
+        protocol: TCP
+        targetPort: 5005
+
+##### 3. Replace / Redeploy deployment config, service etc.
+Note that the service must be deleted and then recreated. Mina Intyg as example.
+
+    oc replace -f deploymentconfig-minaintyg.yaml
+    oc delete -f service-minaintyg.yaml
+    oc create -f service-minaintyg.yaml 
+
+##### 4. Run oc pods to get pod name
+We need to know the name of the pod to port-forward to
+
+    $ oc get pods
+    NAME                    READY     STATUS      RESTARTS   AGE
+    activemq-1-wdwhj        1/1       Running     3          4d
+    minaintyg-12-vbs3m      1/1       Running     0          5m    
+
+##### 5. Set up port-forwarding
+ Use _oc port-forward [podnamn] [lokal port]:[remote port]_, e.g:
+  
+    $ oc port-forward minaintyg-12-vbs3m 5005:5005
+    Forwarding from 127.0.0.1:5005 -> 5005
+    Forwarding from [::1]:5005 -> 5005
+
+##### 6. Starta debug-session
+Start debugging against localhost:5005 or similar using IDEA, Eclipse, NetBeans or whatever...
+
+    
 # Developing S2I
 
 ### 1. Install the S2I binary for your platform
