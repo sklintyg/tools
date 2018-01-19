@@ -34,4 +34,9 @@ RUN chmod -R 775 /usr/local/apache-maven-3.5.0
 RUN chown -R 1001 /usr/local/apache-maven-3.5.0
 RUN chgrp -R 1001 /usr/local/apache-maven-3.5.0
 
+RUN mkdir -p /opt/inera
+RUN chmod -R 775 /opt/inera
+RUN chown -R 1001 /opt/inera
+RUN chgrp -R 1001 /opt/inera
+
 USER 1001

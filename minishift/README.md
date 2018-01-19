@@ -183,13 +183,17 @@ Config maps can conveniently be created for all files in a given directory. Make
 
 If you're in our /tools folder:
 
-    oc create configmap intygstjanst-konfiguration-test --from-file=intygstjanst-konfiguration/test
+    > oc create configmap intygstjanst-konfiguration-test --from-file=intygstjanst-konfiguration/test
 
 ## Generating secrets
 Secrets can also be created for files in a given directory. They are then encrypted so they can be stored externally.
 
-    oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
+    > oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
 
+## Running all .yaml files in directory
+Given that we're in /tools/minishift, we can run all .yaml files in a given directory:
+
+    > oc create -R=true -f=templates/minaintyg/deploy
 
 ## REST examples
 

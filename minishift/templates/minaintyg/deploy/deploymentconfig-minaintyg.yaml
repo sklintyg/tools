@@ -3,7 +3,6 @@ kind: DeploymentConfig
 metadata:
   annotations:
     openshift.io/generated-by: EriksFinaTemplate
-  creationTimestamp: null
   generation: 1
   labels:
     app: minaintyg
@@ -28,7 +27,7 @@ spec:
         - name: SPRING_ACTIVE_PROFILES
           value: test,wc-pu-stub
         - name: APP_JVM_ENV
-          value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dminaintyg.stubs.port=8080 -Dminaintyg.resources.folder=/opt/inera/resources -Dminaintyg.credentials.file=/opt/inera/minaintyg-konfiguration/credentials.properties -Dminaintyg.config.folder=/opt/inera -Dminaintyg.config.file=/opt/inera/minaintyg-konfiguration/minaintyg.properties -Dminaintyg.logback.file=/opt/inera/minaintyg-konfiguration/minaintyg-logback.xml
+          value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dminaintyg.stubs.port=8080 -Dminaintyg.resources.folder=/opt/inera/resources -Dminaintyg.credentials.file=/opt/inera/credentials/credentials.properties -Dminaintyg.config.folder=/opt/inera -Dminaintyg.config.file=/opt/inera/minaintyg-konfiguration/minaintyg.properties -Dminaintyg.logback.file=/opt/inera/minaintyg-konfiguration/minaintyg-logback.xml
         - name: ACTIVE_SPRING_PROFILES
           value: test,wc-pu-stub
 
@@ -59,6 +58,9 @@ spec:
          - mountPath: /opt/inera/certifikat
            name: minaintyg-test-certifikat
            readOnly: true
+         - mountPath: /opt/inera/credentials
+           name: minaintyg-test-credentials
+           readOnly: true
          - mountPath: /opt/inera/resources/links
            name: minaintyg-resources-links
            readOnly: true
@@ -88,4 +90,8 @@ spec:
          secret:
            defaultMode: 420
            secretName: minaintyg-test-certifikat
+       - name: minaintyg-test-credentials
+         secret:
+           defaultMode: 420
+           secretName: minaintyg-test-credentials
   test: false

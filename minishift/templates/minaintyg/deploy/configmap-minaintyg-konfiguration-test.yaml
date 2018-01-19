@@ -261,7 +261,7 @@ data:
 
     putjanst.logicaladdress = PUTEST
 
-    putjanst.endpoint.url = http://localhost:8080/services/pu
+    putjanst.endpoint.url = http://localhost:${minaintyg.stubs.port}/services/pu
 
 
 
@@ -289,22 +289,6 @@ data:
 
     dynamic.links.file=${minaintyg.resources.folder}/links/minaintyg.links.json
 
-
-
-  credentials.properties: |
-
-    # NTjP SSL config
-
-    ntjp.ws.certificate.password = password
-
-    ntjp.ws.key.manager.password = password
-
-    ntjp.ws.truststore.password = password
-
-
-    # SAML config
-
-    fk.saml.keystore.password = password
 
 
 kind: ConfigMap
