@@ -1,0 +1,295 @@
+apiVersion: v1
+data:
+  rehabstod-logback.xml: |
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <configuration scan="true" scanPeriod="30 seconds">
+
+      <jmxConfigurator />
+
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="se.inera.intyg.rehabstod.common.monitoring.util.MarkerFilter">
+          <markers>Monitoring, HSA</markers>
+          <onMatch>DENY</onMatch>
+          <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+          <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+      </appender>
+
+      <!-- Daily rolling file appender for logging monitoring events -->
+      <appender name="MONITORING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="se.inera.intyg.rehabstod.common.monitoring.util.MarkerFilter">
+          <marker>Monitoring</marker>
+          <onMatch>ACCEPT</onMatch>
+          <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${catalina.base}/logs/rehabstod-monitoring.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>${catalina.base}/logs/rehabstod-monitoring.%d{yyyy-MM-dd}.log
+          </fileNamePattern>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+          <layout class="se.inera.intyg.rehabstod.logging.PatternLayoutWithUserContext">
+            <param name="Pattern" value="%date{ISO8601} %session %user - %msg%n" />
+          </layout>
+        </encoder>
+      </appender>
+
+      <logger name="se.inera.intyg.rehabstod" level="info"/>
+
+      <root>
+        <level value="info" />
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="MONITORING" />
+      </root>
+
+    </configuration>
+
+
+  rehabstod.properties: >
+    # Configuration and resource folders
+
+    config.dir=${rehabstod.config.folder}
+
+    resources.dir==${rehabstod.resources.folder}
+
+
+    # Host URLs
+
+    intygstjanst.host.url = http://intygstjanst:8080
+
+    intygstjanst.secure.host.url = http://intygstjanst:8080
+
+    localhost.url=http://localhost:8790
+
+    srs.host.url=http://localhost:8080
+
+    webcert.view.urltemplate=http://webcert:9088/visa/intyg/{intygsId}/readonly?enhet={enhet}
+
+    ntjp.base.url=${localhost.url}/services
+
+
+    # Database settings
+
+    db.driver=org.h2.Driver
+
+    db.url=jdbc:h2:mem:rehabstoddatajpa;DB_CLOSE_DELAY=-1
+
+    db.httpPort=8096
+
+    db.tcpPort=8097
+
+    db.username=rehabstod
+
+    db.password=rehabstod
+
+
+    # Hibernate settings
+
+    hibernate.dialect=org.hibernate.dialect.H2Dialect
+
+    hibernate.hbm2ddl.auto=
+
+    hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
+
+    hibernate.show_sql=false
+
+    hibernate.format_sql=true
+
+    hibernate.id.new_generator_mappings=false
+
+
+    # Dynamic loading of identities into HSA stub
+
+    hsa.stub.additional.identities.folder=${java.io.tmpdir}
+
+
+    # Dynamic links
+
+    dynamic.links.file=${resources.dir}/links/rehabstod.links.json
+
+
+    # In this env a test jms receiver is used for integration tests
+
+    statistics.enabled = true
+
+
+    # Authorization och features
+
+    authorities.configuration.file=file://${resources.dir}/security/authorities.yaml
+
+    features.configuration.file=file://${resources.dir}/security/features.yaml
+
+
+    # Diagnoskapitel, -grupper och -koder
+
+    rhs.diagnoskapitel.file=file://${resources.dir}/diagnoskapitel.txt
+
+    rhs.diagnosgrupper.file=file://${resources.dir}/diagnosgrupper.txt
+
+    rhs.diagnoskod.ksh97_kat.file=file://${resources.dir}/diagnoskoder/KSH97_KAT.ANS
+
+    rhs.diagnoskod.ksh97_kod.file=file://${resources.dir}/diagnoskoder/KSH97_KOD.ANS
+
+    rhs.diagnoskod.ksh97_kxx.file=file://${resources.dir}/diagnoskoder/KSH97_KXX.ANS
+
+    rhs.diagnoskod.ksh97p_kod.file=file://${resources.dir}/diagnoskoder/KSH97P_KOD.ANS
+
+
+    # Stubbad data
+
+    rhs.sjukfall.stub.numberOfPatients=350
+
+    rhs.sjukfall.stub.intygPerPatient=4
+
+    rhs.stub.personnummer.file=file://${resources.dir}/stubdata/testpersonnummer_skatteverket.csv
+
+
+    ################################################
+
+    #
+
+    # Intygstj\u00E4nst Configurations
+
+    #
+
+    #################################################
+
+    it.ping.url=${intygstjanst.host.url}/inera-certificate/ping-for-configuration/v1.0
+
+    it.service.url=${intygstjanst.host.url}/inera-certificate/list-active-sick-leaves-for-care-unit/v1.0
+
+    it.service.connection.timeout=5000
+
+    it.service.receive.timeout=5000
+
+    it.service.logicalAddress=
+
+
+    ################################################
+
+    #
+
+    # S\u00E4kerhetstj\u00E4nsten Configurations
+
+    #
+
+    ################################################
+
+    sakerhetstjanst.saml.keystore.file=file://${config.dir}/certifikat/test.intygstjanster.sjunet.org.jks
+
+    sakerhetstjanst.saml.keystore.alias=test.intygstjanster.sjunet.org
+
+    sakerhetstjanst.saml.responseSkew = 300
+
+
+    ################################################
+
+    #
+
+    # HSA-Integration Configurations
+
+    #
+
+    ################################################
+
+    infrastructure.directory.authorizationmanagement.getcredentialsforpersonincludingprotectedpersonresponderinterface.endpoint.url=${ntjp.base.url}/inera-certificate/hsa-authorization
+
+    infrastructure.directory.organization.getunit.endpoint.url=${ntjp.base.url}/inera-certificate/hsa-unit
+
+    infrastructure.directory.organization.gethealthcareunit.endpoint.url=${ntjp.base.url}/inera-certificate/hsa-healthcareunit
+
+    infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${ntjp.base.url}/inera-certificate/hsa-healthcareunit-members
+
+    infrastructure.directory.employee.getemployee.endpoint.url=${ntjp.base.url}/inera-certificate/hsa-employee
+
+    infrastructure.directory.logicalAddress=
+
+
+    ################################################
+
+    #
+
+    # Personuppgiftstj\u00E4nsten Configurations
+
+    #
+
+    ################################################
+
+    putjanst.logicaladdress = PUTEST
+
+    putjanst.endpoint.url = ${localhost.url}/services/pu
+
+
+    ################################################
+
+    #
+
+    # SRS Configurations
+
+    #
+
+    #################################################
+
+    srs.ping.url=${srs.host.url}/ping-for-configuration/v1.0
+
+    srs.service.url=${srs.host.url}/get-risk-prediction-for-certificate/v1.0
+
+    srs.service.connection.timeout=5000
+
+    srs.service.receive.timeout=5000
+
+    srs.service.logicalAddress=
+
+
+    ################################################
+
+    #
+
+    # HSA/PU ignite cache settings
+
+    #
+
+    ################################################
+
+    cache.ipaddresses=127.0.0.1:47530..47539
+
+    cache.default.expiration.seconds=3600
+
+    cache.bindport=47530
+
+    hsa.unit.cache.expiry=3600
+
+    hsa.healthcareunit.cache.expiry=3600
+
+    hsa.healhcareunitmembers.cache.expiry=3600
+
+    employee.name.cache.expiry=36000
+
+    pu.cache.expiry=36000
+
+
+    ################################################
+
+    #
+
+    # NTjP WebService Configuration
+
+    #
+
+    ################################################
+
+    ntjp.ws.certificate.file = ${config.dir}/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
+
+    ntjp.ws.certificate.type = PKCS12
+
+    ntjp.ws.truststore.file=${config.dir}/certifikat/truststore.jks
+
+    ntjp.ws.truststore.type=JKS
+
+
+kind: ConfigMap
+metadata:
+  name: rehabstod-konfiguration-test
+
