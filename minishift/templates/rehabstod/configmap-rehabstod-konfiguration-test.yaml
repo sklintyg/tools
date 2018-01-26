@@ -1,44 +1,44 @@
 apiVersion: v1
 data:
   credentials.properties: >-
-    sakerhetstjanst.saml.keystore.password=kYSj37ucRb
+    sakerhetstjanst.saml.keystore.password=dummy
 
-    sakerhetstjanst.saml.truststore.password=v7yu5kFwqrllbbjR
-
-
-    sakerhetstjanst.ws.certificate.password=kYSj37ucRb
-
-    sakerhetstjanst.ws.key.manager.password=kYSj37ucRb
-
-    sakerhetstjanst.ws.truststore.password=v7yu5kFwqrllbbjR
+    sakerhetstjanst.saml.truststore.password=dummy
 
 
-    #ntjp.ws.certificate.password=a56pghtAZ3
+    sakerhetstjanst.ws.certificate.password=dummy
 
-    #ntjp.ws.key.manager.password=a56pghtAZ3
+    sakerhetstjanst.ws.key.manager.password=dummy
 
-    #ntjp.ws.truststore.password=password
+    sakerhetstjanst.ws.truststore.password=dummy
+
+
+    #ntjp.ws.certificate.password=dummy
+
+    #ntjp.ws.key.manager.password=dummy
+
+    #ntjp.ws.truststore.password=dummy
 
 
     # QA-Certs:
 
-    ntjp.ws.certificate.password = kYSj37ucRb
+    ntjp.ws.certificate.password = dummy
 
-    ntjp.ws.key.manager.password = kYSj37ucRb
+    ntjp.ws.key.manager.password = dummy
 
-    ntjp.ws.truststore.password = v7yu5kFwqrllbbjR
+    ntjp.ws.truststore.password = dummy
 
 
     ## Currently, we're using the sakerhetstjanst keystore for GRP so the passwords are the same
 
-    cgi.grp.ws.certificate.password=kYSj37ucRb
+    cgi.grp.ws.certificate.password=dummy
 
-    cgi.grp.ws.key.manager.password=kYSj37ucRb
+    cgi.grp.ws.key.manager.password=dummy
 
 
     ## Using truststore grp.test.truststore.jks
 
-    cgi.grp.ws.truststore.password=v7yu5kFwqrllbbjR
+    cgi.grp.ws.truststore.password=dummy
 
   idp-eleg.xml: >-
     <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
@@ -550,7 +550,9 @@ data:
 
     ################################################
 
-    ntjp.ws.certificate.file = ${config.dir}/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
+    #ntjp.ws.certificate.file = ${config.dir}/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
+
+    ntjp.ws.certificate.file = ${config.dir}/certifikat/test.intygstjanster.sjunet.org.jks
 
     ntjp.ws.certificate.type = PKCS12
 
