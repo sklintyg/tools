@@ -1,0 +1,89 @@
+apiVersion: v1
+data:
+
+  logsender-logback.xml: |+
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <configuration scan="true" scanPeriod="30 seconds">
+      <jmxConfigurator />
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+          <pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n
+          </pattern>
+        </layout>
+      </appender>
+
+      <!--Daily rolling file appender -->
+      <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${catalina.base}/logs/log-sender.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <FileNamePattern>${catalina.base}/logs/log-sender.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+
+        <layout class="ch.qos.logback.classic.PatternLayout">
+          <Pattern>%date{ISO8601} [%thread] %-5level %logger{10} - %msg%n
+          </Pattern>
+        </layout>
+      </appender>
+
+      <logger name="org.springframework" level="error" />
+
+      <logger name="org.apache.cxf.services" level="error" />
+
+      <logger name="se.inera" level="error" />
+
+      <root>
+        <level value="error" />
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+      </root>
+    </configuration>
+
+  logsender.properties: >
+    # Configuration folder
+
+    config.dir = ${logsender.config.folder}
+
+
+    ########################################
+
+    #
+
+    # Loggtj\u00E4nst Configuration
+
+    #
+
+    ########################################
+
+    loggtjanst.endpoint.url=https://qa.esb.ntjp.se:443/vp/ehr/log/store/StoreLog/1/rivtabp21
+
+    loggtjanst.logicalAddress = SE165565594230-1000
+
+
+    logsender.bulkSize = 10
+
+    logsender.bulkTimeout = 60000
+
+    ########################################
+
+    #
+
+    # S\u00E4kerhetstj\u00E4nsten WebService Configuration
+
+    #
+
+    ########################################
+
+    #QA
+
+    sakerhetstjanst.ws.certificate.file =
+    ${config.dir}/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
+
+    sakerhetstjanst.ws.certificate.type = PKCS12
+
+    sakerhetstjanst.ws.truststore.file = ${config.dir}/certifikat/truststore.jks
+
+    sakerhetstjanst.ws.truststore.type = JKS
+
+kind: ConfigMap
+metadata:
+  name: logsender-konfiguration-test

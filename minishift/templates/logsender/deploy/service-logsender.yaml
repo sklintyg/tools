@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: ErikDiskett
+  labels:
+    app: logsender
+    environment: test
+  name: logsender
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: 5005-tcp
+    port: 5005
+    protocol: TCP
+    targetPort: 5005
+  selector:
+    deploymentconfig: logsender
+  sessionAffinity: None
+  type: ClusterIP
