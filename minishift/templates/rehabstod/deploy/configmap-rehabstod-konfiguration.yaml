@@ -1,45 +1,5 @@
 apiVersion: v1
 data:
-  credentials.properties: >-
-    sakerhetstjanst.saml.keystore.password=dummy
-
-    sakerhetstjanst.saml.truststore.password=dummy
-
-
-    sakerhetstjanst.ws.certificate.password=dummy
-
-    sakerhetstjanst.ws.key.manager.password=dummy
-
-    sakerhetstjanst.ws.truststore.password=dummy
-
-
-    #ntjp.ws.certificate.password=dummy
-
-    #ntjp.ws.key.manager.password=dummy
-
-    #ntjp.ws.truststore.password=dummy
-
-
-    # QA-Certs:
-
-    ntjp.ws.certificate.password = dummy
-
-    ntjp.ws.key.manager.password = dummy
-
-    ntjp.ws.truststore.password = dummy
-
-
-    ## Currently, we're using the sakerhetstjanst keystore for GRP so the passwords are the same
-
-    cgi.grp.ws.certificate.password=dummy
-
-    cgi.grp.ws.key.manager.password=dummy
-
-
-    ## Using truststore grp.test.truststore.jks
-
-    cgi.grp.ws.truststore.password=dummy
-
   idp-eleg.xml: >-
     <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
     ID="_03d3f420b699b51ffda0a46dd665122831" cacheDuration="PT12H0M0.000S"
@@ -320,9 +280,11 @@ data:
   rehabstod.properties: >
     # Configuration and resource folders
 
+    certificate.dir=${rehabstod.cert.folder}
+
     config.dir=${rehabstod.config.folder}
 
-    resources.dir==${rehabstod.resources.folder}
+    resources.dir=${rehabstod.resources.folder}
 
 
     # Host URLs
@@ -337,22 +299,7 @@ data:
 
     ntjp.base.url=${localhost.url}/services
 
-    webcert.view.urltemplate=http://webcert:9088/visa/intyg/{intygsId}/readonly?enhet={enhet}
-
-
-    # Database settings
-
-    db.driver=org.h2.Driver
-
-    db.url=jdbc:h2:mem:rehabstoddatajpa;DB_CLOSE_DELAY=-1
-
-    db.httpPort=8096
-
-    db.tcpPort=8097
-
-    db.username=rehabstod
-
-    db.password=rehabstod
+    webcert.view.urltemplate=http://webcert:8080/visa/intyg/{intygsId}/readonly?enhet={enhet}
 
 
     # Hibernate settings
@@ -416,6 +363,13 @@ data:
     rhs.stub.personnummer.file=file://${resources.dir}/stubdata/testpersonnummer_skatteverket.csv
 
 
+    # JMS config for PDL
+
+    pdlLogging.systemId=Rehabstod
+
+    pdlLogging.systemName=Rehabst\u00F6d
+
+
     ################################################
 
     #
@@ -447,7 +401,11 @@ data:
 
     ################################################
 
-    sakerhetstjanst.saml.keystore.file=file://${config.dir}/certifikat/test.intygstjanster.sjunet.org.jks
+    sakerhetstjanst.saml.keystore.file=file://${certificate.dir}/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
+
+    #sakerhetstjanst.saml.keystore.file=file://${certificate.dir}/test.intygstjanster.sjunet.org.jks
+
+    sakerhetstjanst.saml.keystore.alias=test.intygstjanster.sjunet.org
 
     sakerhetstjanst.saml.keystore.alias=test.intygstjanster.sjunet.org
 
@@ -550,17 +508,18 @@ data:
 
     ################################################
 
-    #ntjp.ws.certificate.file = ${config.dir}/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
 
-    ntjp.ws.certificate.file = ${config.dir}/certifikat/test.intygstjanster.sjunet.org.jks
+    itintegration.monitoring.pingforconfiguration.url=${ntjp.base.url}/itintegration/monitoring/PingForConfiguration/1/rivtabp20
+
+    ntjp.ws.certificate.file = ${certificate.dir}/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
 
     ntjp.ws.certificate.type = PKCS12
 
-    ntjp.ws.truststore.file=${config.dir}/certifikat/truststore.jks
+    ntjp.ws.truststore.file=${certificate.dir}/truststore.jks
 
     ntjp.ws.truststore.type=JKS
 
 kind: ConfigMap
 metadata:
-  name: rehabstod-konfiguration-test
+  name: rehabstod-test-konfiguration
 

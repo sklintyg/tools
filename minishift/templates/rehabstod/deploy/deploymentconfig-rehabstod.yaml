@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: EriksFinaTemplate
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: rehabstod
+    environment: test
+  name: rehabstod
+spec:
+  replicas: 1
+  selector:
+    app: rehabstod
+    deploymentconfig: rehabstod
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: EriksFinaTemplate
+      labels:
+        app: rehabstod
+        deploymentconfig: rehabstod
+        environment: test
+    spec:
+      containers:
+      - env:
+        - name: APP_JVM_ENV
+          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Drehabstod.stubs.port=8080 -Drehabstod.cert.folder=/opt/inera/certifikat -Drehabstod.config.folder=/opt/inera/rehabstod-konfiguration -Drehabstod.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Drehabstod.config.file=/opt/inera/rehabstod-konfiguration/rehabstod.properties -Dlogback.configurationFile=/opt/inera/rehabstod-konfiguration/rehabstod-logback.xml
+        - name: ACTIVE_SPRING_PROFILES
+          value: test,rhs-security-test,rhs-srs-stub,testability-api,caching-enabled,wc-hsa-stub,wc-pu-stub
+        - name: DB_SERVER
+          value: mysql
+        - name: DB_PORT
+          value: '3306'
+        - name: DB_NAME
+          value: rehabstod
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: rehabstod-db-credentials
+              key: db_username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rehabstod-db-credentials
+              key: db_password
+        - name: ACTIVEMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: rehabstod-db-credentials
+              key: amq_username
+        - name: ACTIVEMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rehabstod-db-credentials
+              key: amq_password
+        image: 172.30.1.1:5000/intygstjanster-test/rehabstod:latest
+        imagePullPolicy: Always
+        name: rehabstod
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 5008
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/inera/rehabstod-konfiguration
+          name: rehabstod-test-konfiguration
+          readOnly: true
+        - mountPath: /opt/inera/certifikat
+          name: rehabstod-test-certifikat
+          readOnly: true
+        - mountPath: /opt/inera/credentials
+          name: rehabstod-test-credentials
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+       - configMap:
+           defaultMode: 420
+           name: rehabstod-test-konfiguration
+         name: rehabstod-test-konfiguration
+       - name: rehabstod-test-certifikat
+         secret:
+           defaultMode: 420
+           secretName: rehabstod-test-certifikat
+       - name: rehabstod-test-credentials
+         secret:
+           defaultMode: 420
+           secretName: rehabstod-test-credentials
+  test: false

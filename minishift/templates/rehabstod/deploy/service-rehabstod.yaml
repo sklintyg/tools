@@ -12,11 +12,11 @@ spec:
   - name: 8080-tcp
     port: 8080
     protocol: TCP
-    targetPort: 8790
-  - name: 5005-tcp
-    port: 5005
+    targetPort: 8080
+  - name: 5008-tcp
+    port: 5008
     protocol: TCP
-    targetPort: 5005
+    targetPort: 5008
   selector:
     deploymentconfig: rehabstod
   sessionAffinity: None
