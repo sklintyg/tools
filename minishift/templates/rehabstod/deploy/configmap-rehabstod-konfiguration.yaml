@@ -295,6 +295,8 @@ data:
 
     intygstjanst.secure.host.url = http://intygstjanst:8080
 
+    statistik.sjunet.host.url=https://statistik.intygstjanster.sjunet.org
+
     srs.host.url=${localhost.url}
 
     ntjp.base.url=${localhost.url}/services
