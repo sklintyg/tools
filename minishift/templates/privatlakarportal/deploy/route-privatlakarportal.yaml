@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: privatlakarportal-route
+  namespace: intygstjanster-test
+spec:
+  host: privatlakarportal-route-intygstjanster-test.192.168.99.100.nip.io
+  path: /
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: privatlakarportal
+    weight: 100
+  wildcardPolicy: None
