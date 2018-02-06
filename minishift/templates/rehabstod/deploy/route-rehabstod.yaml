@@ -4,7 +4,7 @@ metadata:
   name: rehabstod-route
   namespace: intygstjanster-test
 spec:
-  host: rehabstod-route-rehabstod-test.192.168.99.100.nip.io
+  host: rehabstod-route-intygstjanster-test.192.168.99.100.nip.io
   path: /
   port:
     targetPort: 8080-tcp
