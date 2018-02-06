@@ -155,9 +155,9 @@ It's configured to use two mounted resources:
 
 Use the following sequence of commands to deploy a functional pod with logsender:
 
-    oc create -f templates/logsender/configmap-logsender.yaml
-    oc create -f templates/logsender/secrets-logsender.yaml
-    oc create -f templates/logsender/deploymentconfig-logsender.yaml
+    oc create -f templates/logsender-boot/configmap-logsender.yaml
+    oc create -f templates/logsender-boot/secrets-logsender.yaml
+    oc create -f templates/logsender-boot/deploymentconfig-logsender.yaml
 
 There are files for _service_ and _route_ but those aren't needed.
 
