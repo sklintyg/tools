@@ -26,7 +26,7 @@ spec:
       containers:
       - env:
         - name: APP_JVM_ENV
-          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Drehabstod.stubs.port=8080 -Drehabstod.cert.folder=/opt/inera/certifikat -Drehabstod.config.folder=/opt/inera/rehabstod-konfiguration -Drehabstod.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Drehabstod.config.file=/opt/inera/rehabstod-konfiguration/rehabstod.properties -Dlogback.configurationFile=/opt/inera/rehabstod-konfiguration/rehabstod-logback.xml
+          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Drehabstod.stubs.port=8080 -Drehabstod.cert.folder=/opt/inera/certifikat -Drehabstod.config.folder=/opt/inera/rehabstod-konfiguration -Drehabstod.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Drehabstod.config.file=/opt/inera/rehabstod-konfiguration/rehabstod.properties -Dlogback.configurationFile=/opt/inera/rehabstod-konfiguration/rehabstod-logback.xml
         - name: ACTIVE_SPRING_PROFILES
           value: test,rhs-security-test,rhs-srs-stub,testability-api,caching-enabled,wc-hsa-stub,wc-pu-stub
         - name: DB_SERVER
