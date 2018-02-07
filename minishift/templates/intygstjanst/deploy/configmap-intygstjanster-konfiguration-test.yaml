@@ -86,24 +86,30 @@ data:
       </root>
 
     </configuration>
+
   certificate.properties: >
     # Configuration and resource folders
 
     root.config.dir=${certificate.config.folder}
+
     config.dir=${certificate.config.folder}/intygstjanst-konfiguration
+
+
+    # Hosts
+
+    localhost.url=http://localhost:8080
+
 
     # NTjP SSL config
 
-    ntjp.ws.certificate.file=${root.config.dir}/certifikat/test-keystore.jks
+    ntjp.ws.certificate.file = ${config.dir}/certifikat/demo.intygstjanst.intygstjanster.se.p12
 
-    ntjp.ws.certificate.type=JKS
+    ntjp.ws.certificate.type = PKCS12
 
-    ntjp.ws.truststore.file=${root.config.dir}/certifikat/empty-truststore.jks
+    ntjp.ws.truststore.file = ${config.dir}/certifikat/truststore.jks
 
-    ntjp.ws.truststore.type=JKS
+    ntjp.ws.truststore.type = JKS
 
-
-    localhost.url=http://localhost:8186
 
     # Endpoints for communicating with FK
 
@@ -117,14 +123,11 @@ data:
 
     registercertificatev1.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub
 
-    revokemedicalcertificatev1.endpoint.url =
-    ${localhost.url}/inera-certificate/revoke-medical-certificate-stub
+    revokemedicalcertificatev1.endpoint.url=${localhost.url}/inera-certificate/revoke-medical-certificate-stub
 
-    registercertificatev3.endpoint.url =
-    ${localhost.url}/inera-certificate/register-certificate-stub-fk-parent
+    registercertificatev3.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub-fk-parent
 
-    revokecertificatev2.endpoint.url =
-    ${localhost.url}/inera-certificate/revoke-certificate-rivta-stub
+    revokecertificatev2.endpoint.url=${localhost.url}/inera-certificate/revoke-certificate-rivta-stub
 
 
     # In this env a test jms receiver is used for integration tests
@@ -149,7 +152,7 @@ data:
 
     infrastructure.directory.organization.gethealthcareunit.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit
 
-    infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit-members
+    infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${localhost.url}/hsa-healthcareunit-members
 
     infrastructure.directory.employee.getemployee.endpoint.url=${localhost.url}/inera-certificate/hsa-employee
 
@@ -193,11 +196,7 @@ data:
     recipients.update.cron = 0 0 * * * *
 
     recipient.file = ${recipient.config.file}
-  credentials.properties: |
-    # NTjP SSL config
-    ntjp.ws.certificate.password = password
-    ntjp.ws.key.manager.password = password
-    ntjp.ws.truststore.password = password
+
   recipients.json: |
     [
       {
@@ -288,118 +287,4 @@ data:
     ]
 kind: ConfigMap
 metadata:
-  name: intygstjanst-konfiguration-test
-
----
-
-apiVersion: v1
-data:
-  empty-truststore.jks: /u3+7QAAAAIAAAAA5yXvSDt11bGXyBA9M2iy0/5i1Tg=
-  test-keystore.jks: >-
-    /u3+7QAAAAIAAAABAAAAAQAWdGVzdC5pbnR5Z3N0amFuc3Rlci5zZQAAAUv/P+WbAAABjzCCAYswDgYKKwYBBAEqAhEBAQUABIIBd+T2NNnUABFwCK0Pf1Ypibd2p7csLAA0acIDbqQX0xDTZ+0Qrihjm8Eu+2vrPEJWOrVxLUKtaast8TjqMvzIPnYjhsXeRcot1FWD8H2OQVlaC3QFFzVTvUMzLQoElq6myR+cSYgeNLPPk3nl1mpbRh29QZQtViqUdTJKy6sHRSjzqQO2W/Qh6+do1/cJpFVur/JBjDISq/quG3l4AUT7OTkUvXGjtyTkgxIYNhxVO4nFEI6rH3A5m0MD5X2VsVy57m+KLWqb82ZwL8z6lNmVnhAyqfJCgiSPeAllru/+U2J2rCSgwEHElX5mF/HsR1lDJxDUp2673z0oSvzn7inVeEeRbfGAAaKhwFuPKPsLH75Pie0Wqyw1AjVtZ045+VhyAcQAsPexPlehKpIB55xLZCkvWaMzy2WBP00bVH+ii30IFN3KIaBvR1/VGRv/5+bxz+sdnpvQvVa71KqsvN2etH7Zp0c4QcQN9FMGbV2McL64S2nkpndvswAAAAEABVguNTA5AAADUDCCA0wwggMKoAMCAQICBHNOTycwCwYHKoZIzjgEAwUAMHgxCzAJBgNVBAYTAlNFMRAwDgYDVQQIEwdTdmVyaWdlMRIwEAYDVQQHEwlTdG9ja2hvbG0xETAPBgNVBAoTCEluZXJhIEFCMRcwFQYDVQQLEw5JbnR5Z3N0amFuc3RlcjEXMBUGA1UEAxMOSW50eWdzdGphbnN0ZXIwHhcNMTUwMzA5MTU1NTUxWhcNMTUwNjA3MTU1NTUxWjB4MQswCQYDVQQGEwJTRTEQMA4GA1UECBMHU3ZlcmlnZTESMBAGA1UEBxMJU3RvY2tob2xtMREwDwYDVQQKEwhJbmVyYSBBQjEXMBUGA1UECxMOSW50eWdzdGphbnN0ZXIxFzAVBgNVBAMTDkludHlnc3RqYW5zdGVyMIIBtzCCASwGByqGSM44BAEwggEfAoGBAP1/U4EddRIpUt9KnC7s5Of2EbdSPO9EAMMeP4C2USZpRV1AIlH7WT2NWPq/xfW6MPbLm1Vs14E7gB00b/JmYLdrmVClpJ+f6AR7ECLCT7up1/63xhv4O1fnxqimFQ8E+4P208UewwI1VBNaFpEy9nXzrith1yrv8iIDGZ3RSAHHAhUAl2BQjxUjC8yykrmCouuEC/BYHPUCgYEA9+GghdabPd7LvKtcNrhXuXmUr7v6OuqC+VdMCz0HgmdRWVeOutRZT+ZxBxCBgLRJFnEj6EwoFhO3zwkyjMim4TwWeotUfI0o4KOuHiuzpnWRbqN/C/ohNWLx+2J6ASQ7zKTxvqhRkImog9/hWuWfBpKLZl6Ae1UlZAFMO/7PSSoDgYQAAoGAaeFHrf39OYP3IuNw9PIxZutgjxqtystRljgLK0VviCFDPYWJSTbdd9K6jpTR7G5iMgXQ/oHNQWCcOQ2uoy2pGRNVi6CvSrZiqhdwABxyKHraGSV7vTAt0G0FEKDc69/u52LkyakwNklFxRu+HTNl22raWzcO2melMjEy21WNIyejITAfMB0GA1UdDgQWBBTfYLon75fPg+Ak6kfh5oQhzkjk2TALBgcqhkjOOAQDBQADLwAwLAIUOnhRqW9TkVwfgLsseiUgkJ0rWPQCFGMrxMJ9VCHQGufoyOnzVIhWJS3uolbiWOQwYzds2dGfaprGj2DtpVU=
-kind: Secret
-metadata:
-  name: intygstjanst-test-certifikat
-type: Opaque
-
----
-
-apiVersion: v1
-kind: DeploymentConfig
-metadata:
-  annotations:
-    openshift.io/generated-by: EriksFinaTemplate
-  creationTimestamp: null
-  generation: 1
-  labels:
-    app: intygstjanst
-    environment: test
-  name: intygstjanst
-spec:
-  replicas: 1
-  selector:
-    app: intygstjanst
-    deploymentconfig: intygstjanst
-  template:
-    metadata:
-      annotations:
-        openshift.io/generated-by: EriksFinaTemplate
-      labels:
-        app: intygstjanst
-        deploymentconfig: intygstjanst
-        environment: test
-    spec:
-      containers:
-      - env:
-        - name: SPRING_ACTIVE_PROFILES
-          value: test
-        - name: INTYG_DB_USERNAME
-          value: intyg
-        - name: INTYG_DB_PASSWORD
-          value: intyg
-        - name: NTJP_URL
-          value: intyg
-        image: eriklupander/intygstjanst:latest
-        imagePullPolicy: IfNotPresent
-        name: intygstjanst
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: 8085
-            scheme: HTTP
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-         - mountPath: /opt/inera/intygstjanst-konfiguration
-           name: intygstjanst-konfiguration-test
-           readOnly: true
-         - mountPath: /opt/inera/certifikat
-           name: intygstjanst-test-certifikat
-           readOnly: true
-
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
-      volumes:
-       - configMap:
-           defaultMode: 420
-           name: intygstjanst-konfiguration-test
-         name: intygstjanst-konfiguration-test
-       - name: intygstjanst-test-certifikat
-         secret:
-           defaultMode: 420
-           secretName: intygstjanst-test-certifikat
-  test: false
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    openshift.io/generated-by: ErikDiskett
-  labels:
-    app: intygstjanst
-    environment: test
-  name: intygstjanst
-spec:
-  ports:
-  - name: 8080-tcp
-    port: 8080
-    protocol: TCP
-    targetPort: 8085
-  selector:
-    deploymentconfig: intygstjanst
-  sessionAffinity: None
-  type: ClusterIP
-
+  name: intygstjanst-test-konfiguration
