@@ -21,6 +21,8 @@ spec:
   strategy:
     sourceStrategy:
       env:
+      - name: "BUILD_LOGLEVEL"
+        value: "2"
       - name: commonVersion
         value: 3.6.0.+
       - name: infraVersion
