@@ -184,9 +184,9 @@ From this directory (/tools/minishift/[application]/templates/s2i):
 
 The first command creates the images stream to which the build will be pushed. The second and third command sets up and run the build configuration.
 
-Watch the build process with
+Goto the UI to watch the build process
 
-	> oc logs -f bc/[application]
+	intygstjanster-test => Applications => Pods => [application-N-build]
 
 #### Secrets
 
@@ -211,9 +211,9 @@ From this directory (/tools/minishift/[application]/templates/deploy):
 	> oc create -f service-[application].yaml
 	> oc create -f deploymentconfig-[application].yaml
 
-Watch the build process with
+Goto the UI and watch the deploy process
 
-	> oc logs -f dc/[application]
+	intygstjanster-test => Applications => Pods => [application-N-xyz12]
 	
 ## Generating config maps
 Config maps can conveniently be created for all files in a given directory. Make sure you don't include a "credentials.properties" file with secret passwords or real certificates!! Those go into secrets.
