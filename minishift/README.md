@@ -34,17 +34,13 @@ Also includes some YAML files for setting up ActiveMQ and MySQL for intyg use.
 ### Installing
 ##### 1. Install using homebrew:
 
-
     > brew cask install minishift
 
 ##### 2. Update using homebrew
 
-    
     > brew cask install --force minishift
-    
-
+  
 ##### 3. Start with virtualbox:
-
 
     > minishift start --disk-size=40G --vm-driver=virtualbox
     -- Starting local OpenShift cluster using 'virtualbox' hypervisor ...
@@ -113,6 +109,7 @@ Why would you want to do that? Well, just in case:
 ## YAML OpenShift templates
 Inside the "templates" folder we have some YAML files for setting up:
 
+- Build configuration
 - Deployment configuration
 - Service (e.g. Kubernetes Service abstraction)
 - Route (E.g. Kubernetes Ingress Controller)
@@ -130,19 +127,20 @@ Create (1) persistent volume claim, (2) deployment configuration and (3) service
 From this directory (/tools/minishift):
     
     oc create -f templates/mysql/persistentvolumeclaim-mysql.yaml
-    oc create -f templates/mysql/deploymentconfig-mysql.yaml
     oc create -f templates/mysql/service-mysql.yaml
-    
+    oc create -f templates/mysql/deploymentconfig-mysql.yaml
     
 ### Installing ActiveMQ using CLI    
 Create (1) config map, (2) deployment configuration , (3) service and (4) route. 
 
 From this directory (/tools/minishift):
     
-    oc create -f templates/activemq/configmap-activemq.yaml
-    oc create -f templates/activemq/deploymentconfig-activemq.yaml
     oc create -f templates/activemq/service-activemq.yaml    
     oc create -f templates/activemq/route-activemq.yaml 
+    oc create -f templates/activemq/configmap-activemq.yaml
+    oc create -f templates/activemq/deploymentconfig-activemq.yaml
+
+ActiveMQ admin should be reachable on _http://activemq-route-intygstjanster-test.192.168.99.100.nip.io/admin/_
 
 ### Installing the Spring Boot version of Logsender using CLI
 
@@ -161,29 +159,68 @@ Use the following sequence of commands to deploy a functional pod with logsender
 
 There are files for _service_ and _route_ but those aren't needed.
 
-### Installing MySQL as a service using GUI
-_(deprecated)_
-1) In the admin GUI, choose "Import YAML / Json".
-2) Copy-paste _deploymentconfig-mysql.yaml_ into the textarea.
-3) Do the same with _service-mysql.yaml_.
-4) Note that the mysql-image contains users and empty databases for all our applications.
+### Installing our applications using CLI
+Since we don't have any container images (yet) we need to build our applications before we can deploy them into OpenShift.
 
+Each application has a _s2i_ and _deploy_ folder with templates for building and deploying an application respectively.
 
-### Installing ActiveMQ as a service
-_(deprecated)_
-1) In the admin GUI, choose "Import YAML / Json".
-2) Copy-paste _deploymentconfig-activemq.yaml_ into the textarea.
-3) Do the same with _service-activemq.yaml_.
-4) Do the same with _route-activemq.yaml_.
-5) ActiveMQ admin should be reachable on _http://activemq-route-intygstjanster-test.192.168.99.100.nip.io/admin/_
+##### Pre-requisits
 
+If not already done so, you have to set up the intyg-s2i build image first. The intyg-s2i is the base image we use to build each application.
 
+	> oc import-image eriklupander/intyg-s2i --confirm
+
+Use the GUI to confirm that the image was successfully imported.
+
+	intygstjanster-test => Builds => Images
+
+#### Building
+
+From this directory (/tools/minishift/[application]/templates/s2i):
+
+	> oc create -f imagestream-[application].yaml
+	> oc create -f buildconfig-[application].yaml
+	> oc start-build [application] -n intygstjanster-test
+
+The first command creates the images stream to which the build will be pushed. The second and third command sets up and run the build configuration.
+
+Watch the build process with
+
+	> oc logs -f bc/[application]
+
+#### Secrets
+
+Create secrets for certificates and credentials (passwords).
+
+    > oc secrets new [application]-test-certifikat [path-to-application's-config-repo]/[application]-konfiguration/demo/certifikat
+   	
+   	> oc secrets new [application]-test-credentials [path-to-application's-config-repo]/[application]-konfiguration/demo/credentials.properties
+
+From this directory (/tools/minishift/[application]/templates/deploy):
+
+	> oc create -f secrets-[application]-db-credentials.yaml
+	
+This last command might not be applicable to all application. It depends if tha application uses a database and/or message broker or any other external resource.
+ 
+#### Deploying
+
+From this directory (/tools/minishift/[application]/templates/deploy):
+
+	> oc create -f configmap-[application]-test-konfiguration.yaml
+	> oc create -f route-[application].yaml
+	> oc create -f service-[application].yaml
+	> oc create -f deploymentconfig-[application].yaml
+
+Watch the build process with
+
+	> oc logs -f dc/[application]
+	
 ## Generating config maps
 Config maps can conveniently be created for all files in a given directory. Make sure you don't include a "credentials.properties" file with secret passwords or real certificates!! Those go into secrets.
 
 If you're in our /tools folder:
 
-    > oc create configmap intygstjanst-konfiguration-test --from-file=intygstjanst-konfiguration/test
+    > oc create configmap intygstjanst-test-konfiguration --from-file=intygstjanst-konfiguration/test
 
 ## Generating secrets
 Secrets can also be created for files in a given directory. They are then encrypted so they can be stored externally.
@@ -210,7 +247,6 @@ Given that we're in /tools/minishift, we can run all .yaml files in a given dire
         -H 'Accept: application/json' \
         https://$ENDPOINT/api/v1/namespaces/$NAMESPACE/pods
 
-
 ## Using a unified YAML file to C(R)UD an application
 
 A convenient way to fully bootstrap an entire application including its configuration, secrets, service etc. is to use a YAML file containing definitions for all participating components.
@@ -230,7 +266,6 @@ See templates/intygstjanst/intygstjanst.yaml
     oc delete -f templates/intygstjanst/intygstjanst.yaml
 
 
-
 ## About S2I scripts
 
 ##### Assemble step
@@ -244,7 +279,6 @@ The quote above describes the work done by the _assemble_ script, e.g. it should
     The S2I process sets up the final application image such that the CMD for the image will execute the corresponding run script.
 
 This is quite simple: Everything you need to do at container startup goes into the _run_ script. Instead of brewing your own "starup.sh" which you'd then pass using CMD ["start.sh"], you put that stuff into _run_. This could be setting environment variables, running liquibase and of course the actual command to start the service such as _catalina.sh run_ or a _java -jar mybootapp.jar_.
-
 
 ### What does the above mean for us?
 
@@ -322,7 +356,6 @@ We add Gradle using curl and add some extra lib files we use into tomcat/lib.
 
 This Dockerfiles defines the base "intyg jws-gradle-s2i" builder image we then should be able to use for all our Tomcat-based .war applications.
 
-
 We also have bash scripts (note without suffix!) in _/.s2i/bin_:
 
 #### assemble
@@ -390,7 +423,6 @@ This is the script OpenShift runs on the container when it's executing a _BuildC
     fi
     
     mv $result_file $DEPLOY_DIR/ROOT.war
-
 
 Approx steps:
 1. OpenShift will download the source code for us into /tmp/source(?) and use /home/jboss as starting folder. 
