@@ -520,7 +520,7 @@ We need to know the name of the pod to port-forward to
     Forwarding from 127.0.0.1:5005 -> 5005
     Forwarding from [::1]:5005 -> 5005
 
-##### 6. Starta debug-session
+##### 6. Start debug-session
 Start debugging against localhost:5005 or similar using IDEA, Eclipse, NetBeans or whatever...
 
     
