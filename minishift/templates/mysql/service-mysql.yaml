@@ -7,7 +7,6 @@ metadata:
     app: mysql
     environment: test
   name: mysql
-  namespace: intygstjanster-test
 spec:
   ports:
     - name: 3306-tcp

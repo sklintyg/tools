@@ -1,8 +1,6 @@
 apiVersion: v1
 kind: DeploymentConfig
 metadata:
-  annotations:
-    openshift.io/generated-by: EriksFinaTemplate
   generation: 1
   labels:
     app: webcert
@@ -15,8 +13,6 @@ spec:
     deploymentconfig: webcert
   template:
     metadata:
-      annotations:
-        openshift.io/generated-by: EriksFinaTemplate
       labels:
         app: webcert
         deploymentconfig: webcert
@@ -25,7 +21,12 @@ spec:
       containers:
       - env:
         - name: APP_JVM_ENV
-          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Dactivemq_username=$ACTIVEMQ_USERNAME -Dactivemq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 -Dwebcert.stubs.port=8080 -Dwebcert.stub.data.folder=/opt/inera -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=\\\"*\\\" -Dwebcert.stubs.port=8080 -Dwebcert.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dwebcert.config.folder=/opt/inera -Dwebcert.config.file=/opt/inera/webcert-konfiguration/webcert.properties -Dwebcert.logback.file=/opt/inera/webcert-konfiguration/webcert-logback.xml
+          value: -Dntjp.base.url=$NTJP_BASE_URL -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Dactivemq_username=$ACTIVEMQ_USERNAME -Dactivemq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 -Dwebcert.stubs.port=8080 -Dwebcert.stub.data.folder=/opt/inera -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=\\\"*\\\" -Dwebcert.stubs.port=8080 -Dwebcert.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dwebcert.config.folder=/opt/inera -Dwebcert.config.file=/opt/inera/webcert-konfiguration/webcert.properties -Dwebcert.logback.file=/opt/inera/webcert-konfiguration/webcert-logback.xml
+        - name: NTJP_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: webcert-env
+              key: ntjp_base_url
         - name: ACTIVE_SPRING_PROFILES
           value: test,wc-all-stubs,wc-security-test,testability-api,caching-enabled,wc-init-db
         - name: DB_SERVER

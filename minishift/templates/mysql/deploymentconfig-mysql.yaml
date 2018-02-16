@@ -1,14 +1,11 @@
 apiVersion: v1
 kind: DeploymentConfig
 metadata:
-  annotations:
-    openshift.io/generated-by: EriksScript
   generation: 3
   labels:
     app: mysql
     environment: test
   name: mysql
-  namespace: intygstjanster-test
 spec:
   replicas: 1
   selector:

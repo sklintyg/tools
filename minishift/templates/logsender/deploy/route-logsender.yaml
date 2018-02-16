@@ -2,9 +2,8 @@ apiVersion: v1
 kind: Route
 metadata:
   name: logsender-route
-  namespace: intygstjanster-test
 spec:
-  host: logsender-route-intygstjanster-test.192.168.99.100.nip.io
+  # host: logsender-route-intygstjanster-test.192.168.99.100.nip.io
   path: /
   port:
     targetPort: 8080-tcp
