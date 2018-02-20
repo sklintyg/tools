@@ -19,6 +19,8 @@ spec:
   strategy:
     sourceStrategy:
       env:
+      - name: MAVEN_MIRROR_URL
+        value: http://nexus-route-intygstjanster-test.192.168.99.100.nip.io/repository/maven-public/
       - name: commonVersion
         value: 3.6.0.+
       - name: infraVersion
