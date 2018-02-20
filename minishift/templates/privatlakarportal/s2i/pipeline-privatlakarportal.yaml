@@ -6,7 +6,6 @@ metadata:
     name: privatlakarportal-pipeline
     template: application-template-sample-pipeline
   name: privatlakarportal-pipeline
-  namespace: intygstjanster-test
 spec:
   nodeSelector: null
   output: {}

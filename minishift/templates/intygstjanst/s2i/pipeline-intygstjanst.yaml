@@ -6,7 +6,6 @@ metadata:
     name: intygstjanst-pipeline
     template: application-template-sample-pipeline
   name: intygstjanst-pipeline
-  namespace: intygstjanster-test
 spec:
   nodeSelector: null
   output: {}

@@ -3,4 +3,4 @@ kind: Secret
 metadata:
   name: webcert-env
 stringData:
-  ntjp_base_url: http://localhost:8080/services
+  ntjp_base_url: https://qa.esb.ntjp.se:443/vp

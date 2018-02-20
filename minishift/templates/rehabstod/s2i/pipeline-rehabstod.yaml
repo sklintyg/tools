@@ -6,7 +6,6 @@ metadata:
     name: rehabstod-pipeline
     template: application-template-sample-pipeline
   name: rehabstod-pipeline
-  namespace: intygstjanster-test
 spec:
   nodeSelector: null
   output: {}

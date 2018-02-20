@@ -6,7 +6,6 @@ metadata:
     name: logsender-pipeline
     template: application-template-sample-pipeline
   name: logsender-pipeline
-  namespace: intygstjanster-test
 spec:
   nodeSelector: null
   output: {}

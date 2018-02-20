@@ -6,7 +6,6 @@ metadata:
     name: webcert-pipeline
     template: application-template-sample-pipeline
   name: webcert-pipeline
-  namespace: intygstjanster-test
 spec:
   nodeSelector: null
   output: {}
