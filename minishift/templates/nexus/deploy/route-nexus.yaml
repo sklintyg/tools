@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: nexus-route
+  namespace: intygstjanster-test
+spec:
+  host: nexus-route-intygstjanster-test.192.168.99.100.nip.io
+  path: /
+  port:
+    targetPort: 8081-tcp
+  to:
+    kind: Service
+    name: nexus
+    weight: 100

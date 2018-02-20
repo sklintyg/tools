@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  labels:
+    app: nexus
+  name: nexus
+  namespace: intygstjanster-test
+spec:
+  tags:
+  - from:
+      kind: DockerImage
+      name: docker.io/sonatype/nexus3:3.2.1
+    name: "3.2.1"
