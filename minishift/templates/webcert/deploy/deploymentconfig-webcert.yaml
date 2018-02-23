@@ -55,7 +55,7 @@ spec:
             secretKeyRef:
               name: webcert-db-credentials
               key: activemq_password
-        image: 172.30.1.1:5000/intygstjanster-test/webcert:latest
+        image: 172.30.1.1:5000/intygstjanster-demo/webcert:latest
         imagePullPolicy: Always
         name: webcert
         ports:

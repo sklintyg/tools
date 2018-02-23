@@ -22,7 +22,7 @@ spec:
         - name: APP_JVM_ENV
           value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dcertificate.config.folder=/opt/inera -Dcertificate.config.file=/opt/inera/intygstjanst-konfiguration/certificate.properties -Dcertificate.logback.file=/opt/inera/intygstjanst-konfiguration/certificate-logback.xml -Drecipient.config.file=/opt/inera/intygstjanst-konfiguration/recipients.json
         - name: ACTIVE_SPRING_PROFILES
-          value: test,it-fk-stub,it-ts-stub,it-init-db,testability-api,caching-enabled
+          value: test,it-fk-stub,it-ts-stub,it-init-db,testability-api,caching-enabled,wc-hsa-stub
         - name: NTJP_URL
           value: https://qa.esb.ntjp.se:443/vp
         - name: DB_SERVER
@@ -41,7 +41,7 @@ spec:
             secretKeyRef:
               name: intygstjanst-db-credentials
               key: db_password
-        image: 172.30.1.1:5000/intygstjanster-test/intygstjanst:latest
+        image: 172.30.1.1:5000/intygstjanster-demo/intygstjanst:latest
         imagePullPolicy: Always
         name: intygstjanst
         ports:

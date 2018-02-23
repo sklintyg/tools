@@ -27,6 +27,8 @@ spec:
         value: 3.6.0.+
       - name: buildVersion
         value: 3.6.0.0-OPENSHIFT
+      - name: GRADLE_ARGS
+        value: build -Popenshift
       from:
         kind: "ImageStreamTag"
         name: "intyg-s2i:latest"

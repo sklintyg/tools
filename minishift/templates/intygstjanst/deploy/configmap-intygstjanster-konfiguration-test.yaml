@@ -99,35 +99,36 @@ data:
 
     localhost.url=http://localhost:8080
 
+    ntjp.base.url=https://qa.esb.ntjp.se:443/vp
 
     # NTjP SSL config
 
-    ntjp.ws.certificate.file = ${config.dir}/certifikat/demo.intygstjanst.intygstjanster.se.p12
+    ntjp.ws.certificate.file = /opt/inera/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
 
     ntjp.ws.certificate.type = PKCS12
 
-    ntjp.ws.truststore.file = ${config.dir}/certifikat/truststore.jks
+    ntjp.ws.truststore.file = /opt/inera/certifikat/truststore.jks
 
     ntjp.ws.truststore.type = JKS
 
 
     # Endpoints for communicating with FK
 
-    registermedicalcertificatev3.endpoint.url=${localhost.url}/inera-certificate/register-medical-certificate-stub
+    registermedicalcertificatev3.endpoint.url=${localhost.url}/register-medical-certificate-stub
 
-    sendmedicalcertificatequestionv1.endpoint.url=${localhost.url}/inera-certificate/send-certificate-question-stub
+    sendmedicalcertificatequestionv1.endpoint.url=${localhost.url}/send-certificate-question-stub
 
-    sendmessagetocarev2.endpoint.url=${localhost.url}/inera-certificate/send-message-to-care-stub
+    sendmessagetocarev2.endpoint.url=${localhost.url}/send-message-to-care-stub
 
-    sendmessagetorecipientv2.endpoint.url=${localhost.url}/inera-certificate/send-message-to-recipient-stub
+    sendmessagetorecipientv2.endpoint.url=${localhost.url}/send-message-to-recipient-stub
 
-    registercertificatev1.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub
+    registercertificatev1.endpoint.url=${localhost.url}/register-certificate-stub
 
-    revokemedicalcertificatev1.endpoint.url=${localhost.url}/inera-certificate/revoke-medical-certificate-stub
+    revokemedicalcertificatev1.endpoint.url=${localhost.url}/revoke-medical-certificate-stub
 
-    registercertificatev3.endpoint.url=${localhost.url}/inera-certificate/register-certificate-stub-fk-parent
+    registercertificatev3.endpoint.url=${localhost.url}/register-certificate-stub-fk-parent
 
-    revokecertificatev2.endpoint.url=${localhost.url}/inera-certificate/revoke-certificate-rivta-stub
+    revokecertificatev2.endpoint.url=${localhost.url}/revoke-certificate-rivta-stub
 
 
     # In this env a test jms receiver is used for integration tests
@@ -146,18 +147,31 @@ data:
     ################################################
 
 
-    infrastructure.directory.authorizationmanagement.getcredentialsforpersonincludingprotectedpersonresponderinterface.endpoint.url=${localhost.url}/inera-certificate/hsa-authorization
+    infrastructure.directory.authorizationmanagement.getcredentialsforpersonincludingprotectedpersonresponderinterface.endpoint.url=${localhost.url}/hsa-authorization
 
-    infrastructure.directory.organization.getunit.endpoint.url=${localhost.url}/inera-certificate/hsa-unit
+    infrastructure.directory.organization.getunit.endpoint.url=${localhost.url}/hsa-unit
 
-    infrastructure.directory.organization.gethealthcareunit.endpoint.url=${localhost.url}/inera-certificate/hsa-healthcareunit
+    infrastructure.directory.organization.gethealthcareunit.endpoint.url=${localhost.url}/hsa-healthcareunit
 
     infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${localhost.url}/hsa-healthcareunit-members
 
-    infrastructure.directory.employee.getemployee.endpoint.url=${localhost.url}/inera-certificate/hsa-employee
+    infrastructure.directory.employee.getemployee.endpoint.url=${localhost.url}/hsa-employee
 
 
     infrastructure.directory.logicalAddress=
+
+    #infrastructure.directory.authorizationmanagement.getcredentialsforpersonincludingprotectedpersonresponderinterface.endpoint.url=${ntjp.base.url}/infrastructure/directory/authorizationmanagement/GetCredentialsForPersonIncludingProtectedPerson/1/rivtabp21
+
+    #infrastructure.directory.organization.getunit.endpoint.url=${ntjp.base.url}/infrastructure/directory/organization/GetUnit/1/rivtabp21
+
+    #infrastructure.directory.organization.gethealthcareunit.endpoint.url=${ntjp.base.url}/infrastructure/directory/organization/GetHealthCareUnit/1/rivtabp21
+
+    #infrastructure.directory.organization.gethealthcareunitmembers.endpoint.url=${ntjp.base.url}/infrastructure/directory/organization/GetHealthCareUnitMembers/1/rivtabp21
+
+    #infrastructure.directory.employee.getemployee.endpoint.url=${ntjp.base.url}/infrastructure/directory/employee/GetEmployeeIncludingProtectedPerson/1/rivtabp21
+
+
+    #infrastructure.directory.logicalAddress=SE165565594230-1000
 
 
     ################################################

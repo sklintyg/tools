@@ -3,7 +3,6 @@ kind: Route
 metadata:
   name: intygstjanst-route
 spec:
-  # host: intygstjanst-route-intygstjanster-test.192.168.99.100.nip.io
   path: /
   port:
     targetPort: 8080-tcp

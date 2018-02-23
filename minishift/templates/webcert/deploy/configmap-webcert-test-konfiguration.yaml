@@ -801,5 +801,14 @@ data:
 
     pu.stub.data.folder = ${webcert.stub.data.folder}
 
+    #######################################
+
+    # NetID Access Server
+
+    #######################################
+
+    netid.access.server.url=http://localhost:${webcert.stubs.port}/services/netid-access-server-stub
+
+
 metadata:
   name: webcert-konfiguration-test
