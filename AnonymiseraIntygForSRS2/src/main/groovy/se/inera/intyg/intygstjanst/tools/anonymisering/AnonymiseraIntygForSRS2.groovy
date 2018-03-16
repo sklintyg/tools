@@ -260,7 +260,7 @@ class AnonymiseraIntygForSRS2 {
         if (funkAkt != null) {
             funktionstillstandAktivitetBeskrivning = cleanCommaFromText(funkAkt.'ns1:beskrivning'.text())
             arbetsformagaMotivering = cleanCommaFromText(funkAkt.'ns1:arbetsformaga'.'ns1:motivering'.text())
-            funktionstillstandPrognos = intyg.'ns3:lakarutlatande'.'ns1:funktionstillstand'.'ns1:arbetsformaga'.'ns1:prognosangivelse'
+            funktionstillstandPrognos = cleanCommaFromText(intyg.'ns3:lakarutlatande'.'ns1:funktionstillstand'.'ns1:arbetsformaga'.'ns1:prognosangivelse'.text())
             arbetsuppgift = cleanCommaFromText(funkAkt.'ns1:arbetsformaga'.'ns1:arbetsuppgift'.'ns1:typAvArbetsuppgift'.text())
         }
 
@@ -272,7 +272,7 @@ class AnonymiseraIntygForSRS2 {
         String nuvarandeArbete = getSysselsattning(intyg, 'Nuvarande_arbete')
         String arbetsloshet = getSysselsattning(intyg, 'Arbetsloshet')
         String foraldrarledighet = getSysselsattning(intyg, 'Foraldrarledighet')
-        String kommentar = intyg.'ns3:lakarutlatande'.'ns1:kommentar'
+        String kommentar = cleanCommaFromText(intyg.'ns3:lakarutlatande'.'ns1:kommentar'.text())
 
         rowMaker.add(makeRow(Arrays.asList(
                 utlatandeId, utlatandeTyp, signeringsDatum,
@@ -412,6 +412,7 @@ class AnonymiseraIntygForSRS2 {
     }
 
     static String cleanCommaFromText(String input) {
-        return input.replace(",", " ")
+        return input.replace(",", " ").replace("\n", " ")
+
     }
 }
