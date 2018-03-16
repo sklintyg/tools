@@ -124,11 +124,12 @@ class AnonymiseraIntygForSRS2 {
         def queryParameters = new JsonSlurper().parseText(queryParamFile.text)
 
         def hsaIds = queryParameters.hsaIds.collect {"'$it'"}.join(', ')
+        def fromDate = queryParameters.fromDate
 
         def bootstrapSql = new Sql(dataSource)
         def certificateIds = bootstrapSql.rows(
-                "select ID from CERTIFICATE where CERTIFICATE_TYPE = :type and CARE_UNIT_ID in ($hsaIds)",
-                [type : type])
+                "select ID from CERTIFICATE where CERTIFICATE_TYPE = :type and CARE_UNIT_ID in ($hsaIds) and SIGNED_DATE >= :fromDate",
+                [type : type, fromDate : fromDate])
 
         bootstrapSql.close()
 
