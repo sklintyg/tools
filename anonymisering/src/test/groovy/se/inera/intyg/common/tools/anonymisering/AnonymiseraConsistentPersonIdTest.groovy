@@ -37,7 +37,7 @@ class AnonymiseraConsistentPersonIdTest {
 
     @Test
     void testDetermineAgeFromPatientId() {
-        assertEquals("31", anonymiseraConsistentPersonId.determineAgeFromPersonnummer("19851123-1212"))
+        assertEquals("32", anonymiseraConsistentPersonId.determineAgeFromPersonnummer("19851123-1212"))
     }
 
     @Test

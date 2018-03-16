@@ -1,0 +1,43 @@
+apply plugin: 'groovy'
+apply plugin: 'application'
+apply plugin: 'maven'
+
+group = 'se.inera.intyg.tools'
+version = "2.1.6"
+mainClassName = 'se.inera.intyg.tools.anonymisering.AnonymiseraIntygForSRS2'
+
+ext {
+  h2Version = "1.3.176"
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
+        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+      }
+    }
+  }
+}
+
+dependencies {
+  compile 'se.inera.intyg.tools:anonymisering:2.1.4'
+  compile 'org.codehaus.groovy:groovy-all:2.4.7'
+  compile 'org.apache.commons:commons-dbcp2:2.0'
+  compile 'org.codehaus.gpars:gpars:1.1.0'
+  compile "com.h2database:h2:${h2Version}"
+  compile "mysql:mysql-connector-java:5.1.40"
+}
+
+repositories {
+  mavenLocal()
+  maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
+  maven { url "https://build-inera.nordicmedtest.se/nexus/repository/snapshots/" }
+  maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+jar {
+  from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+  manifest.attributes('Main-Class' : mainClassName)
+}
+
