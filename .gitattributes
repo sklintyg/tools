@@ -1,0 +1,3 @@
+credentials.properties filter=git-crypt diff=git-crypt
+*.jks filter=git-crypt diff=git-crypt
+*.p12 filter=git-crypt diff=git-crypt
