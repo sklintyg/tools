@@ -21,9 +21,9 @@ spec:
       containers:
       - env:
         - name: APP_JVM_ENV
-          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Dib.stubs.port=8080 -Dib.cert.folder=/opt/inera/certifikat -Dib.config.folder=/opt/inera/intygsbestallning-konfiguration -Dib.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dib.config.file=/opt/inera/intygsbestallning-konfiguration/intygsbestallning.properties -Dlogback.configurationFile=/opt/inera/intygsbestallning-konfiguration/intygsbestallning-logback.xml
+          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Dib.stubs.port=8080 -Dib.cert.folder=/opt/inera/certifikat -Dintygsbestallning.config.folder=/opt/inera/intygsbestallning-konfiguration -Dintygsbestallning.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dib.config.file=/opt/inera/intygsbestallning-konfiguration/intygsbestallning.properties -Dlogback.configurationFile=/opt/inera/intygsbestallning-konfiguration/intygsbestallning-logback.xml
         - name: ACTIVE_SPRING_PROFILES
-          value: dev,caching-enabled,ib-stub
+          value: test,caching-enabled,ib-stub
         - name: DB_SERVER
           value: mysql
         - name: DB_PORT
@@ -74,6 +74,9 @@ spec:
         - mountPath: /opt/inera/intygsbestallning-konfiguration
           name: intygsbestallning-test-konfiguration
           readOnly: true
+        - mountPath: /opt/inera/credentials
+          name: intygsbestallning-credentials
+          readOnly: true
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -84,4 +87,8 @@ spec:
            defaultMode: 420
            name: intygsbestallning-test-konfiguration
          name: intygsbestallning-test-konfiguration
+       - name: intygsbestallning-credentials
+         secret:
+           defaultMode: 420
+           secretName: intygsbestallning-credentials
   test: false

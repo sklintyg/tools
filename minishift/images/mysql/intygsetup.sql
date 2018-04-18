@@ -41,7 +41,7 @@ CREATE DATABASE statistik;
 
 
 -- INTYGSBESTALLNING
-CREATE USER 'ib'@'%' IDENTIFIED BY 'ib';
-GRANT ALL PRIVILEGES ON *.* TO 'ib'@'%' IDENTIFIED BY 'ib' WITH GRANT OPTION;
+CREATE USER 'intygsbestallning'@'%' IDENTIFIED BY 'intygsbestallning';
+GRANT ALL PRIVILEGES ON *.* TO 'intygsbestallning'@'%' IDENTIFIED BY 'intygsbestallning' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE ib;
+CREATE DATABASE intygsbestallning;
