@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  labels:
+    app: intygsbestallning
+    template: application-template-sample-pipeline
+  name: intygsbestallning
+spec:
+  lookupPolicy:
+    local: false

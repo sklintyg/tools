@@ -8,7 +8,7 @@ RUN yum -y update
 RUN yum -y install ansible
 
 # Install Gradle (actually, not really necessary since we're using the gradle wrapper anyway)
-ENV GRADLE_VERSION 4.2
+ENV GRADLE_VERSION 4.5.1
 RUN curl -sL -0 https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o /tmp/gradle-${GRADLE_VERSION}-bin.zip
 RUN unzip /tmp/gradle-${GRADLE_VERSION}-bin.zip -d /usr/local/
 RUN rm /tmp/gradle-${GRADLE_VERSION}-bin.zip
