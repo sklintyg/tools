@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure MySQL Yum repo is installed
-  shell: rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+  shell: rpm -Uvh http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
   args:
     creates: /etc/yum.repos.d/mysql-community.repo
 
