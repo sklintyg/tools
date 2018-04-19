@@ -149,13 +149,14 @@ data:
 
     # Host URLs
 
-    ib.host.url=http://localhost:8990
+    ib.host.url=http://localhost:8080
 
     ntjp.base.url=${ib.host.url}/services/stubs
 
     infrastructure.directory.logicalAddress=
 
     putjanst.logicaladdress = PUDEV
+
 
 
 kind: ConfigMap
