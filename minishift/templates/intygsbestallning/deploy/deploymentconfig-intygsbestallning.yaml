@@ -21,7 +21,7 @@ spec:
       containers:
       - env:
         - name: APP_JVM_ENV
-          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Dib.stubs.port=8080 -Dintygsbestallning.cert.folder=/opt/inera/certifikat -Dintygsbestallning.config.folder=/opt/inera/intygsbestallning-konfiguration -Dintygsbestallning.resources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dib.config.file=/opt/inera/intygsbestallning-konfiguration/intygsbestallning.properties -Dlogback.configurationFile=/opt/inera/intygsbestallning-konfiguration/intygsbestallning-logback.xml
+          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Dib.stubs.port=8080 -Dcertificate.folder=/opt/inera/certifikat -Dconfig.folder=/opt/inera/intygsbestallning-konfiguration -Dresources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dconfig.file=/opt/inera/intygsbestallning-konfiguration/intygsbestallning.properties -Dlogback.configurationFile=/opt/inera/intygsbestallning-konfiguration/intygsbestallning-logback.xml
         - name: ACTIVE_SPRING_PROFILES
           value: test,caching-enabled,ib-stub,wc-hsa-stub,wc-pu-stub,testability-api,ib-security-dev
         - name: DB_SERVER

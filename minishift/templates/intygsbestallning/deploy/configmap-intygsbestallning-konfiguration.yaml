@@ -141,11 +141,11 @@ data:
   intygsbestallning.properties: >
     # Configuration and resource folders
 
-    certificate.dir=${intygsbestallning.cert.folder}
+    certificate.dir=${certificate.folder}
 
-    config.dir=${intygsbestallning.config.folder}
+    config.dir=${config.folder}
 
-    resources.dir=${intygsbestallning.resources.folder}
+    resources.dir=${resources.folder}
 
     # Host URLs
 
