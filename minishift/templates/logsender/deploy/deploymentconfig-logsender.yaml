@@ -1,9 +1,6 @@
 apiVersion: v1
 kind: DeploymentConfig
 metadata:
-  annotations:
-    openshift.io/generated-by: EriksFinaTemplate
-  generation: 1
   labels:
     app: logsender
     environment: test
@@ -15,8 +12,6 @@ spec:
     deploymentconfig: logsender
   template:
     metadata:
-      annotations:
-        openshift.io/generated-by: EriksFinaTemplate
       labels:
         app: logsender
         deploymentconfig: logsender
@@ -25,11 +20,31 @@ spec:
       containers:
       - env:
         - name: APP_JVM_ENV
-          value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dlogsender.config.folder=/opt/inera -Dlogsender.config.file=/opt/inera/logsender-konfiguration/logsender.properties -Dlogsender.logback.file=/opt/inera/logsender-konfiguration/logsender-logback.xml
+          value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dactivemq_hostname=$ACTIVEMQ_HOSTNAME -Dactivemq_port=$ACTIVEMQ_PORT -Dactivemq_username=$ACTIVEMQ_USERNAME -Dactivemq_password=$ACTIVEMQ_PASSWORD -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dconfig.folder=/opt/inera -Dconfig.file=/opt/inera/logsender-konfiguration/logsender.properties -Dlogback.file=/opt/inera/logsender-konfiguration/logsender-logback.xml
         - name: ACTIVE_SPRING_PROFILES
           value: test
+        - name: ACTIVEMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: logsender-amq-credentials
+              key: amq_username
+        - name: ACTIVEMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: logsender-amq-credentials
+              key: amq_password
+        - name: ACTIVEMQ_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: logsender-amq-credentials
+              key: amq_hostname
+        - name: ACTIVEMQ_PORT
+          valueFrom:
+            secretKeyRef:
+              name: logsender-amq-credentials
+              key: amq_port
 
-        image: 172.30.1.1:5000/intygstjanster-test/logsender:latest
+        image: 'docker-registry.default.svc:5000/intyg/logsender'
         imagePullPolicy: Always
         name: logsender
         ports:
@@ -73,9 +88,9 @@ spec:
        - name: logsender-test-certifikat
          secret:
            defaultMode: 420
-           secretName: logsender-test-certifikat
+           secretName: intygsbestallning-certifikat
        - name: logsender-test-credentials
          secret:
            defaultMode: 420
-           secretName: logsender-test-credentials
+           secretName: intygsbestallning-credentials
   test: false

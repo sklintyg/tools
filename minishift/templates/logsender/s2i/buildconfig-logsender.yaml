@@ -20,11 +20,11 @@ spec:
     sourceStrategy:
       env:
       - name: commonVersion
-        value: 3.6.0.+
+        value: 3.7.0.+
       - name: infraVersion
-        value: 3.6.0.+
+        value: 3.7.0.+
       - name: buildVersion
-        value: 3.6.0.0-OPENSHIFT
+        value: 0.1-OPENSHIFT
       - name: ARTIFACT_DIR
         value: build/libs
       from:

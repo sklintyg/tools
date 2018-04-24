@@ -41,48 +41,11 @@ data:
   logsender.properties: >
     # Configuration folder
 
-    config.dir = ${logsender.config.folder}
+    config.dir=${config.folder}
 
+    ntjp.base.url=http://localhost:8080/stubs
 
-    ########################################
-
-    #
-
-    # Loggtj\u00E4nst Configuration
-
-    #
-
-    ########################################
-
-    loggtjanst.endpoint.url=https://qa.esb.ntjp.se:443/vp/ehr/log/store/StoreLog/1/rivtabp21
-
-    loggtjanst.logicalAddress = SE165565594230-1000
-
-
-    logsender.bulkSize = 10
-
-    logsender.bulkTimeout = 60000
-
-    ########################################
-
-    #
-
-    # S\u00E4kerhetstj\u00E4nsten WebService Configuration
-
-    #
-
-    ########################################
-
-    #QA
-
-    sakerhetstjanst.ws.certificate.file =
-    ${config.dir}/certifikat/verifiering.webcert.intygstjanster.sjunet.org_autentisering.p12
-
-    sakerhetstjanst.ws.certificate.type = PKCS12
-
-    sakerhetstjanst.ws.truststore.file = ${config.dir}/certifikat/truststore.jks
-
-    sakerhetstjanst.ws.truststore.type = JKS
+    loggtjanst.logicalAddress = SE000000000000-0000
 
 kind: ConfigMap
 metadata:
