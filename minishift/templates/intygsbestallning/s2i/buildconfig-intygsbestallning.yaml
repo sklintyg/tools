@@ -16,6 +16,12 @@ spec:
       uri: https://github.com/sklintyg/ib-backend.git
     contextDir: /
     type: Git
+  triggers:
+    - trigger:
+      type: "Generic"
+      generic:
+        secret: "intygtestar"
+        allowEnv: true
   strategy:
     sourceStrategy:
       env:

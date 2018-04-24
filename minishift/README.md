@@ -585,3 +585,37 @@ The line above tries to do an S2I build using:
 - Uses the source in _/Users/eriklupander/intyg/intygstjanst_ 
 - The builder image identified by _eriklupander/intyg-s2i_
 - What the output image will be named _intyg-dev_.
+
+
+### Sandbox access
+
+##### OC client
+for interacting with BF OpenShift make sure you use the `oc` client application provided by Red Hat, and not the Origin one:
+
+1. https://access.redhat.com/downloads/content/290
+   - requires Red Hat account
+2. https://mirror.openshift.com/pub/openshift-v3/clients/3.7.23/
+   - open Red Hat trusted source, requires no account/registration
+
+We currently use version 3.7.23. Always make sure your client is up to date with the server, if in doubt type `oc version`. (edited)
+
+Download and unpack somewhere, the tar.gz is unpacked into the pure oc binary.
+
+To login to the sandbox, 
+
+    oc login https://portal-ocpsbx1-ind.ocp.osl.basefarm.net
+    
+Use your BF username/password
+
+    oc project intyg
+    
+
+
+
+##### VPN URL
+
+    vpn.osl.basefarm.net
+    
+##### GUI
+
+    https://portal-ocpsbx1-ind.ocp.osl.basefarm.net/console/project/intyg/overview

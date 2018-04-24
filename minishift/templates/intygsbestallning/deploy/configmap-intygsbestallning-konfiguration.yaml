@@ -158,7 +158,6 @@ data:
     putjanst.logicaladdress = PUDEV
 
 
-
 kind: ConfigMap
 metadata:
   name: intygsbestallning-test-konfiguration
