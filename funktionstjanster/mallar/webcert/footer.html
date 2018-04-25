@@ -3,29 +3,216 @@
 	    </div>
 	  </div>
 	</div>
-	<div id="footer">
-	  <div class="inner">
-	    <div class="left">
-	      <h3>Om e-legitimation</h3>
-	      <ul>
-	      	<li><a href="/skaffa_eleg.html">Skaffa e-legitimation</a></li>
-	      	<li><a href="/testa_eleg.html">Testa din e-legitimation</a></li>
-      	  </ul>
-	    </div>
-	    <div class="right">
-    	  <h3>Kontakt</h3>            
-    	  <ul>
-	    	  <li><a href="/support_eleg.html">Kontakt och support</a></li>
-		      <li><a href="/sparra_eleg.html">Spärra</a></li>
-	      </ul>
-	    </div>
-	    <div class="clearFloat"></div>
-	    <div>
-	      <h3 style="padding-top:30px">Tjänsten tillhandahålls av</h3>            		    
-	      <a target="_blank" href="http://www.cgi.se">CGI Sverige AB</a> &nbsp;|&nbsp;
-	      <a href="mailto:eid-login@cgi.com">Maila CGI</a>&nbsp;|&nbsp; 
-	      <a target="_blank" href="http://www.cgi.se/business-process-services/bankid-och-e-legitimationer">Om tjänsten</a> &nbsp;|&nbsp;  
-	      <a href="/cookieinfo.html">Information om kakor (cookies)</a>
-      	</div>
-	  </div>
-	</div>
+
+    <div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="cookieModalLabel">Om kakor (cookies)</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Vi använder kakor (cookies) för att den här webbplatsen ska fungera på ett bra sätt för dig. Genom att logga in accepterar du vår användning av kakor.</p>
+                    <h4>Så här använder vi kakor</h4>
+                    <ul>
+                        <li>En sessionskaka som innehåller ett unikt slumptal för att identifiera just din inloggning och försvinner när webbläsaren stängs av.</li>
+                        <li>En informationskaka om vilken av servrarna på vår webbplats som hanterade din inloggning och den kakan finns kvar i webbläsaren även efter omstart.</li>
+                    </ul>
+                    <p>Dessa två kakor behövs för att på ett säkert sätt låta dig komma åt olika e-tjänster som en inloggad och identifierad användare. Kakorna i sig innehåller inga personliga uppgifter och används inte av någon annan.</p>
+                    <h4>Undvika kakor</h4>
+                    <p>Vill du inte acceptera kakor kan din webbläsare ställas in så att du automatiskt nekar till lagring av kakor eller informeras varje gång en webbplats begär att få lagra en kaka. Genom webbläsaren kan också tidigare lagrade kakor raderas. Se webbläsarens hjälpsidor för mer information.</p>
+                    <p>Väljer du att inte acceptera kakor så kan du inte identifiera dig med e-legitimation i denna e-tjänst.</p>
+                    <p>Mer information om kakor kan du finna på <a href="http://pts.se/sv/privat/internet/integritet/kakor-cookies/" target="_blank">Kommunikationsmyndigheten PTS sida om kakor</a><span><i class="material-icons">launch</i></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="skaffaElegModal" tabindex="-1" role="dialog" aria-labelledby="skaffaElegModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="skaffaElegModalLabel">Skaffa e-legitimation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Det finns flera utgivare av e-legitimationer. Det vanligaste sättet är att du kontaktar din bank. Har du Internetbank så kan du enkelt skaffa en e-legitimation på fil till din dator, men det finns också e-legitimation på kort och vissa utgivare kan även erbjuda e-legitimation i mobiltelefon.</p>
+                    <p>Utgivare på e-legitimation för:</p>
+                    <h4>BankID</h4>
+                    <ul>
+                        <li><a href="https://danskebank.se/privat">Danske Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.handelsbanken.se">Handelsbanken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.icabanken.se">ICA Banken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://ikanobank.se">Ikano Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="http://www.lansforsakringar.se">Länsförsäkringar</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.nordea.se">Nordea</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://seb.se">SEB</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.skandia.se">Skandia</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.sparbankensyd.se">Sparbanken Syd</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.swedbank.se">Swedbank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.alandsbanken.se">Ålandsbanken</a><span><i class="material-icons">launch</i></span></li>
+                    </ul>
+                    <h4>Telia</h4>
+                    <ul>
+                        <li><a href="https://www.telia.se/privat">Telia</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.skatteverket.se/idkort">Skatteverkets ID-kort</a><span><i class="material-icons">launch</i></span></li>
+                    </ul>
+                    <h4>Villkor för att skaffa e-legitimation</h4>
+                    <ul class="dots">
+                        <li>Du måste ha svenskt personnummer</li>
+                        <li>Vara fyllda 13 år (vissa utgivare har en åldergräns på 16 år)</li>
+                        <li>Vara folkbokförd i Sverige</li>
+                    </ul>
+                    <p>Är du ej folkbokförd i Sverige får du prata med din bank för att beställa e-legitimation.</p>
+                    <h4>Under 18 år</h4>
+                    <p>Under 18 år krävs målmans medgivande. Besök ditt bankkontor eller Skatteverkets servicekontor tillsammans med målsman för att skaffa e-legitimation.</p>
+                    <h4>Skyddad identitet</h4>
+                    <p>Har du skyddat identitet behöver du besöka ditt bankkontor eller Skatteverkets servicekontor för att skaffa e-legitimation.</p>
+                    <h4>Kostnad</h4>
+                    <p>Olika utgivare av e-legitimation kan ha olika avgifter. E-legitimation på fil är oftast gratis att skaffa, medan e-legitimation på kort normalt kostar pengar och kan även utgöra fysisk ID-handling.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="testaElegModal" tabindex="-1" role="dialog" aria-labelledby="testaElegModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="testaElegModalLabel">Testa din e-legitimation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Det är din utgivare av e-legitimation som skall ge dig support och hjälp med den programvaran som behövs i din dator. På följande länkar kan du testa din e-legitimation och även installera/uppdatera den säkerhetsprogramvara som behövs om du saknar den.</p>
+                    <p></p>
+                    <ul>
+                        <li><a href="https://test.bankid.com">Testa BankID</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://install.bankid.com">Installera BankID Säkerhetsprogramvara</a><span><i class="material-icons">launch</i></span></li>
+                        <br>
+                        <li><a href="https://cve.trust.telia.com/TeliaElegNG/">Testa Telias e-legitimation</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://cve.trust.telia.com/TeliaElegNG/NetId">Installera NetID</a><span><i class="material-icons">launch</i></span></li>
+                    </ul>
+                    <p>Får du det inte att fungera, kontakta din utgivare för support. Om din e-legitimation fungerar på testsidan, är det antagligen fel på själva e-tjänsten som du försöker använda. Kontakta då den myndighet eller det företag som har e-tjänsten.</p>
+                    <h4>BankID</h4>
+                    <ul>
+                        <li><a href="https://danskebank.se/privat">Danske Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.handelsbanken.se">Handelsbanken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.icabanken.se">ICA Banken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://ikanobank.se">Ikano Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="http://www.lansforsakringar.se">Länsförsäkringar</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.nordea.se">Nordea</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://seb.se">SEB</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.skandia.se">Skandia</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.sparbankensyd.se">Sparbanken Syd</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.swedbank.se">Swedbank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.alandsbanken.se">Ålandsbanken</a><span><i class="material-icons">launch</i></span></li>
+                    </ul>
+                    <h4>Telia</h4>
+                    <p><a href="https://www.skatteverket.se/idkort">Skatteverkets ID-kort</a><span><i class="material-icons">launch</i></span>&nbsp;(innehåller <a href="https://www.telia.se/privat">Telia</a><span><i class="material-icons">launch</i></span>)</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="kontaktSupportModal" tabindex="-1" role="dialog" aria-labelledby="kontaktSupportModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="kontaktSupportModalLabel">Kontakt och support</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Har du problem med din e-legitimation kontakta din utgivare av e-legitimationen. Vanligtvis din bank.</p>
+                    <p>BankID har en gemensam supportsida som du når här:&nbsp;<a href="https://support.bankid.com/sv">BankID support</a><span><i class="material-icons">launch</i></span></p>
+                    <p>Om din e-legitimation fungerar på <a href="/testa_eleg.html">testsidan</a> men inte när du loggar in via själva e-tjänsten ska du kontakta den myndighet eller företag som har själva e-tjänsten.</p>
+                    <h4>BankID</h4>
+                    <ul>
+                        <li><a href="https://danskebank.se/privat">Danske Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.handelsbanken.se">Handelsbanken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.icabanken.se">ICA Banken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://ikanobank.se">Ikano Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="http://www.lansforsakringar.se">Länsförsäkringar</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.nordea.se">Nordea</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://seb.se">SEB</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.skandia.se">Skandia</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.sparbankensyd.se">Sparbanken Syd</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.swedbank.se">Swedbank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.alandsbanken.se">Ålandsbanken</a><span><i class="material-icons">launch</i></span></li>
+                    </ul>
+                    <h4>Telia</h4>
+                    <p><a href="https://www.skatteverket.se/idkort">Skatteverkets ID-kort</a><span><i class="material-icons">launch</i></span></p>
+                    <p><a href="https://www.telia.se/privat">Telia</a><span><i class="material-icons">launch</i></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="sparraElegModal" tabindex="-1" role="dialog" aria-labelledby="sparraElegModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="sparraElegModalLabel">Spärra din e-legitimation</h4>
+                </div>
+                <div class="modal-body">
+                    <p>En e-legitimation är en personlig ID-handling som du skall förvara säkert och hålla din privata pin-kod hemlig. Om du misstänker att någon obehörig kan ha kommit åt din e-legitimation, eller du blivit av med din e-legitimation, är det viktigt att du omedelbart spärrar e-legitimationen så att den inte längre kan användas.</p>
+                    <p>Har du e-legitimation på fil, kan du normalt själv spärra e-legitimationen via din internetbank. Kommer du inte åt Internetbanken eller har e-legitimation på kort måste du ringa till din utgivare och spärra din e-legitimation.</p>
+                    <ul>
+                        <li><a href="https://danskebank.se/privat">Danske Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.handelsbanken.se">Handelsbanken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.icabanken.se">ICA Banken</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://ikanobank.se">Ikano Bank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="http://www.lansforsakringar.se">Länsförsäkringar</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.nordea.se">Nordea</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://seb.se">SEB</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.skandia.se">Skandia</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.sparbankensyd.se">Sparbanken Syd</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.swedbank.se">Swedbank</a><span><i class="material-icons">launch</i></span></li>
+                        <li><a href="https://www.alandsbanken.se">Ålandsbanken</a><span><i class="material-icons">launch</i></span></li>
+                    </ul>
+                    <h4>Telia</h4>
+                    <p><a href="https://www.skatteverket.se/idkort">Skatteverkets ID-kort</a><span><i class="material-icons">launch</i></span></p>
+                    <p><a href="https://www.telia.se/privat">Telia</a><span><i class="material-icons">launch</i></span></p>
+                    <p>Ett stulet eller borttappat ID-kort skall du även polisanmäla. Ring 114 14 eller gör en elektronisk anmälan hos &nbsp;<a href="https://polisen.se">Polisen</a><span><i class="material-icons">launch</i></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <div class="inner containerfooter">
+            <div class="leftFooter">
+                <h3>Om e-legitimation</h3>
+                <ul>
+                    <li><a href="#" data-toggle="modal" data-target="#skaffaElegModal">Skaffa e-legitimation</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#testaElegModal">Testa din e-legitimation</a></li>
+                </ul>
+            </div>
+            <div class="middleFooter">
+                <h3>Kontakt och support</h3>
+                <ul>
+                    <li><a href="#" data-toggle="modal" data-target="#kontaktSupportModal">Kontakt och support</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#sparraElegModal">Spärra e-legitimation</a></li>
+                </ul>
+            </div>
+            <div class="rightFooter">
+                <h3>Inloggningstjänsten tillhandahålls av:</h3>
+                <span><a target="_blank" href="http://www.cgi.se">CGI Sverige AB, leverantör av säker inloggning</a><i class="material-icons">launch</i></span>
+                <br>
+                <span><a target="_blank" href="http://www.cgi.se/business-process-services/bankid-och-e-legitimationer">Om tjänsten</a><i class="material-icons">launch</i></span>
+            </div>
+        </div>
+        <div class="inner externalLinks containerfooter">
+            Inloggningstjänsten använder kakor (cookies). &nbsp;<a href="#" data-toggle="modal" data-target="#cookieModal">Läs mer om kakor</a>
+        </div>
+    </div>

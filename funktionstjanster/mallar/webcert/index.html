@@ -2,35 +2,42 @@
 <html>
 <head>
 <!--Vid problem ange referens: (PARM{refid}-grp)-->
-  <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
-  <title>PARM{text-logintomg}</title>
-  <link href="/common.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <title>PARM{text-logintomg}</title>
+    <link href="/common.css" rel="stylesheet" type="text/css">
   <!--[if IE 7]>
     <link href="/ie.css" rel="stylesheet" type="text/css">
   <![endif]-->
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
-  <meta http-equiv="refresh" content="500;url=PARM{prop-saml.sploginurl}">
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
+    <meta http-equiv="refresh" content="500;url=PARM{prop-saml.sploginurl}">
+    <script type="text/javascript" src="/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="/bootstrap.min.js"></script>
 
 </head>
 
-<body id="commonbody" style="margin: 0;">
-
+<body id="commonbody">
   PARM{include:/header.html}
 
-        <div id="loginLinksWrp" style="display:PARM{showidp}">
-          <h1>Inloggning med e-legitimation</h1>
-          <ul id="loginLinks">
+  <div id="containerbody">
+  <div id="backlink">
+      <i class="material-icons">keyboard_arrow_left</i><a href="https://webcert.intygstjanster.se">Tillbaka till startsidan</a>
+  </div>
 
-                   PARM{viewsccp11}<li class=indexlist><a href="/mg-local/login?type=ccp11">Mobilt BankID</a></li>PARM{vieweccp11}
-                   PARM{viewsccp10}<li class=indexlist><a href="/mg-local/login?type=ccp10">BankID eller Nordea</a></li>PARM{vieweccp10}
-                   PARM{viewsccp5}<li class=indexlist><a href="/mg-local/login?type=ccp5">PARM{nameccp5}</a></li>PARM{vieweccp5}
-                   PARM{viewsccp8}<li class=indexlist><a href="/mg-local/login?type=ccp8">Telia</a></li>PARM{vieweccp8}
-          </ul>
-        </div>
 
+  PARM{include:/content.html}
+
+  <div id="loginLinksWrp" style="display:PARM{showidp}">
+      <h1>Välj inloggning</h1>
+      <a href="/mg-local/login?type=ccp11"><span PARM{viewsccp11} class=indexlist >Mobilt BankID<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp11}</span></a>
+      <a href="/mg-local/login?type=ccp10"><span PARM{viewsccp10} class=indexlist>BankID eller Nordea<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp10}</span></a>
+      <a href="/mg-local/login?type=ccp5"><span PARM{viewsccp5} class=indexlist>PARM{nameccp5}<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp5}</span></a>
+      <a href="/mg-local/login?type=ccp8"><span PARM{viewsccp8} class=indexlist>Telia<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp8}</span></a>
+  </div>
+  </div>
   PARM{include:/footer.html}
 
 </body>
 </html>
-
