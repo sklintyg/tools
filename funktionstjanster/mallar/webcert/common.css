@@ -22,11 +22,20 @@ html {
     min-height: 100%;
 }
 
+@font-face {
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: 400;
+	src: local('Roboto'), local('Roboto-Regular'),
+	url('/fonts/Roboto-Regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+	url('/fonts/Roboto-Regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
 body {
 	font-family: Roboto, helvetica, arial, sans-serif;
 	font-size: 14px;
 	color: #1a1a1a;
-	overflow: scroll;
+	overflow: auto
 	margin: 0px !important;
   	background-color: #fff;
 }
