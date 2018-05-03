@@ -21,35 +21,51 @@ spec:
       containers:
       - env:
         - name: APP_JVM_ENV
-          value: -Ddb_server=$DB_SERVER -Ddb_port=$DB_PORT -Ddb_name=$DB_NAME -Ddb_username=$DB_USERNAME -Ddb_password=$DB_PASSWORD -Damq_username=$ACTIVEMQ_USERNAME -Damq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Dib.stubs.port=8080 -Dcertificate.folder=/opt/inera/certifikat -Dconfig.folder=/opt/inera/intygsbestallning-konfiguration -Dresources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dconfig.file=/opt/inera/intygsbestallning-konfiguration/intygsbestallning.properties -Dlogback.configurationFile=/opt/inera/intygsbestallning-konfiguration/intygsbestallning-logback.xml
+          value: -Ddatabase_server=$DATABASE_SERVER -Ddatabase_port=$DATABASE_PORT -Ddatabase_name=$DATABASE_NAME -Ddatabase_username=$DATABASE_USERNAME -Ddatabase_password=$DATABASE_PASSWORD -Dactivemq_server=$ACTIVEMQ_SERVER -Dactivemq_port=$ACTIVEMQ_PORT -Dactivemq_username=$ACTIVEMQ_USERNAME -Dactivemq_password=$ACTIVEMQ_PASSWORD -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008 -Dib.stubs.port=8080 -Dcertificate.folder=/opt/inera/certifikat -Dconfig.folder=/opt/inera/intygsbestallning-konfiguration -Dresources.folder=/opt/inera/resources -Dcredentials.file=/opt/inera/credentials/credentials.properties -Dconfig.file=/opt/inera/intygsbestallning-konfiguration/intygsbestallning.properties -Dlogback.configurationFile=/opt/inera/intygsbestallning-konfiguration/intygsbestallning-logback.xml
         - name: ACTIVE_SPRING_PROFILES
           value: test,caching-enabled,ib-stub,wc-hsa-stub,wc-pu-stub,testability-api,ib-security-dev,ib-init-data
-        - name: DB_SERVER
-          value: mysql
-        - name: DB_PORT
-          value: '3306'
-        - name: DB_NAME
+        - name: DATABASE_NAME
           value: intygsbestallning
-        - name: DB_USERNAME
+        - name: DATABASE_SERVER
           valueFrom:
             secretKeyRef:
               name: intygsbestallning-db-credentials
-              key: db_username
-        - name: DB_PASSWORD
+              key: database_server
+        - name: DATABASE_PORT
           valueFrom:
             secretKeyRef:
               name: intygsbestallning-db-credentials
-              key: db_password
+              key: database_port
+        - name: DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: intygsbestallning-db-credentials
+              key: database_username
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: intygsbestallning-db-credentials
+              key: database_password
+        - name: ACTIVEMQ_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: intygsbestallning-db-credentials
+              key: activemq_server
+        - name: ACTIVEMQ_PORT
+          valueFrom:
+            secretKeyRef:
+              name: intygsbestallning-db-credentials
+              key: activemq_port
         - name: ACTIVEMQ_USERNAME
           valueFrom:
             secretKeyRef:
               name: intygsbestallning-db-credentials
-              key: amq_username
+              key: activemq_username
         - name: ACTIVEMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: intygsbestallning-db-credentials
-              key: amq_password
+              key: activemq_password
         image: docker-registry.default.svc:5000/intyg/intygsbestallning
         imagePullPolicy: Always
         name: intygsbestallning
