@@ -6,3 +6,5 @@
 - include: provision_activemq.yml
 - include: provision_apache.yml
 - include: provision_tomcat.yml
+- include: provision_redis.yml
+

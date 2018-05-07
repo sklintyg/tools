@@ -1,0 +1,18 @@
+[Unit]
+Description=Redis In-Memory Data Store
+After=network.target
+
+[Service]
+Type=simple
+PIDFile=/var/run/redis.pid
+User=redis
+Group=redis
+ExecStartPre=/bin/mkdir -p /var/lib/redis/logs
+ExecStart=/usr/local/bin/redis-server /etc/redis.conf
+ExecStop=/usr/local/bin/redis-cli shutdown
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

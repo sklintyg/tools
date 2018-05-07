@@ -1,0 +1,10 @@
+---
+# This playbook provisions activemq
+
+- hosts: redis
+  become: yes 
+  environment:
+    "{{ proxy_env }}"
+  roles:
+    - redis
+

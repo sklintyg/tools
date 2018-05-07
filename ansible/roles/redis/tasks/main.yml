@@ -1,0 +1,91 @@
+---
+
+- name: Create archive directory
+  file:
+    path: "{{ archive_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Install redis build deps 
+  yum: name={{item}} state=present
+  with_items:
+  - make
+  - gcc
+  - wget
+
+- name: Download redis source code
+  get_url:
+    url: "{{ redis_download_url }}"
+    dest: "{{ archive_dir }}/redis-{{ redis_version }}.tar.gz"
+
+- name: Extract redis source code
+  unarchive:
+    src: "{{ archive_dir }}/redis-{{ redis_version }}.tar.gz"
+    dest: "{{ inera_root }}"
+    remote_src: yes
+    creates: "{{ inera_root }}/redis-{{ redis_version }}"
+
+- name: Compile redis
+  shell: make chdir={{ inera_root }}/redis-{{ redis_version }} creates={{ archive_dir }}/redis-{{ redis_version }}/src/redis-server
+
+- name: Create symlinks in /usr/local/bin to redis home
+  file: 
+    state: link
+    src: "{{ inera_root }}/redis-{{ redis_version }}/src/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+  with_items:
+  - redis-cli
+  - redis-server
+  - redis-benchmark
+
+- name: Create redis user
+  user: name=redis
+
+- name: Ensure log folder exists
+  file: path=/var/lib/redis/logs state=directory recurse=yes owner=redis group=redis
+
+- name: Ensure redis working folder exists
+  file: path=/var/lib/redis state=directory recurse=yes owner=redis group=redis
+
+- name: Ensure systemd config folder exists
+  file: path=/etc/systemd/system state=directory recurse=yes
+
+
+- name: Create main redis config
+  template:
+    src: "redis.conf.j2"
+    dest: "/etc/redis.conf"
+    owner: redis
+    group: redis
+    mode: 0644
+
+- name: Create log rotation redis conf
+  template:
+    src: "redis-server.logrotation.j2"
+    dest: "/etc/logrotate.d/redis-server"
+    owner: redis
+    group: redis
+    mode: 0644
+
+- name: Create systemd config file
+  template:
+    src: "redis-server.service.j2"
+    dest: "/etc/systemd/system/redis-server.service"
+    owner: "root"
+    group: "root"
+    mode: 0644
+
+- name: Force systemd to reread configs
+  systemd: daemon_reload=yes
+
+- name: Enable redis service
+  systemd: name=redis-server enabled=yes masked=no
+
+- name: (Re)start redis service
+  systemd: name=redis-server state=reloaded
+
+
+
+
+
+

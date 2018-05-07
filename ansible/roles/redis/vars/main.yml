@@ -1,0 +1,4 @@
+redis_version: 4.0.9
+redis_download_url: http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
+redis_port: 6379
+
