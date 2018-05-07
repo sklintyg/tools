@@ -36,8 +36,9 @@ Justera ev. också minnesinställningarna till 2048 genom att kommentera in och 
     #   # Customize the amount of memory on the VM:
        vb.memory = "2048"
     end
-    
-##### 3. Skapa virtuella maskinen
+   
+
+##### 3 Skapa virtuella maskinen (virtuell maskin med en egen ip på LAN)
    
     vagrant up --provider virtualbox
     
@@ -87,11 +88,30 @@ Notera att vi specificerar version=0-SNAPSHOT som parameter, du måste alltså h
     
     ansible-playbook -i inventory/webcert/dev deploy.yml --extra-vars "vagrantIp=192.168.1.22 vagrantPort=22 keyFile=~/.ssh/vagrant version=0-SNAPSHOT"
 
-    
 ## 8. Klart! 
   
 Nu borde du kunna köra Webcert mot t.ex. https://192.168.0.189/welcome.html
-    
+
+
+## Alternativa instruktioner, macOS+virtualbox, använda för test av redis-ansiblescript
+### 1) Skapa Vagrantfile
+
+Kör
+`vagrant init centos/7`
+
+### 2) Lös configproblem
+- Ta bort entriet för 127.0.0.1 från ~/.ssh/known\_hosts, för att ssh inte ska klaga på att det är en ny nyckel
+
+### 3) Kör igång maskinen
+`vagrant up`
+
+### 4) SSH:a in på maskinen
+`vagrant ssh`
+
+### 5) Kör ansible
+`ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory/webcert/dev provision_redis.yml --extra-vars "vagrantIp=127.0.0.1 vagrantPort=2222 ansible_ssh_pass= keyFile=/Users/carl/git_repos/Inera_stuff/tools/ansible/.vagrant/machines/default/virtualbox/private_key" --flush-cache`
+(Note, tomma värdet för ansible\_ssh\_pass är inte ett stavfel)
+
 # Övrigt
     
 ## Hantera problem med MySQL
