@@ -1,0 +1,8 @@
+---
+
+- hosts: redis
+  become: yes
+  roles:
+    - cleanup_redis
+  serial: 1
+

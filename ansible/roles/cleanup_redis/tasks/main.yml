@@ -1,0 +1,40 @@
+---
+
+- name: Gather list of all installed redis services
+  find: 
+    paths: /etc/init.d
+    patterns: 'redis_*'
+  register: find_result
+
+- name: Stop all redis services
+  service:
+    name: "{{ item.path | basename }}"
+    state: stopped
+    enabled: no
+  with_items: "{{ find_result.files }}"
+
+- name: Remove init scripts for redis services
+  file: path="{{ item.path }}" state=absent
+  with_items: "{{ find_result.files }}"
+
+- name: Remove redis application
+  file: path="{{ inera_root }}/{{ inventory_hostname }}-redis" state=absent
+
+- name: Remove symlinks to redis binaries from path
+  file:
+    state: absent
+    path: "/usr/local/bin/{{ item }}"
+  with_items:
+  - redis-cli
+  - redis-server
+  - redis-benchmark
+
+- name: Delete redis user and their corresponding home folder
+  user: name=redis remove=yes state=absent
+
+- name: Delete redis working folder
+  file: path=/var/redis state=absent
+ 
+- name: Delete redis config(s) folder
+  file: path=/etc/redis state=absent
+
