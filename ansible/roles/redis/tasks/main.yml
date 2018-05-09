@@ -22,20 +22,24 @@
     url: "{{ redis_download_url }}"
     dest: "{{ archive_dir }}/redis-{{ redis_version }}.tar.gz"
 
+- name: Create redis application directory
+  file: path="{{ redis_application_dir }}" state=directory mode=0755 recurse=yes
+
 - name: Extract redis source code
   unarchive:
     src: "{{ archive_dir }}/redis-{{ redis_version }}.tar.gz"
-    dest: "{{ inera_root }}"
+    dest: "{{ redis_application_dir }}"
     remote_src: yes
-    creates: "{{ inera_root }}/redis-{{ redis_version }}"
+    extra_opts: [--strip-components=1] # tar flag: removes outer folder from contents when unpacking
+    creates: "{{ redis_application_dir }}/src"
 
 - name: Compile redis
-  shell: make chdir={{ inera_root }}/redis-{{ redis_version }} creates={{ archive_dir }}/redis-{{ redis_version }}/src/redis-server
+  shell: make chdir="{{ redis_application_dir }}" creates="{{ redis_application_dir }}/src/redis-server"
 
 - name: Create symlinks in /usr/local/bin to redis home
   file: 
     state: link
-    src: "{{ inera_root }}/redis-{{ redis_version }}/src/{{ item }}"
+    src: "{{ redis_application_dir }}/src/{{ item }}"
     dest: "/usr/local/bin/{{ item }}"
   with_items:
   - redis-cli
