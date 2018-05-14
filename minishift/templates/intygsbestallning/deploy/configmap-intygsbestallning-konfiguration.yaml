@@ -156,6 +156,9 @@ data:
 
     putjanst.logicaladdress = PUDEV
 
+    vacation.periods=29-31,51-52
+
+
 
 kind: ConfigMap
 metadata:
