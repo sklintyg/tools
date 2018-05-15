@@ -1,4 +1,4 @@
-# Simplifies local image creation and deploy
+# Simplifies local image creation and deploy, requires oc CLI and make
 # To be able to push an existing image stream is expected
 
 IS_NAME=$(shell basename `pwd`)
@@ -11,6 +11,9 @@ all: build
 
 # build container
 build:
+ifeq ($(REPO_NAME),)
+	@echo "Warning: no image stream exists. Create one with make install"
+endif
 	docker build -t $(IS_NAME) .
 
 # requires an existing image stream (repo), see install
