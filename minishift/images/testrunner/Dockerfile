@@ -1,5 +1,7 @@
-FROM nimmis/java-centos:openjdk-8-jre
+FROM anapsix/alpine-java:latest
+
+RUN adduser -D -H -S -s /bin/false -u 1000 myuser
 
 #Install git
-RUN yum -y update
-RUN yum -y install git
+RUN apk update
+RUN apk add git
