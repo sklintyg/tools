@@ -1,5 +1,7 @@
 FROM centos:latest
 
+USER root
+
 RUN yum update
 RUN yum install git
 RUN mkdir /home/1001
