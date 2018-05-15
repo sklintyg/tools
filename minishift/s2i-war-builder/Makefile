@@ -1,6 +1,6 @@
-# Handle docker image and repo
+# Simplifies local image creation and deploy
 
-IS_NAME=s2i-war-builder
+IS_NAME=$(shell basename `pwd`)
 
 REPO_NAME=$(shell oc get is | grep $(IS_NAME) | cut -d' ' -f 4 )
 
