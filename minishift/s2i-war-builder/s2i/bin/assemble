@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Global S2I variable setup
+# Use openshift env vars
+source $(dirname "$0")/s2i-setup
+
+# Source code provided to directory
+S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"}
+
+# Resulting WAR files will be copied to this location
+S2I_ARTIFACTS_DIR=${S2I_ARTIFACTS_DIR-"/tmp/artifacts"}
+mkdir -p $S2I_ARTIFACTS_DIR
+
+# Target artifact WAR
+ARTIFACT=$S2I_ARTIFACTS_DIR/ROOT.war
+
+# Start INTYG gradle building code
+echo "Injected env: commonVersion: $commonVersion buildVersion: $buildVersion infraVersion: $infraVersion"
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DcommonVersion=$commonVersion -DbuildVersion=$buildVersion -DinfraVersion=$infraVersion -Dfile.encoding=UTF-8"
+
+# Start build using gradle.
+if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
+    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build"}
+
+    echo "---> Building application from source with gradle wrapper GRADLE_ARGS=$GRADLE_ARGS"
+    (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
+    ERR=$?
+    if [ $ERR -ne 0 ]; then
+        echo "Aborting due to error code $ERR from gradle build"
+        exit $ERR
+    fi
+
+    # Copy built file into tomcat webapps
+    WAR=$(find ${S2I_SOURCE_DIR}/build/libs -name \*.war)
+    if [ -f "$WAR" ]; then
+        echo "---> Move output artifact $WAR to $ARTIFACT (keep original name as a symbolic link)"
+        mv $WAR $ARTIFACT
+        (cd $S2I_ARTIFACTS_DIR; ln -s $(basename $ARTIFACT) $(basename $WAR))
+        ERR=$?
+        if [ $ERR -ne 0 ]; then
+            echo "Unable to move output artifact, exit code: $ERR"
+            exit $ERR
+        fi
+    else
+        echo "---> Output WAR file $WAR could not be found in directory $LIB_DIR"
+        exit 1
+    fi
+else
+    echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
+    exit 1
+fi
+
+# cleanup
+echo "---> Cleaning up"
+rm -rf $S2I_SOURCE_DIR $HOME/.gradle $HOME/.m2
+
+echo "build done."
