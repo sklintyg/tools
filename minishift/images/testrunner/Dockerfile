@@ -1,7 +1,8 @@
-FROM anapsix/alpine-java:latest
+FROM centos:latest
 
-RUN adduser -D -H -S -s /bin/false -u 1000 myuser
+RUN yum update
+RUN yum install git
+RUN mkdir /home/1001
+RUN chown 1001:0 /home/1001
 
-#Install git
-RUN apk update
-RUN apk add git
+USER 1001
