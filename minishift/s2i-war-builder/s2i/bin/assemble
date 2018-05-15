@@ -42,7 +42,7 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
             exit $ERR
         fi
     else
-        echo "---> Output WAR file $WAR could not be found in directory $LIB_DIR"
+        echo "---> Output WAR file $WAR could not be found in directory $S2I_SOURCE_DIR/build/libs"
         exit 1
     fi
 else
