@@ -5,5 +5,8 @@ minaintyg-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ss
 minaintyg-dev1 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
 minaintyg-dev2 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
 
+[redis]
+minaintyg-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+
 [tools]
 minaintyg-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}

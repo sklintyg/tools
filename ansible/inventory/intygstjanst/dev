@@ -8,6 +8,9 @@ intygstjanst-dev2 ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansibl
 [activemq]
 intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
 
+[redis]
+intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
+
 [mysql]
 intygstjanst-dev ansible_ssh_host={{vagrantIp}} ansible_ssh_user=vagrant ansible_ssh_port={{vagrantPort}} ansible_ssh_private_key_file={{keyFile}}
 

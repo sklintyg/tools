@@ -11,5 +11,8 @@ srs-dev
 srs-dev1
 srs-dev2
 
+[redis]
+srs-dev
+
 [tools]
 srs-dev
