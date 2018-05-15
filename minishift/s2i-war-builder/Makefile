@@ -1,5 +1,5 @@
 # Simplifies local image creation and deploy
-# To be able to push an appropriate image stream is expected to exists
+# To be able to push an existing image stream is expected
 
 IS_NAME=$(shell basename `pwd`)
 REPO_NAME=$(shell oc get is | grep $(IS_NAME) | cut -d' ' -f 4 )
@@ -15,7 +15,7 @@ build:
 
 # requires an existing image stream (repo), see install
 push: update build
-	docker login -u $(USER) -p $(TOKEN) $(REPO_NAME)
+	@echo $(TOKEN) | docker login -u $(USER) --password-stdin $(REPO_NAME)
 	docker tag $(IS_NAME) $(REPO_NAME)
 	docker push $(REPO_NAME)
 
