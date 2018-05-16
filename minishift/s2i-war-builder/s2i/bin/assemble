@@ -18,6 +18,24 @@ ARTIFACT=$S2I_ARTIFACTS_DIR/ROOT.war
 echo "Injected env: commonVersion: $commonVersion buildVersion: $buildVersion infraVersion: $infraVersion"
 export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DcommonVersion=$commonVersion -DbuildVersion=$buildVersion -DinfraVersion=$infraVersion -Dfile.encoding=UTF-8"
 
+# create build info
+create_build_info() {
+    SHA256=$(sha256sum $S2I_ARTIFACTS_DIR/ROOT.war | awk '{ print $1 }')
+    TIMESTAMP=$(date --iso-8601='seconds')
+cat << EOF > $S2I_ARTIFACTS_DIR/build.info
+TIMESTAMP=$TIMESTAMP
+ARTIFACT=$S2I_ARTIFACTS_DIR/ROOT.war
+ARTIFACT_SHA256=$SHA256
+ARTIFACT_FROM=$WAR
+SOURCE=$OPENSHIFT_BUILD_SOURCE
+BRANCH=$OPENSHIFT_BUILD_REFERENCE
+COMMIT=$OPENSHIFT_BUILD_COMMIT
+OPENSHIFT_BUILD_NAME=$OPENSHIFT_BUILD_NAME
+OPENSHIFT_PROJECT=$OPENSHIFT_BUILD_NAMESPACE
+S2I_IMAGE=${JBOSS_IMAGE_NAME}:${JBOSS_IMAGE_VERSION}
+EOF
+}
+
 # Start build using gradle.
 if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
     GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build"}
@@ -33,9 +51,8 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
     # Copy built file into tomcat webapps
     WAR=$(find ${S2I_SOURCE_DIR}/build/libs -name \*.war)
     if [ -f "$WAR" ]; then
-        echo "---> Move output artifact $WAR to $ARTIFACT (keep original name as a symbolic link)"
+        echo "---> Move output artifact $WAR to $ARTIFACT"
         mv $WAR $ARTIFACT
-        (cd $S2I_ARTIFACTS_DIR; ln -s $(basename $ARTIFACT) $(basename $WAR))
         ERR=$?
         if [ $ERR -ne 0 ]; then
             echo "Unable to move output artifact, exit code: $ERR"
@@ -45,6 +62,9 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
         echo "---> Output WAR file $WAR could not be found in directory $S2I_SOURCE_DIR/build/libs"
         exit 1
     fi
+
+    echo "---> Create build info"
+    create_build_info
 else
     echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
     exit 1

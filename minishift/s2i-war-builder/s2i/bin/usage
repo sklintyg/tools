@@ -11,19 +11,14 @@ else
     RELEASE=""
 fi
 
-JAVA=$(java -version 2>&1)
+JAVA=$(java -version 2>&1 | head -1)
 
-cat <<EOF
-This is an openshift S2I Java build container (typically building with a gradle wrapper).
-
-From Image: ${JBOSS_IMAGE_NAME}:${JBOSS_IMAGE_VERSION}
-Source: $OPENSHIFT_BUILD_SOURCE
-Commit: $OPENSHIFT_BUILD_COMMIT
-Build Name: $OPENSHIFT_BUILD_NAME
-Artifact: $S2I_ARTIFACTS_DIR/ROOT.war
-
-Platform:
-$RELEASE
-$LINUX
-$JAVA
-EOF
+echo "# This is an openshift S2I Java build container (typically built with a gradle wrapper)."
+echo
+echo "# Build Info:"
+cat $S2I_ARTIFACTS_DIR/build.info
+echo
+echo "# Build Platform:"
+echo "$RELEASE"
+echo "$LINUX"
+echo "$JAVA"
