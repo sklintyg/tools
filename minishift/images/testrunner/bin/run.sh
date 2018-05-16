@@ -6,3 +6,6 @@ git clone $GIT_URL repo
 
 # Cleanup
 rm -rf repo
+
+# Notify back to pipeline
+curl -X POST -k -d "OK" $CALLBACK_URL
