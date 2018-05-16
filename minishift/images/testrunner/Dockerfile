@@ -1,4 +1,4 @@
-FROM centos:latest
+FROM nimmis/java-centos:openjdk-8-jre
 
 USER root
 RUN yum -y install git && yum clean all -y
