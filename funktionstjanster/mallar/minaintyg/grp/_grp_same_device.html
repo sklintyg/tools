@@ -1,16 +1,24 @@
 PARM{include:/head.html?title=text-mbi}
 <!-- Page used for GRP Authentication -->
+<link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script language="javascript" type="text/javascript">
 
 </script>
+<script type="text/javascript" src="/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/bootstrap.min.js"></script>
 </head>
 <body id="commonbody">
 
 PARM{include:/header.html?topheading=text-mbi-loginusingmbi?dialogheading=text-mbi-loginusingmbi}
 
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
+    </div>
+
 <iframe src="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}" height=0 width=0></iframe>
 
 <div id="manualstart"><a class='button' href="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}">PARM{text-rfa18}</a></div>
-
-
+</div>
 PARM{include:/footer.html?topheading=text-loginusingmbi?dialogheading=text-mbi-loginusingmbi}

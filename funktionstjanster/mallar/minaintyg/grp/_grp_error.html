@@ -1,28 +1,29 @@
 PARM{include:/head.html?title=text-genericerror}
 <style>
-    .wordwrap {
-        white-space: pre-wrap;      /* CSS3 */
-        white-space: -moz-pre-wrap; /* Firefox */
-        white-space: -pre-wrap;     /* Opera <7 */
-        white-space: -o-pre-wrap;   /* Opera 7 */
+    .wordwrap { 
+        white-space: pre-wrap;      /* CSS3 */   
+        white-space: -moz-pre-wrap; /* Firefox */    
+        white-space: -pre-wrap;     /* Opera <7 */   
+        white-space: -o-pre-wrap;   /* Opera 7 */    
         word-wrap: break-word;      /* IE */
         /*text-align: left;*/
 
     }
 </style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/bootstrap.min.js"></script>
 </head>
 <body id="errorbody">
 
 PARM{include:/header.html}
 
-    <div class="backlink">
-      <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
-    </div>
-
-    <h2>Inloggningen misslyckades</h2>
-    <div class="alert alert-danger">
-      <p class="wordwrap">PARM{message}</p>
-      <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
-    </div>
+    <h1>Ett fel har inträffat</h1>
+    <p class="wordwrap">PARM{message}</p>
+    <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
+    <p class="wordwrap"><a href="/">PARM{text-clickhereformainpage}</a></p>
 
 PARM{include:/footer.html}
