@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Set environment variables needed by our application
-export JAVA_OPTS="$JAVA_OPTS -Dspring.profiles.active=$ACTIVE_SPRING_PROFILES $APP_JVM_ENV"
-
-exec $CATALINA_HOME/bin/catalina.sh run
