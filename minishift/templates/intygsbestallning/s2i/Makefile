@@ -3,7 +3,7 @@
 APP_NAME=intygsbestallning
 GIT_URL=https://github.com/sklintyg/ib-backend.git
 GIT_BRANCH=develop
-PROCESS=oc process buildtemplate-war -p APP_NAME=$(APP_NAME) -p GIT_URL=$(GIT_URL) GIT_BRANCH=$(GIT_BRANCH)
+PROCESS=oc process buildtemplate-war -p APP_NAME=$(APP_NAME) -p GIT_URL=$(GIT_URL) -p GIT_BRANCH=$(GIT_BRANCH)
 
 all: apply
 
@@ -15,3 +15,6 @@ delete:
 
 list:
 	$(PROCESS) -o yaml
+
+build:
+	oc start-build $(APP_NAME)-artifact --follow

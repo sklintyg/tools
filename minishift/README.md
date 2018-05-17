@@ -34,15 +34,15 @@ Also includes some YAML files for setting up ActiveMQ and MySQL for intyg use.
 ### Installing
 ##### 1. Install using homebrew:
 
-    > brew cask install minishift
+    $ brew cask install minishift
 
 ##### 2. Update using homebrew
 
-    > brew cask install --force minishift
+    $ brew cask install --force minishift
   
 ##### 3. Start with virtualbox:
 
-    > minishift start --disk-size=40G --vm-driver=virtualbox
+    $ minishift start --disk-size=40G --vm-driver=virtualbox
     -- Starting local OpenShift cluster using 'virtualbox' hypervisor ...
     -- Minishift VM will be configured with ...
        Memory:    2 GB
@@ -75,7 +75,7 @@ Name it _intygstjanster-test_
 ##### 5. Fix oc command
 Back to the command-line       
          
-    > minishift oc-env
+    $ minishift oc-env
     export PATH="/Users/yourusername/.minishift/cache/oc/v3.6.0:$PATH"
     
     OR
@@ -88,23 +88,23 @@ Run that export:
 
 ##### 6. Log in to oc
 
-    > oc login -u system:admin
+    $ oc login -u system:admin
     Logged into "https://192.168.99.100:8443" as "system:admin" using existing credentials.
     Using project "myproject".
  
 ##### 7. Change project and grant root so we can run stuff like mysql and activemq    
-    > oc project intygstjanster-test
-    > oc adm policy add-scc-to-user anyuid -z default
+    $ oc project intygstjanster-test
+    $ oc adm policy add-scc-to-user anyuid -z default
 
 ##### 8. Fix Docker path
 It's very convenient to use the minishift's docker engine for building images locally. Run this:
 
-    > eval $(minishift docker-env)    
+    $ eval $(minishift docker-env)    
 
 ##### 9. Stopping minishift
 Why would you want to do that? Well, just in case:
 
-    > minishift stop
+    $ minishift stop
          
 ## YAML OpenShift templates
 Inside the "templates" folder we have some YAML files for setting up:
@@ -121,26 +121,6 @@ Please note that running MySQL and ActiveMQ as containers with mounted storage i
 
 From the point of view of our applications, this shouldn't matter since all we need to know about is URLs and possible user credentials. For dev, test, demo purposes it's fine running these services inside the cluster.
 
-### Installing MySQL using CLI
-Create (1) persistent volume claim, (2) deployment configuration and (3) service  
-
-From this directory (/tools/minishift):
-    
-    oc create -f templates/mysql/persistentvolumeclaim-mysql.yaml
-    oc create -f templates/mysql/service-mysql.yaml
-    oc create -f templates/mysql/deploymentconfig-mysql.yaml
-    
-### Installing ActiveMQ using CLI    
-Create (1) config map, (2) deployment configuration , (3) service and (4) route. 
-
-From this directory (/tools/minishift):
-    
-    oc create -f templates/activemq/service-activemq.yaml    
-    oc create -f templates/activemq/route-activemq.yaml 
-    oc create -f templates/activemq/configmap-activemq.yaml
-    oc create -f templates/activemq/deploymentconfig-activemq.yaml
-
-ActiveMQ admin should be reachable on _http://activemq-route-intygstjanster-test.192.168.99.100.nip.io/admin/_
 
 ### Installing the Spring Boot version of Logsender using CLI
 
@@ -153,9 +133,9 @@ It's configured to use two mounted resources:
 
 Use the following sequence of commands to deploy a functional pod with logsender:
 
-    oc create -f templates/logsender-boot/configmap-logsender.yaml
-    oc create -f templates/logsender-boot/secrets-logsender.yaml
-    oc create -f templates/logsender-boot/deploymentconfig-logsender.yaml
+    $ oc create -f templates/logsender-boot/configmap-logsender.yaml
+    $ oc create -f templates/logsender-boot/secrets-logsender.yaml
+    $ oc create -f templates/logsender-boot/deploymentconfig-logsender.yaml
 
 There are files for _service_ and _route_ but those aren't needed.
 
@@ -168,81 +148,99 @@ Each application has a _s2i_ and _deploy_ folder with templates for building and
 
 If not already done so, you have to set up the intyg-s2i build image first. The intyg-s2i is the base image we use to build each application.
 
-	> oc import-image eriklupander/intyg-s2i --confirm
+	$ oc import-image advptr/s2i-war-builder --confirm
 
 Use the GUI to confirm that the image was successfully imported.
 
-	intygstjanster-test => Builds => Images
+	{project_name} => Builds => Images
+	
+Make sure that the generic build template has been installed:
+	
+	$ oc create -c tools/minishift/temlpates/openshift/buildtemplate-war.yaml 
 
 #### Building
 
-From this directory (/tools/minishift/[application]/templates/s2i):
+From this directory `tools/minishift/{app_name}/templates/s2i`:
 
-	> oc create -f imagestream-[application].yaml
-	> oc create -f buildconfig-[application].yaml
-	> oc start-build [application] -n intygstjanster-test
+**Create build config**
 
-The first command creates the images stream to which the build will be pushed. The second and third command sets up and run the build configuration.
+	$ make apply
+	
+...or use plain oc
+	
+	$ oc process buildtemplate-war \
+		-p APP_NAME=intygsbestallning-pl \
+		-p GIT_URL=https://github.com/sklintyg/ib-backend.git \
+		-p GIT_BRANCH=develop | oc apply -f -
+	
+
+**Build**
+
+	$ make build
+	
+...or use plain oc 
+	
+	$ oc start-build {app_name}-artifact
+	
 
 Goto the UI to watch the build process
 
-	intygstjanster-test => Applications => Pods => [application-N-build]
+	{project_name} => Builds => Images => {app_name}-N-build]
 
 #### Secrets
 
 Create secrets for certificates and credentials (passwords).
 
-    > oc secrets new [application]-test-certifikat [path-to-application's-config-repo]/[application]-konfiguration/demo/certifikat
-   	
-   	> oc secrets new [application]-test-credentials [path-to-application's-config-repo]/[application]-konfiguration/demo/credentials.properties
+    $ oc secrets new {app_name}-test-certifikat [path-to-application's-config-repo]/{app_name}-konfiguration/demo/certifikat
+    $ oc secrets new {app_name}-test-credentials [path-to-application's-config-repo]/{app_name}-konfiguration/demo/credentials.properties
 
-From this directory (/tools/minishift/[application]/templates/deploy):
+From this directory `tools/minishift/{app_name}/templates/deploy`:
 
-	> oc create -f secrets-[application]-db-credentials.yaml
+	$ oc create -f secrets-{app_name}-db-credentials.yaml
 	
 This last command might not be applicable to all application. It depends if tha application uses a database and/or message broker or any other external resource.
  
 #### Deploying
 
-From this directory (/tools/minishift/[application]/templates/deploy):
+From this directory `tools/minishift/{app_name}/templates/deploy`:
 
-	> oc create -f configmap-[application]-test-konfiguration.yaml
-	> oc create -f route-[application].yaml
-	> oc create -f service-[application].yaml
-	> oc create -f deploymentconfig-[application].yaml
+	$ oc create -f configmap-{app_name}-test-konfiguration.yaml
+	$ oc create -f route-{app_name}.yaml
+	$ oc create -f service-{app_name}.yaml
+	$ oc create -f deploymentconfig-{app_name}.yaml
 
 Goto the UI and watch the deploy process
 
-	intygstjanster-test => Applications => Pods => [application-N-xyz12]
+	{project_name} => Applications => Pods => {app_name-N-xyz12}
 	
 ## Generating config maps
 Config maps can conveniently be created for all files in a given directory. Make sure you don't include a "credentials.properties" file with secret passwords or real certificates!! Those go into secrets.
 
-If you're in our /tools folder:
+If you're in our `tools` folder:
 
-    > oc create configmap intygstjanst-test-konfiguration --from-file=intygstjanst-konfiguration/test
+    $ oc create configmap intygstjanst-test-konfiguration --from-file=intygstjanst-konfiguration/test
 
 ## Generating secrets
 Secrets can also be created for files in a given directory. They are then encrypted so they can be stored externally.
 
-    > oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
+    $ oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
 
 ## Running all .yaml files in directory
-Given that we're in /tools/minishift, we can run all .yaml files in a given directory:
+Given that we're in `tools/minishift`, we can run all `.yaml` files in a given directory:
 
-    > oc create -R=true -f=templates/minaintyg/deploy
+    $ oc create -R=true -f=templates/minaintyg/deploy
 
 ## REST examples
 
 #### Set some ENV-vars
-    oc login -u system -p admin
-    TOKEN=$(oc whoami -t)
-    ENDPOINT=$(oc config current-context | cut -d/ -f2 | tr - .)
-    NAMESPACE=$(oc config current-context | cut -d/ -f1)
+    $ oc login -u system -p admin
+    $ TOKEN=$(oc whoami -t)
+    $ ENDPOINT=$(oc config current-context | cut -d/ -f2 | tr - .)
+    $ NAMESPACE=$(oc config current-context | cut -d/ -f1)
 
 #### Call service
 
-    curl -k \
+    $ curl -k \
         -H "Authorization: Bearer $TOKEN" \
         -H 'Accept: application/json' \
         https://$ENDPOINT/api/v1/namespaces/$NAMESPACE/pods
@@ -255,255 +253,179 @@ See templates/intygstjanst/intygstjanst.yaml
 
 ##### Create
 
-    oc create -f templates/intygstjanst/intygstjanst.yaml
+    $ oc create -f templates/intygstjanst/intygstjanst.yaml
     
 ##### Update
 
-    oc update -f templates/intygstjanst/intygstjanst.yaml
+    $ oc update -f templates/intygstjanst/intygstjanst.yaml
     
 ##### Delete
 
-    oc delete -f templates/intygstjanst/intygstjanst.yaml
+    $ oc delete -f templates/intygstjanst/intygstjanst.yaml
 
 
-## About S2I scripts
+## 2-Step Source to Image (S2I) Build Strategy 
 
-##### Assemble step
-
-    S2I uses an assemble script to do the work of copying the application source code into the correct location and then installing any dependencies which the application may require.
-
-The quote above describes the work done by the _assemble_ script, e.g. it should do the same stuff that you'd typically do using Ansible or as COPY / ADD / RUN commands in a Dockerfile. The purpose seems to be that the Dockerfile of the base S2I image can be kept relatively clean, and the complexity goes into the _assemble_ script. Those scripts are typically bash, but it might be possible to use other scripting languages as well.
-    
-##### Run step    
-
-    The S2I process sets up the final application image such that the CMD for the image will execute the corresponding run script.
-
-This is quite simple: Everything you need to do at container startup goes into the _run_ script. Instead of brewing your own "starup.sh" which you'd then pass using CMD ["start.sh"], you put that stuff into _run_. This could be setting environment variables, running liquibase and of course the actual command to start the service such as _catalina.sh run_ or a _java -jar mybootapp.jar_.
-
-### What does the above mean for us?
-
-Let's start by defining a task: We want to be able to build intygstjanst.war in a S2I and package it into a Tomcat. The S2I builder image *must* be generic enough to be able to package webcert, intygstjansten or rehabstod using the same base S2I image and parameterized _assemble_ and _run_ scripts.
-
-##### Some context: BuildConfig
-Remember that such as builder image is the starting point for a BuildConfig such as this:
-
-    apiVersion: v1
-    kind: BuildConfig
-    metadata:
-      labels:
-        app: intygstjanst
-      name: intygstjanst
-    spec:
-      resources: {}
-      source:
-        git:
-          ref: develop
-          uri: https://github.com/sklintyg/intygstjanst.git     <--- 1. NOTE THIS 
-        contextDir: /
-        type: Git
-      strategy:
-        sourceStrategy:
-            from:
-              kind: "ImageStreamTag"
-              name: "sklintyg-gradle-tomcat-builder:latest"      <--- 2. NOTE THIS 
-            forcePull: true
-
-Note two things:
-
-- 1: Here we specify where to get the source code for what we're building.
-- 2: Here we specify the S2I builder image to use. Note that this image is what we're actually trying to set up here! 
-
-##### Base Dockerfile
-In order to be able to assemble and build something, we need some basic building blocks such as a JDK and a Gradle installation. This is typically handled in the Dockerfile, but could also be handled in the _assemble_ script I guess:
-
-    FROM registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift
-    
-    # Note: $JWS_HOME is /opt/webserver
-    # Install gradle
-    USER root
-    ENV GRADLE_VERSION 4.2
-    RUN curl -sL -0 https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o /tmp/gradle-${GRADLE_VERSION}-bin.zip
-    RUN unzip /tmp/gradle-${GRADLE_VERSION}-bin.zip -d /usr/local/
-    RUN rm /tmp/gradle-${GRADLE_VERSION}-bin.zip
-    RUN mv /usr/local/gradle-${GRADLE_VERSION} /usr/local/gradle
-    RUN ln -sf /usr/local/gradle/bin/gradle /usr/local/bin/gradle
-    
-    # Download extra libs into tomcat/lib
-    USER 185
-    ADD http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.40/mysql-connector-java-5.1.40.jar $JWS_HOME/lib
-    ADD http://repo1.maven.org/maven2/org/apache/activemq/activemq-client/5.13.0/activemq-client-5.13.0.jar $JWS_HOME/lib
-    ADD http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar $JWS_HOME/lib
-    ADD http://repo1.maven.org/maven2/org/fusesource/hawtbuf/hawtbuf/1.9/hawtbuf-1.9.jar $JWS_HOME/lib
-    ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar $JWS_HOME/lib
-    ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar $JWS_HOME/lib
-    
-    USER root
-    
-    # Overwrite s2i scripts 
-    COPY ./.s2i/bin/ /usr/local/s2i
-    
-    # Fix owner and permissions on libs and scripts
-    RUN chmod -R 775 $JWS_HOME/lib
-    RUN chmod -R 775 /usr/local/s2i       
-    RUN chown -R 185 $JWS_HOME/lib
-    RUN chown -R 185 /usr/local/s2i
-    
-    USER 185
-
-    
-The Dockerfile above is based on an official jboss-webserver-3/webserver30-tomcat8-openshift base image which has some S2I stuff pre-packaged into it as well as the Red Hat flavour of Tomcat, installed into /opt/webserver. 
-We add Gradle using curl and add some extra lib files we use into tomcat/lib.
-
-This Dockerfiles defines the base "intyg jws-gradle-s2i" builder image we then should be able to use for all our Tomcat-based .war applications.
-
-We also have bash scripts (note without suffix!) in _/.s2i/bin_:
-
-#### assemble
-This is the script OpenShift runs on the container when it's executing a _BuildConfig_ in order to produce a runnable container image. 
-
-    #!/bin/sh
-    . $(dirname $0)/common.sh
-    
-    LOCAL_SOURCE_DIR=/tmp/src
-    mkdir -p $LOCAL_SOURCE_DIR
-    
-    DEPLOY_DIR=$JWS_HOME/webapps
-    
-    # the subdirectory within LOCAL_SOURCE_DIR from where we should copy build artifacts
-    
-    configure_proxy
-    configure_mirrors
-    
-    manage_incremental_build
-    
-    # Restore artifacts from the previous build (if they exist).
-    echo "---> Restoring build artifacts..."
-    if [ "$(ls -A /tmp/artifacts/ 2>/dev/null)" ]; then
-      echo "---> Restoring found build artifacts..."
-      cp -Rf /tmp/artifacts/. ./
-    fi
-    
-    echo "---> Installing application source..."
-    cp -Rf /tmp/src/. ./
-    
-    echo "injected vars: commonVersion: $commonVersion buildVersion: $buildVersion infraVersion: $infraVersion"
-    export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DcommonVersion=$commonVersion -DbuildVersion=$buildVersion -DinfraVersion=$infraVersion"
-    
-    # Start build using gradle.
-    if [ -f "$LOCAL_SOURCE_DIR/build.gradle" ]; then
-     # pushd $LOCAL_SOURCE_DIR &> /dev/null
-    
-      echo "---> Building application from source..."
-      GRADLE_ARGS=${GRADLE_ARGS:-"build"}
-      echo "--> # GRADLE_ARGS = $GRADLE_ARGS"
-    
-        echo "---> Building application with gradle..."
-        /usr/local/gradle/bin/gradle $GRADLE_ARGS
-    
-        ERR=$?
-          if [ $ERR -ne 0 ]; then
-            echo "Aborting due to error code $ERR from Gradle build"
-            exit $ERR
-          fi
-    
-      # optionally clear the local maven repository after the build
-      # clear_maven_repository
-    
-      # popd &> /dev/null
-    fi
-    
-    # Copy to webapps dir
-    ARTIFACT_DIR=/home/jboss/web/build/libs
-    echo "--> # ARTIFACT_DIR = $ARTIFACT_DIR"
-    echo "---> Rename artifact $(find $ARTIFACT_DIR -name *.war)"
-    result_file=$(find $ARTIFACT_DIR -name *.war)
-    if [ -z "$result_file" ]; then
-       echo "---> Build file $result_file could not be found"
-       exit 1
-    fi
-    
-    mv $result_file $DEPLOY_DIR/ROOT.war
-
-Approx steps:
-1. OpenShift will download the source code for us into /tmp/source(?) and use /home/jboss as starting folder. 
-2. There's a step where artifacts from previous builds are added from /tmp/artifacts into /home/jboss, though we're not using that functionality at the moment.
-3. We need to pass environment variables to gradle using $JAVA_TOOL_OPTIONS. More explicitly, we're adding:
-
-- commonVersion: Version of our "common" libraries to use (e.g. download from Nexus)
-- infraVersion: Version of our "infra" libraries to use (also downloaded from Nexus)
-- buildVersion: This is the version that goes into the version.txt file, perhaps used for more stuff?
-
-These must be specified as ENV vars by whoever starts a build with a BuildConfig using this S2I image. E.g. Jenkins or manually.
-
-4. We've coded the bash script so it runs "gradle build". This takes an awful amount of time since both gradle plugin dependencies AND all application dependencies has to be download from Maven Central and/or our Nexus on each build.
-5. Finally, we copy any .war file present in /home/jboss/web/builds/lib into the file /opt/webserver/webapps/ROOT.war 
- 
-Note to seld: Could we install Ansible in our base builder image and then use Ansible playbooks set up stuff using the playbooks we've checked out from our /ansible folder?
+To isolate images for building the application from images to run the application a two-step build process is applied. The first step is a normal S2I _Source_ type build resulting in an image with built artifacts and the second step extracts the artifacts from the first step and performs a _Docker_ type build.
 
 
-## Building and running our S2I image
+#### Base Images
 
-##### Build
+The build image for step one is based on a plain `openshift/base-centos7` with Java 8 and custom s2i scripts added, and the runtime image is currently based on a Red Hat JBoss Tomcat Server  `registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift`.
+
+###### build assemble script (step 1)
+	
+	#!/bin/bash
+	
+	# Global S2I variable setup
+	# Use openshift env vars
+	#source $(dirname "$0")/s2i-setup
+	
+	# Source code provided to directory
+	S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"} <-- Note: S2I downloads code to /tmp/src 
+	
+	# Resulting WAR files will be copied to this location
+	S2I_ARTIFACTS_DIR=${S2I_ARTIFACTS_DIR-"/tmp/artifacts"}
+	mkdir -p $S2I_ARTIFACTS_DIR
+	
+	# Source artifact
+	SOURCE_ARTIFACTS_DIR=$S2I_SOURCE_DIR/web/build/libs <-- Note: Gradle is expected to output the WAR file at this location
+	
+	# Target artifact WAR
+	TARGET_WAR=$S2I_ARTIFACTS_DIR/ROOT.war
+	
+	# Setup build nev
+	export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
+	-DbuildVersion=$BUILD_VERSION  \
+	-DinfraVersion=$INFRA_VERSION \
+	-DcommonVersion=$COMMON_VERSION \
+	-Dfile.encoding=UTF-8"
+	
+	# create build info
+	create_build_info() {  <-- Note: Used to save build info to a file
+	    SHA256=$(sha256sum $S2I_ARTIFACTS_DIR/ROOT.war | awk '{ print $1 }')
+	    TIMESTAMP=$(date --iso-8601='seconds')
+	cat << EOF > $S2I_ARTIFACTS_DIR/build.info
+	TIMESTAMP=$TIMESTAMP
+	ARTIFACT=$S2I_ARTIFACTS_DIR/ROOT.war
+	ARTIFACT_SHA256=$SHA256
+	ARTIFACT_FROM=$WAR
+	SOURCE=$OPENSHIFT_BUILD_SOURCE
+	BRANCH=$OPENSHIFT_BUILD_REFERENCE
+	COMMIT=$OPENSHIFT_BUILD_COMMIT
+	OPENSHIFT_BUILD_NAME=$OPENSHIFT_BUILD_NAME
+	OPENSHIFT_PROJECT=$OPENSHIFT_BUILD_NAMESPACE
+	BUILDER_IMAGE=${BUILDER_IMAGE}
+	EOF
+	}
+	
+	# Start build using gradle.
+	if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
+	    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build"}
+	
+	    echo "---> Building application from source with gradle wrapper GRADLE_ARGS=$GRADLE_ARGS"
+	    (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
+	    ERR=$?
+	    if [ $ERR -ne 0 ]; then
+	        echo "Aborting due to error code $ERR from gradle build"
+	        exit $ERR
+	    fi
+	
+	    # Copy built file into tomcat webapps
+	    WAR=$(find ${SOURCE_ARTIFACTS_DIR} -name \*.war)
+	    if [ -f "$WAR" ]; then
+	        echo "---> Move output artifact $WAR to $TARGET_WAR"
+	        mv $WAR $TARGET_WAR
+	        ERR=$?
+	        if [ $ERR -ne 0 ]; then
+	            echo "Unable to move output artifact, exit code: $ERR"
+	            exit $ERR
+	        fi
+	    else
+	        echo "---> Output WAR file $WAR could not be found in directory $SOURCE_ARTIFACTS_DIR"
+	        exit 1
+	    fi
+	
+	    echo "---> Create build info"
+	    create_build_info
+	else
+	    echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
+	    exit 1
+	fi
+	
+	# cleanup
+	echo "---> Cleaning up"
+	rm -rf $S2I_SOURCE_DIR $HOME/.gradle $HOME/.m2
+	
+	echo "build done."
+
+
+### Generic openshift template for building WAR applications
+
+As long as it's about to build a typical intyg WAR packaged application there exists a build template which can be used to generate:
+
+* Build configuration to build the artifact and runtime image.
+* ImageStreams to store images.
+
+
+The build template name is `buildtemplate-war` and the definition file is `templates/openshift/buildtemplate-war.yaml`:
+
+	# create template
+	$ oc create -f buildtemplate-war.yaml
+
+Example of use to generate or update build configurations for the application `intygsbestallning`:
+
+	# apply for application
+	$ oc process buildtemplate-war -p APP_NAME=intygsbestallning -p GIT_URL=https://github.com/sklintyg/ib-backend.git | oc apply -f - 
+
+Now we have a build configuration and can trigger a build by starting step 1 (intygsbestallning-artifact).
+
+	# build images for intygsbestallning
+	$ oc start-build intygsbestallning-artifact
+	
+_Step 2 is automatically started on a successful completion of step 1_
+	
+
+The `APP_NAME` and `GIT_URL` parameters are mandatory, the following parameters might be used to customize the configuration:
+	
+	* APP_NAME - name of application, mandatory
+	* STAGE - stage environment default is dev
+	* ARTIFACT_IMAGE_SUFFIX - suffix of artifact container default value is artifact
+	* GIT_URL - source repository, mandatory
+	* GIT_BRANCH - source branch default is develop
+	* GENERIC_SECRET - secret default is intygtestar
+	* BUILDER_IMAGE - S2I image to build, default is s2i-war-builder:latest
+	* COMMON_VERSION - version of common to use
+	* INFRA_VERSION - version of infra to use
+	* BUILD_VERSION - build version label 
+
+## Creating the S2I image
+
 _Note that we may need to set up a "sklintyg" account at Docker Hub unless we fix a private repository for our docker images._
 
-From /minishift/jws-gradle-s2i folder.
+Go to the `s2i-war-builder` folder.
+A Makefile exists to simplify creation of image and openshift image stream. You are expected to be logged in to openshift and also to have an appropriate docker environment up an runnning.
+ 
+ 	# create image stream
+ 	make install
+ 	
+ 	# build docker image
+ 	make build
+ 	
+ 	# build and push docker image
+ 	make push 
+ 	
+Due to lack of permissions manual steps are required to import the S2I builder to the remote basefarm cluster.
 
-    > docker build -t sklintyg/jws-gradle-builder .
-    > docker push sklintyg/jws-gradle-builder
-    > oc import-image sklintyg/jws-gradle-builder --confirm
+1. Upload image to a public docker hub
+2. Connect oc to the remote cluster
+2. Import and create a corresponding image stream `$ oc import-image <docker-name> --confirm`
 
-This should have pushed our builder image to Docker Hub and then we can install it as a (builder) image into our OpenShift environment.
+If you would like to dive into details, please checkout:
 
-##### Usage in a BuildConfig
+* S2I - [https://github.com/openshift/source-to-image/releases/tag/v1.1.8](https://github.com/openshift/source-to-image/releases/tag/v1.1.8)
+* DIY - [https://blog.openshift.com/create-s2i-builder-image](https://blog.openshift.com/create-s2i-builder-image)
 
-Consider the BuildConfig YAML below.
-
-     apiVersion: v1
-     kind: BuildConfig
-     metadata:
-       labels:
-         app: intygstjanst
-       name: intygstjanst
-     spec:
-       output:
-         to:
-           kind: ImageStreamTag
-           name: intygstjanst:latest
-       resources: {}
-       source:
-         git:
-           ref: develop
-           uri: https://github.com/sklintyg/intygstjanst.git
-         contextDir: /
-         type: Git
-       strategy:
-         sourceStrategy:
-           env:
-           - name: commonVersion
-             value: 3.6.0.23
-           - name: infraVersion
-             value: 3.6.0.1
-           - name: buildVersion
-             value: 3.6.0.0-OPENSHIFT
-           from:
-             kind: "ImageStreamTag"
-             name: "jws-gradle-builder:latest"
-           forcePull: true
-     
-It defines the following:
-
-- That the output of the build is an Image to be pushed into the ImageStream named "intygstjanst"
-- The the source code it will check out from git (build be the _assemble_ script) is the develop branch of our intygstjanst.
-- The the sourceStrategy states that we'll use our very own "jws-gradle-builder" builder image.
-- Also note the three hard-coded ENV vars. This is not a very realistic approach but should suffice for educational purposes.
-
-##### Executing a build
-
-This should be very possible to do from the command-line. I have however only done this from the GUI thus far. If you do that, you can pay some attention to the Logs. A build should take several minutes since a lot of dependencies must be downloaded on each build. There exists strategies to cache dependencies using multi-stage builds or mounting a volume with Nexus artifacts into the container... we should take a look at approaches to speed this up.
-
-If a build succeeds, a new "image" should be present in the GUI simply called "intygstjanst".
-
-The built image can then be specified in a _Deployment configuration_.
 
 # Debugging a running container
 
@@ -533,9 +455,9 @@ Make sure the service of the container we want to debug has a service that expos
 ##### 3. Replace / Redeploy deployment config, service etc.
 Note that the service must be deleted and then recreated. Mina Intyg as example.
 
-    oc replace -f deploymentconfig-minaintyg.yaml
-    oc delete -f service-minaintyg.yaml
-    oc create -f service-minaintyg.yaml 
+    $ oc replace -f deploymentconfig-minaintyg.yaml
+    $ oc delete -f service-minaintyg.yaml
+    $ oc create -f service-minaintyg.yaml 
 
 ##### 4. Run oc pods to get pod name
 We need to know the name of the pod to port-forward to
@@ -555,39 +477,7 @@ We need to know the name of the pod to port-forward to
 ##### 6. Start debug-session
 Start debugging against localhost:5005 or similar using IDEA, Eclipse, NetBeans or whatever...
 
-    
-# Developing S2I
-
-### 1. Install the S2I binary for your platform
-https://github.com/openshift/source-to-image/releases/tag/v1.1.8
-
-Make sure you add the s2i binary to your PATH.
-
-### 2. From scratch
-See guide here on how to scaffold:
-
-https://blog.openshift.com/create-s2i-builder-image/
-
-### 3. From our own
-In /tools/minishift/tomcat8-gradle-ansible-s2i, there source for a builder image. Using docker build, create it:
-
-    docker build -t eriklupander/intyg-s2i .
-    
-You may name the tag whatever for testing purposes, just remember what you named it as you'll need it in the next step.
-
-To speed up testing and developing of an s2i, make sure you've built the S2I image above then use _s2i build_ to test without uploading to OpenShift etc:
-
-    s2i build -e buildVersion=0.1-dev -e commonVersion=3.6.0.+ -e infraVersion=3.6.0.+ /Users/eriklupander/intyg/intygstjanst eriklupander/intyg-s2i intyg-dev
-    
-The line above tries to do an S2I build using:
- 
-- Three environment variables so gradle knows which versions of infra and common to use, + which version it's actually building.
-- Uses the source in _/Users/eriklupander/intyg/intygstjanst_ 
-- The builder image identified by _eriklupander/intyg-s2i_
-- What the output image will be named _intyg-dev_.
-
-
-### Sandbox access
+# BF Sandbox access
 
 ##### OC client
 for interacting with BF OpenShift make sure you use the `oc` client application provided by Red Hat, and not the Origin one:
@@ -603,13 +493,11 @@ Download and unpack somewhere, the tar.gz is unpacked into the pure oc binary.
 
 To login to the sandbox, 
 
-    oc login https://portal-ocpsbx1-ind.ocp.osl.basefarm.net
+    $ oc login https://portal-ocpsbx1-ind.ocp.osl.basefarm.net
     
 Use your BF username/password
 
-    oc project intyg
-    
-
+    $ oc project intyg
 
 
 ##### VPN URL
