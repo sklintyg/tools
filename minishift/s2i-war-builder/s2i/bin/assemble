@@ -2,7 +2,7 @@
 
 # Global S2I variable setup
 # Use openshift env vars
-source $(dirname "$0")/s2i-setup
+#source $(dirname "$0")/s2i-setup
 
 # Source code provided to directory
 S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"}
@@ -11,12 +11,14 @@ S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"}
 S2I_ARTIFACTS_DIR=${S2I_ARTIFACTS_DIR-"/tmp/artifacts"}
 mkdir -p $S2I_ARTIFACTS_DIR
 
-# Target artifact WAR
-ARTIFACT=$S2I_ARTIFACTS_DIR/ROOT.war
+# Source artifact
+SOURCE_ARTIFACTS_DIR=$S2I_SOURCE_DIR/web/build/libs
 
-# Start INTYG gradle building code
-echo "Injected env: commonVersion: $commonVersion buildVersion: $buildVersion infraVersion: $infraVersion"
-export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DcommonVersion=$commonVersion -DbuildVersion=$buildVersion -DinfraVersion=$infraVersion -Dfile.encoding=UTF-8"
+# Target artifact WAR
+TARGET_WAR=$S2I_ARTIFACTS_DIR/ROOT.war
+
+# Setup build nev
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DbuildVersion=$BUILD_VERSION  -DinfraVersion=$INFRA_VERSION -DcommonVersion=$COMMON_VERSION -Dfile.encoding=UTF-8"
 
 # create build info
 create_build_info() {
@@ -32,7 +34,7 @@ BRANCH=$OPENSHIFT_BUILD_REFERENCE
 COMMIT=$OPENSHIFT_BUILD_COMMIT
 OPENSHIFT_BUILD_NAME=$OPENSHIFT_BUILD_NAME
 OPENSHIFT_PROJECT=$OPENSHIFT_BUILD_NAMESPACE
-S2I_IMAGE=${JBOSS_IMAGE_NAME}:${JBOSS_IMAGE_VERSION}
+BUILDER_IMAGE=${BUILDER_IMAGE}
 EOF
 }
 
@@ -49,17 +51,17 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
     fi
 
     # Copy built file into tomcat webapps
-    WAR=$(find ${S2I_SOURCE_DIR}/build/libs -name \*.war)
+    WAR=$(find ${SOURCE_ARTIFACTS_DIR} -name \*.war)
     if [ -f "$WAR" ]; then
-        echo "---> Move output artifact $WAR to $ARTIFACT"
-        mv $WAR $ARTIFACT
+        echo "---> Move output artifact $WAR to $TARGET_WAR"
+        mv $WAR $TARGET_WAR
         ERR=$?
         if [ $ERR -ne 0 ]; then
             echo "Unable to move output artifact, exit code: $ERR"
             exit $ERR
         fi
     else
-        echo "---> Output WAR file $WAR could not be found in directory $S2I_SOURCE_DIR/build/libs"
+        echo "---> Output WAR file $WAR could not be found in directory $SOURCE_ARTIFACTS_DIR"
         exit 1
     fi
 
