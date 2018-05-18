@@ -146,9 +146,20 @@ Each application has a _s2i_ and _deploy_ folder with templates for building and
 
 ##### Pre-requisits
 
-If not already done so, you have to set up the intyg-s2i build image first. The intyg-s2i is the base image we use to build each application.
+If not already done so, you have to set up the build image first. The s2i-war-builder is the base image we use to build each application.
 
-	$ oc import-image advptr/s2i-war-builder --confirm
+Make sure the image builder template has been installed.
+
+	$  oc create -f tools/templates/openshift/buildtemplate-image.yaml
+
+Go to the `tools/minishift/s2i-war-builder` folder and build the builder image.
+	
+	$ make build
+
+...or with plain oc
+
+	$ oc process buildtemplate-image -p NAME=s2i-war-builder -p SOURCE="$(cat Dockerfile)" | oc apply -f -
+	$ oc start-build s2i-war-builder --from-dir=./ --follow
 
 Use the GUI to confirm that the image was successfully imported.
 
@@ -166,7 +177,7 @@ From this directory `tools/minishift/{app_name}/templates/s2i`:
 
 	$ make apply
 	
-...or use plain oc
+...or with plain oc
 	
 	$ oc process buildtemplate-war \
 		-p APP_NAME=intygsbestallning-pl \
@@ -178,7 +189,7 @@ From this directory `tools/minishift/{app_name}/templates/s2i`:
 
 	$ make build
 	
-...or use plain oc 
+...or with plain oc 
 	
 	$ oc start-build {app_name}-artifact
 	
@@ -401,26 +412,12 @@ The `APP_NAME` and `GIT_URL` parameters are mandatory, the following parameters 
 
 ## Creating the S2I image
 
-_Note that we may need to set up a "sklintyg" account at Docker Hub unless we fix a private repository for our docker images._
-
-Go to the `s2i-war-builder` folder.
-A Makefile exists to simplify creation of image and openshift image stream. You are expected to be logged in to openshift and also to have an appropriate docker environment up an runnning.
+Go to the `tools/minishift/s2i-war-builder/s2i-war-builder` folder.
+A Makefile exists to simplify creation of image and openshift image stream. You are expected to be logged in to openshift.
  
- 	# create image stream
- 	make install
+ 	# create image stream, requires the `buildtemplate-image` to be installed
+ 	$ make build
  	
- 	# build docker image
- 	make build
- 	
- 	# build and push docker image
- 	make push 
- 	
-Due to lack of permissions manual steps are required to import the S2I builder to the remote basefarm cluster.
-
-1. Upload image to a public docker hub
-2. Connect oc to the remote cluster
-2. Import and create a corresponding image stream `$ oc import-image <docker-name> --confirm`
-
 If you would like to dive into details, please checkout:
 
 * S2I - [https://github.com/openshift/source-to-image/releases/tag/v1.1.8](https://github.com/openshift/source-to-image/releases/tag/v1.1.8)
@@ -429,7 +426,7 @@ If you would like to dive into details, please checkout:
 
 # Debugging a running container
 
-Sometimes its necessary to troubleshoot stuff in a running container. Luckily, openshift and "oc" provides built-in port-forwarding so it's enough for us to add the necesary JVM args, expose our selected port (such as 5005) using a service and then forward that port from our local host computer.
+Sometimes its necessary to troubleshoot stuff in a running container. Luckily, openshift and "oc" provides built-in port-forwarding so it's enough for us to add the necessary JVM args, expose our selected port (such as 5005) using a service and then forward that port from our local host computer.
 
 ### Steps
 

@@ -73,7 +73,6 @@ objects:
           forcePull: true
   - apiVersion: v1
     kind: BuildConfig
-    name: ${APP_NAME}
     metadata:
       name: ${APP_NAME}
       labels:
@@ -120,7 +119,6 @@ objects:
     metadata:
       name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}
       labels:
-        template: application-template-sample-pipeline
         app: ${APP_NAME}
         stage: ${STAGE}
     spec:
@@ -131,7 +129,6 @@ objects:
     metadata:
       name: ${APP_NAME}
       labels:
-        template: application-template-sample-pipeline
         app: ${APP_NAME}
         stage: ${STAGE}
     spec:
