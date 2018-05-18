@@ -1,7 +1,6 @@
 # Creates docker image
 
 NAME=$(shell basename `pwd`)
-SRC=$(shell cat Dockerfile)
 TEMPLATE=buildtemplate-image
 PROCESS=oc process $(TEMPLATE) -p NAME=$(NAME) -p SOURCE="`cat Dockerfile`"
 
