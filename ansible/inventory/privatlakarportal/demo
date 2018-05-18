@@ -5,6 +5,9 @@ privatlakarportal-demo2 ansible_ssh_host=ine-dib-app02.sth.basefarm.net ansible_
 [activemq]
 privatlakarportal-demo ansible_ssh_host=ine-dib-app02.sth.basefarm.net ansible_ssh_user=ine-intyg-build ansible_ssh_private_key_file=~/.ssh/ine-build_rsa
 
+[redis]
+privatlakarportal-demo ansible_ssh_host=ine-dib-app02.sth.basefarm.net ansible_ssh_user=ine-intyg-build ansible_ssh_private_key_file=~/.ssh/ine-build_rsa
+
 [mysql]
 privatlakarportal-demo ansible_ssh_host=ine-dib-app02.sth.basefarm.net ansible_ssh_user=ine-intyg-build ansible_ssh_private_key_file=~/.ssh/ine-build_rsa
 

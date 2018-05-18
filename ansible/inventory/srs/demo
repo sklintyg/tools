@@ -4,5 +4,8 @@ srs-demo ansible_ssh_host=ine-dib-app04.sth.basefarm.net ansible_ssh_user=ine-in
 [mysql]
 srs-demo ansible_ssh_host=ine-dib-app04.sth.basefarm.net ansible_ssh_user=ine-intyg-build ansible_ssh_private_key_file=~/.ssh/ine-build_rsa
 
+[redis]
+srs-demo ansible_ssh_host=ine-dib-app04.sth.basefarm.net ansible_ssh_user=ine-intyg-build ansible_ssh_private_key_file=~/.ssh/ine-build_rsa
+
 [tools]
 srs-demo ansible_ssh_host=ine-dib-app04.sth.basefarm.net ansible_ssh_user=ine-intyg-build ansible_ssh_private_key_file=~/.ssh/ine-build_rsa
