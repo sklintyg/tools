@@ -2,10 +2,13 @@
 git clone $GIT_URL repo
 
 # Execute
-#repo/gradlew assemble restAssuredTest -DbaseUrl=$TARGET_URL -DbuildVersion=$BUILD_VERSION -DcommonVersion=$COMMON_VERSION -DinfraVersion=$INFRA_VERSION
+repo/gradlew assemble restAssuredTest -DbaseUrl=$TARGET_URL -DbuildVersion=$BUILD_VERSION -DcommonVersion=$COMMON_VERSION -DinfraVersion=$INFRA_VERSION
+
+# Copy test results to persistent volume mount
+cp -r repo/web/build/reports/tests/restAssuredTest/* /tmp/reports/$JOB_URL/$BUILD_VERSION/
 
 # Cleanup
 rm -rf repo
 
 # Notify back to pipeline
-curl -X POST -k -d "OK" $CALLBACK_URL
+curl -X POST -k -d "DONE" $CALLBACK_URL
