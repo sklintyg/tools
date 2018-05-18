@@ -1,4 +1,4 @@
-FROM nimmis/java-centos:openjdk-8-jre
+FROM nimmis/java-centos:openjdk-8-jdk
 
 USER root
 RUN yum -y install git curl && yum clean all -y
