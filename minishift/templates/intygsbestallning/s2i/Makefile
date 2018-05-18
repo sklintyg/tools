@@ -17,4 +17,5 @@ list:
 	$(PROCESS) -o yaml
 
 build:
-	oc start-build $(APP_NAME)-artifact --follow
+	oc start-build $(APP_NAME)-artifact --follow --wait
+	oc start-build $(APP_NAME) --follow --wait

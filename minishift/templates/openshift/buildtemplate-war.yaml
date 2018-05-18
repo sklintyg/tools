@@ -107,13 +107,6 @@ objects:
                 destinationDir: "."
       strategy:
         type: Docker
-      triggers:
-        - imageChange: {}
-          type: ImageChange
-          imageChange:
-            from:
-              kind: "ImageStreamTag"
-              name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:latest
   - apiVersion: v1
     kind: ImageStream
     metadata:
