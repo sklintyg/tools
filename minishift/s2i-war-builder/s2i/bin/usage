@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Use openshift env vars
-source $(dirname "$0")/s2i-setup
+# Resulting WAR files will be copied to this location
+S2I_ARTIFACTS_DIR=${S2I_ARTIFACTS_DIR-"/tmp/artifacts"}
 
 LINUX=$(uname -a)
 
