@@ -87,6 +87,39 @@ objects:
               secret:
                 defaultMode: 420
                 secretName: ${APP_NAME}-${STAGE}-env
-      test: false
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: ${APP_NAME}
+      name: ${APP_NAME}
+    spec:
+      ports:
+      - name: 8080-tcp
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+      - name: 5010-tcp
+        port: 5010
+        protocol: TCP
+        targetPort: 5010
+      selector:
+        deploymentconfig: ${APP_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: ${APP_NAME}-route
+    spec:
+      path: /
+      port:
+        targetPort: 8080-tcp
+      to:
+        kind: Service
+        name: ${APP_NAME}
+        weight: 100
+      wildcardPolicy: None
+  
  
 
