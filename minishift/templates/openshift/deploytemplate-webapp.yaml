@@ -9,7 +9,6 @@ parameters:
     required: true
   - name: STAGE
     required: true
-    value: "dev"
 objects:
   - apiVersion: v1
     kind: DeploymentConfig
@@ -35,6 +34,8 @@ objects:
           - env:
             - name: APP_NAME
               value: ${APP_NAME}
+            - name: STAGE
+              value: ${STAGE}
             image: ${IMAGE}
             imagePullPolicy: Always
             name: ${APP_NAME}
@@ -81,11 +82,11 @@ objects:
             - name: ${APP_NAME}-config
               configMap:
                 defaultMode: 420
-                name: ${APP_NAME}-config
+                name: ${APP_NAME}-${STAGE}-config
             - name: ${APP_NAME}-env
               secret:
                 defaultMode: 420
-                secretName: ${APP_NAME}-env
+                secretName: ${APP_NAME}-${STAGE}-env
       test: false
  
 

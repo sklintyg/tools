@@ -1,18 +1,15 @@
 # Deplpy utilitiy
 
-#APP_NAME=$(shell cd ..; basename `pwd`)
-
-PROCESS=oc process deploytemplate-webapp -p APP_NAME=$(APP_NAME) -p IMAGE=$(IMAGE_NAME)
+PROCESS=oc process deploytemplate-webapp -p APP_NAME=$(APP_NAME) -p IMAGE=$(IMAGE_NAME) -p STAGE=$(STAGE)
 
 apply:
 	$(PROCESS) | oc $@ -f -
 
-	
 prepare:
-	oc create configmap $(APP_NAME)-config --from-file=config/
-	oc create secret generic $(APP_NAME)-env --from-file=env/ --type=Opaque
+	oc create configmap $(APP_NAME)-$(STAGE)-config --from-file=config/$(STAGE)/
+	oc create secret generic $(APP_NAME)-$(STAGE)-env --from-file=env/$(STAGE)/ --type=Opaque
 
 clean:
-	oc delete configmap $(APP_NAME)-config
-	oc delete secret $(APP_NAME)-env
+	oc delete configmap $(APP_NAME)-$(STAGE)-config
+	oc delete secret $(APP_NAME)-$(STAGE)-env
 
