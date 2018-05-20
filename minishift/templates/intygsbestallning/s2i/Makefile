@@ -1,9 +1,11 @@
 # Utility to create and delete build configurations for intygsbestallning
 
-APP_NAME=intygsbestallning
+#APP_NAME=$(shell cd ..; basename `pwd`)
+APP_NAME=intygsbestallning-pl
+
 GIT_URL=https://github.com/sklintyg/ib-backend.git
 GIT_BRANCH=develop
-PROCESS=oc process buildtemplate-war -p APP_NAME=$(APP_NAME) -p GIT_URL=$(GIT_URL) -p GIT_BRANCH=$(GIT_BRANCH)
+PROCESS=oc process buildtemplate-webapp -p APP_NAME=$(APP_NAME) -p GIT_URL=$(GIT_URL) -p GIT_BRANCH=$(GIT_BRANCH)
 
 all: apply
 

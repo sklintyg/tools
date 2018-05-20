@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds">
+  <jmxConfigurator />
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="se.inera.intyg.intygsbestallning.common.monitoring.util.MarkerFilter">
+      <markers>Monitoring, HSA</markers>
+      <onMatch>DENY</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </layout>
+  </appender>
+  <!-- Daily rolling file appender for logging monitoring events -->
+  <appender name="MONITORING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="se.inera.intyg.intygsbestallning.common.monitoring.util.MarkerFilter">
+      <marker>Monitoring</marker>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${catalina.base}/logs/intygsbestallning-monitoring.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.base}/logs/intygsbestallning-monitoring.%d{yyyy-MM-dd}.log      </fileNamePattern>
+    </rollingPolicy>
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <layout class="se.inera.intyg.intygsbestallning.logging.PatternLayoutWithUserContext">
+        <param name="Pattern" value="%date{ISO8601} %session %user - %msg%n" />
+      </layout>
+    </encoder>
+  </appender>
+  <logger name="se.inera.intyg.intygsbestallning" level="info"/>
+  <root>
+    <level value="info" />
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="MONITORING" />
+  </root>
+</configuration>

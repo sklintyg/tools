@@ -36,7 +36,7 @@ EOF
 
 # Start build using gradle.
 if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
-    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build"}
+    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build -x test"}
 
     echo "---> Building application from source with gradle wrapper GRADLE_ARGS=$GRADLE_ARGS"
     (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)

@@ -1,7 +1,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: buildtemplate-war
+  name: buildtemplate-webapp
 parameters:
   - name: APP_NAME
     required: true
@@ -87,6 +87,7 @@ objects:
         dockerfile: |-
           FROM registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift:latest
           LABEL maintainer="inera.se"
+          ENV APP_NAME=${APP_NAME}
 
           RUN rm -rf /opt/webserver/webapps/*
           
@@ -96,8 +97,9 @@ objects:
           ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar $JWS_HOME/lib
           
-          ADD ROOT.war /opt/webserver/webapps/ROOT.war
-          ADD build.info /opt/webserver/build.info
+          ADD ROOT.war /opt/webserver/webapps/
+          ADD build.info /opt/webserver/
+          ADD launch.sh /opt/webserver/bin/
         images:
           - from:
               kind: ImageStreamTag
