@@ -37,6 +37,8 @@ done
 GIT_URL=$(git config --get remote.origin.url)
 BUILD_VERSION=$(git describe --tags --dirty=.dirty)
 GIT_REF=$(git rev-parse HEAD)
+RESOURCES=$(pwd)/env/$STAGE/resources.zip
+PROJECT_DIR=$(git rev-parse --show-toplevel)
 
 function build() {
     oc process buildtemplate-webapp -p APP_NAME="$APP_NAME" -p GIT_URL="$GIT_URL" -p GIT_REF=$GIT_REF -p BUILD_VERSION=$BUILD_VERSION  -p STAGE=$STAGE | oc $1 -f -    
@@ -51,17 +53,24 @@ function deploy() {
     return 0
 }
 
-function config() {
-    oc create configmap $(APP_NAME)-config --from-file=config/$(STAGE)/ && \
-	oc create secret generic $(APP_NAME)-env --from-file=env/$(STAGE)/ --type=Opaque
-    [ $? != 0 ] && exit 1
+function assemble_resources() {
+    echo "assemble: $1, $2"
+    [ -d "$1" ] && (cd $(dirname "$1"); zip -ru "$2" resources)
     return 0
+}
+
+function config() {
+    assemble_resources $PROJECT_DIR/main/resources $RESOURCES
+    assemble_resources $PROJECT_DIR/web/src/main/resources $RESOURCES
+    oc create configmap "$APP_NAME-config" --from-file=config/$STAGE/
+    oc create secret generic "$APP_NAME-env" --from-file=env/$STAGE/ --type=Opaque
 }
 
 if [ ! -z "$REMOVE" ]; then
     [ ! -z "$BUILD" ] &&  oc get bc | grep "^${APP_NAME}\ " && build delete
     [ ! -z "$DEPLOY" ] && oc get dc | grep "^${APP_NAME}\ " && deploy delete
     if [ ! -z "$CONFIG" ]; then
+	rm -f $RESOURCES
 	oc delete configmap "$APP_NAME-config"
 	oc delete secret "$APP_NAME-env"
     fi
@@ -69,8 +78,7 @@ if [ ! -z "$REMOVE" ]; then
 fi
 
 if [ ! -z "$CONFIG" ]; then
-    oc create configmap "$APP_NAME-config" --from-file=config/$STAGE/
-    oc create secret generic "$APP_NAME-env" --from-file=env/$STAGE/ --type=Opaque
+    config
 fi
 
 if [ ! -z "$BUILD" ]; then
