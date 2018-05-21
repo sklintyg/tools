@@ -10,7 +10,7 @@ parameters:
     value: "artifact"
   - name: GIT_URL
     required: true
-  - name: GIT_BRANCH
+  - name: GIT_REF
     required: true
     value: "develop"
   - name: GENERIC_SECRET
@@ -28,7 +28,7 @@ parameters:
     value: 3.7.0.+
   - name: BUILD_VERSION
     required: true
-    value: 1.0.0.0-OPENSHIFT
+    value: 1.0-OPENSHIFT
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -42,11 +42,11 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:latest
+          name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
       resources: {}
       source:
         git:
-          ref: ${GIT_BRANCH}
+          ref: ${GIT_REF}
           uri: ${GIT_URL}
         contextDir: /
         type: Git
@@ -82,7 +82,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${APP_NAME}:latest
+          name: ${APP_NAME}:${BUILD_VERSION}
       source:
         dockerfile: |-
           FROM registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift:latest
@@ -110,7 +110,7 @@ objects:
         images:
           - from:
               kind: ImageStreamTag
-              name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:latest
+              name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
             paths:
               - sourcePath: /tmp/artifacts/.
                 destinationDir: "."
