@@ -7,9 +7,15 @@ if [ "${SCRIPT_DEBUG}" = "true" ]; then
 fi
 
 CREDENTIALS=/opt/$APP_NAME/env/secret-env.sh
-
 if [ -f $CREDENTIALS ]; then
     . $CREDENTIALS
+fi
+
+RESOURCES=/opt/$APP_NAME/env/resources.zip
+if [ -f $RESOURCES ]; then
+    (cd /tmp; unzip $RESOURCES)    
+else
+    ln -s /opt/webserver/webapps/ROOT/WEB-INF/classes /tmp/resources
 fi
 
 echo "Running $APP_NAME on $JBOSS_IMAGE_NAME image, version $JBOSS_IMAGE_VERSION"
@@ -17,3 +23,5 @@ echo "Running $APP_NAME on $JBOSS_IMAGE_NAME image, version $JBOSS_IMAGE_VERSION
 export CATALINA_OPTS="$CATALINA_OPTS $CATALINA_OPTS_APPEND"
 
 exec $JWS_HOME/bin/catalina.sh run
+
+

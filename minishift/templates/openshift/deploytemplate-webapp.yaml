@@ -82,11 +82,11 @@ objects:
             - name: ${APP_NAME}-config
               configMap:
                 defaultMode: 420
-                name: ${APP_NAME}-${STAGE}-config
+                name: ${APP_NAME}-config
             - name: ${APP_NAME}-env
               secret:
                 defaultMode: 420
-                secretName: ${APP_NAME}-${STAGE}-env
+                secretName: ${APP_NAME}-env
   - apiVersion: v1
     kind: Service
     metadata:
