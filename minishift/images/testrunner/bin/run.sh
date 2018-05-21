@@ -6,7 +6,7 @@ ls -lah repo
 cd repo && ./gradlew assemble restAssuredTest -DbaseUrl=$TARGET_URL -DbuildVersion=$BUILD_VERSION -DcommonVersion=$COMMON_VERSION -DinfraVersion=$INFRA_VERSION
 
 # Copy test results to persistent volume mount
-cp -r repo/web/build/reports/tests/restAssuredTest/* /tmp/reports/$JOB_NAME/$BUILD_VERSION/
+cp -r /opt/app-root/repo/web/build/reports/tests/restAssuredTest/* /tmp/reports/$JOB_NAME/$BUILD_VERSION/
 
 # Notify back to pipeline
 if [ $? -eq 0 ]; then
