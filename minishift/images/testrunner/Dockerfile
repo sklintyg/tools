@@ -1,7 +1,7 @@
 FROM nimmis/java-centos:openjdk-8-jdk
 
 USER root
-RUN yum -y install git curl && yum clean all -y
+RUN yum -y install git curl bzip2 && yum clean all -y
 
 ### Setup user for build execution and application runtime
 ENV APP_ROOT=/opt/app-root
