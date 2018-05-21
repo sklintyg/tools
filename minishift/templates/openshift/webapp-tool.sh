@@ -1,4 +1,24 @@
 #!/bin/bash
+#
+# Script to build and deploy and web applications.
+#
+# usage: webapp-tool.sh [ -n <app_name> [ -s <stage> ] [ -bcdr ]
+# 
+# -c: creates configmap and secrets, also assembles resources into a zip archive
+# -b: builds artifact and runtime image (see template buildtemplate-webapp)
+# -d: deploys runtime with service and route (see template deploytemplate-webapp)
+# -r: removes config, build or deploy (require sone or more of flags -c, -b, -d)
+#
+# Config:
+# Configurations are stored as a configmap and as a secret, which are mapped into the deployed application (see deploytemplate-webapp).
+# Within the secret a resurze.zip file might exists, and this is unpacked upon application launch to the /tmp/resources folder.
+#
+# Build:
+# The script assumes that the actual version (commit) if the code shall be built, i.e. it must have been previously pushed to remote.
+# Typically a particular version tag/ref is built.
+#
+# Deploy
+# 
 
 while getopts "n:s:cbdh?r" opt; do
     case "$opt" in
@@ -35,8 +55,9 @@ done
 [ -z "$STAGE" ] && STAGE=test
 
 GIT_URL=$(git config --get remote.origin.url)
-BUILD_VERSION=$(git describe --tags --dirty=.dirty)
-GIT_REF=$(git rev-parse HEAD)
+BUILD_VERSION=${BUILD_VERSION:-$(git describe --tags --dirty=.dirty)}
+GIT_REF=${GIT_REF:-$(git rev-parse HEAD)}
+
 RESOURCES=$(pwd)/env/$STAGE/resources.zip
 PROJECT_DIR=$(git rev-parse --show-toplevel)
 
@@ -48,7 +69,7 @@ function build() {
 
 function deploy() {
     IMAGE=$(oc get is | grep "^${APP_NAME}\ " | grep $BUILD_VERSION | awk '{ print $2 }')
-    oc process deploytemplate-webapp -p APP_NAME="$APP_NAME" -p IMAGE="$IMAGE" -p STAGE=$STAGE | oc $1 -f -
+    oc process deploytemplate-webapp -p APP_NAME="$APP_NAME" -p IMAGE="${IMAGE}:${BUILD_VERSION}" -p STAGE=$STAGE | oc $1 -f -
     [ $? != 0 ] && exit 1
     return 0
 }
@@ -60,7 +81,7 @@ function assemble_resources() {
 }
 
 function config() {
-    assemble_resources $PROJECT_DIR/main/resources $RESOURCES
+    assemble_resources $PROJECT_DIR/src/main/resources $RESOURCES
     assemble_resources $PROJECT_DIR/web/src/main/resources $RESOURCES
     oc create configmap "$APP_NAME-config" --from-file=config/$STAGE/
     oc create secret generic "$APP_NAME-env" --from-file=env/$STAGE/ --type=Opaque
