@@ -70,7 +70,7 @@ GIT_URL=$(git config --get remote.origin.url)
 BUILD_VERSION=${BUILD_VERSION:-$(git describe --tags --dirty=.dirty)}
 GIT_REF=${GIT_REF:-$(git rev-parse HEAD)}
 
-RESOURCES=$(pwd)/env/$STAGE/resources.zip
+RESOURCES=$(pwd)/$STAGE/env/resources.zip
 PROJECT_DIR=$(git rev-parse --show-toplevel)
 
 function build() {
@@ -95,8 +95,8 @@ function assemble_resources() {
 function config() {
     assemble_resources $PROJECT_DIR/src/main/resources $RESOURCES
     assemble_resources $PROJECT_DIR/web/src/main/resources $RESOURCES 
-    oc create configmap "$APP_NAME-config" --from-file=config/$STAGE/
-    oc create secret generic "$APP_NAME-env" --from-file=env/$STAGE/ --type=Opaque
+    oc create configmap "$APP_NAME-config" --from-file=$STAGE/config/
+    oc create secret generic "$APP_NAME-env" --from-file=$STAGE/env/ --type=Opaque
     return 0
 }
 
