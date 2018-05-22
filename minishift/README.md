@@ -150,9 +150,9 @@ If not already done so, you have to set up the build image first. The s2i-war-bu
 
 Make sure the image builder template has been installed.
 
-	$  oc create -f tools/templates/openshift/buildtemplate-image.yaml
+	$  oc create -f tools/devops/openshift/buildtemplate-image.yaml
 
-Go to the `tools/minishift/s2i-war-builder` folder and build the builder image.
+Go to the `tools/devops/openshift/s2i-war-builder` folder and build the builder image.
 	
 	$ make build
 
@@ -167,18 +167,12 @@ Use the GUI to confirm that the image was successfully imported.
 	
 Make sure that the generic build template has been installed:
 	
-	$ oc create -c tools/minishift/temlpates/openshift/buildtemplate-war.yaml 
+	$ oc create -c tools/devops/openshift/buildtemplate-war.yaml 
 
 #### Building
 
-From this directory `tools/minishift/{app_name}/templates/s2i`:
-
 **Create build config**
 
-	$ make apply
-	
-...or with plain oc
-	
 	$ oc process buildtemplate-war \
 		-p APP_NAME=intygsbestallning-pl \
 		-p GIT_URL=https://github.com/sklintyg/ib-backend.git \
@@ -186,60 +180,46 @@ From this directory `tools/minishift/{app_name}/templates/s2i`:
 	
 
 **Build**
-
-	$ make build
 	
-...or with plain oc 
-	
+	# build artifact
 	$ oc start-build {app_name}-artifact
+	
+	# build runtime
+	$ oc start-build {app_name}
 	
 
 Goto the UI to watch the build process
 
 	{project_name} => Builds => Images => {app_name}-N-build]
 
-#### Secrets
+#### Secret and Config Map
 
-Create secrets for certificates and credentials (passwords).
+An application deployment config expects one secret with the name `{app_name}-env` and one config map with the name `{app_name}-config`
 
-    $ oc secrets new {app_name}-test-certifikat [path-to-application's-config-repo]/{app_name}-konfiguration/demo/certifikat
-    $ oc secrets new {app_name}-test-credentials [path-to-application's-config-repo]/{app_name}-konfiguration/demo/credentials.properties
+Create secret for certificates, credentials, resources, etc.
 
-From this directory `tools/minishift/{app_name}/templates/deploy`:
+    $ oc create secret generic {app_name}-env --from-file {config-directory} --type=Opaque
 
-	$ oc create -f secrets-{app_name}-db-credentials.yaml
+Create config map with text files:
+	
+	$ oc create configmap {app_name}-config --from-file {config-directory}
 	
 This last command might not be applicable to all application. It depends if tha application uses a database and/or message broker or any other external resource.
  
 #### Deploying
 
-From this directory `tools/minishift/{app_name}/templates/deploy`:
-
-	$ oc create -f configmap-{app_name}-test-konfiguration.yaml
-	$ oc create -f route-{app_name}.yaml
-	$ oc create -f service-{app_name}.yaml
-	$ oc create -f deploymentconfig-{app_name}.yaml
+	$ oc process deploytemplate-webapp -p APP_NAME="{app_name}" -p IMAGE="{image}:{build_version}" -p STAGE={stage} | oc apply -f -
 
 Goto the UI and watch the deploy process
 
 	{project_name} => Applications => Pods => {app_name-N-xyz12}
 	
-## Generating config maps
-Config maps can conveniently be created for all files in a given directory. Make sure you don't include a "credentials.properties" file with secret passwords or real certificates!! Those go into secrets.
-
-If you're in our `tools` folder:
-
-    $ oc create configmap intygstjanst-test-konfiguration --from-file=intygstjanst-konfiguration/test
-
-## Generating secrets
-Secrets can also be created for files in a given directory. They are then encrypted so they can be stored externally.
-
-    $ oc secrets new intygstjanst-test-certifikat ~/intyg/intygstjanst-konfiguration/test/certifikat
 
 ## Running all .yaml files in directory
-Given that we're in `tools/minishift`, we can run all `.yaml` files in a given directory:
 
-    $ oc create -R=true -f=templates/minaintyg/deploy
+Run all `.yaml` files in a given directory:
+
+    $ oc create -R=true -f={directory}
 
 ## REST examples
 
@@ -256,24 +236,32 @@ Given that we're in `tools/minishift`, we can run all `.yaml` files in a given d
         -H 'Accept: application/json' \
         https://$ENDPOINT/api/v1/namespaces/$NAMESPACE/pods
 
-## Using a unified YAML file to C(R)UD an application
+## Using script webapp-tool.sh to C(R)UD an application
 
-A convenient way to fully bootstrap an entire application including its configuration, secrets, service etc. is to use a YAML file containing definitions for all participating components.
+The `webapp-tool.sh` is a generic script to bootstrap an application from openshift templates. It's designed to be executed from the source tree of the application to deploy, 
+and assigns default values for:
 
-See templates/intygstjanst/intygstjanst.yaml
+* APP_NAME - from git repository name
+* GIT_URL - from git
+* GIT_REF - current git ref
+* STAGE - default is test
+* BUILD_VERSION - default is the actual tag (see git describe --tags)
 
-##### Create
+Usage:
 
-    $ oc create -f templates/intygstjanst/intygstjanst.yaml
-    
-##### Update
-
-    $ oc update -f templates/intygstjanst/intygstjanst.yaml
-    
-##### Delete
-
-    $ oc delete -f templates/intygstjanst/intygstjanst.yaml
-
+	# Run from remote source
+	$ curl -s https://raw.githubusercontent.com/sklintyg/tools/develop/devops/openshift/webapp-tool.sh | bash /dev/stdin -h
+	$ usage: webapp-tool.sh [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]
+		  -b: do build
+		  -c: do config
+		  -d: do deploy
+		  -h: prints usage options
+		  -n <app_name>: set application name (default is git project name)
+		  -m <build_version>: set build version (default is git tag)
+		  -r: remove config, build or deploy  (in combination with other flags)
+		  -s <stage>: stage name (default is test)
+		  -t <git_ref>: build from git ref (default is current)
+	
 
 ## 2-Step Source to Image (S2I) Build Strategy 
 
@@ -403,7 +391,7 @@ The `APP_NAME` and `GIT_URL` parameters are mandatory, the following parameters 
 	* STAGE - stage environment default is dev
 	* ARTIFACT_IMAGE_SUFFIX - suffix of artifact container default value is artifact
 	* GIT_URL - source repository, mandatory
-	* GIT_BRANCH - source branch default is develop
+	* GIT_REF - source tag/branch/ref default is develop
 	* GENERIC_SECRET - secret default is intygtestar
 	* BUILDER_IMAGE - S2I image to build, default is s2i-war-builder:latest
 	* COMMON_VERSION - version of common to use
@@ -412,7 +400,7 @@ The `APP_NAME` and `GIT_URL` parameters are mandatory, the following parameters 
 
 ## Creating the S2I image
 
-Go to the `tools/minishift/s2i-war-builder/s2i-war-builder` folder.
+Go to the `tools/devops/openshift/s2i-war-builder` folder.
 A Makefile exists to simplify creation of image and openshift image stream. You are expected to be logged in to openshift.
  
  	# create image stream, requires the `buildtemplate-image` to be installed
