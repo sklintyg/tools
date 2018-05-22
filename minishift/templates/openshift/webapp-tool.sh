@@ -20,10 +20,13 @@
 # Deploy
 # 
 
-while getopts "n:s:cbdh?r" opt; do
+while getopts "m:n:s:t:cbdh?r" opt; do
     case "$opt" in
 	h|\?)
             echo "usage: $(basename $0) [ -n <app_name> [ -s <stage> ] [ -bcdr ]"
+	    echo "-n <app_name>: set application name"
+	    echo "-m <build_version>: set build version"
+	    echo "-t <git_ref>: build from git ref"
 	    echo "-b: do build"
 	    echo "-c: do config"
 	    echo "-d: do deploy"
@@ -32,6 +35,9 @@ while getopts "n:s:cbdh?r" opt; do
             ;;
 	c) 
 	    CONFIG=1
+            ;;
+	m) 
+	    BUILD_VERSION=$OPTARG
             ;;
 	n) 
 	    APP_NAME=$OPTARG
@@ -44,6 +50,9 @@ while getopts "n:s:cbdh?r" opt; do
 	    ;;
 	r)
 	    REMOVE=1
+	    ;;
+	t) 
+	    GIT_REF=$OPTARG
 	    ;;
 	b)
 	    BUILD=1
@@ -87,13 +96,18 @@ function config() {
     oc create secret generic "$APP_NAME-env" --from-file=env/$STAGE/ --type=Opaque
 }
 
+function exists() {
+    oc get $1 | grep "^${APP_NAME}${2}\ "
+    return $?
+}
+
 if [ ! -z "$REMOVE" ]; then
-    [ ! -z "$BUILD" ] &&  oc get bc | grep "^${APP_NAME}\ " && build delete
-    [ ! -z "$DEPLOY" ] && oc get dc | grep "^${APP_NAME}\ " && deploy delete
+    [ ! -z "$BUILD" ] &&  exists bc  "" && build delete
+    [ ! -z "$DEPLOY" ] && exists dc  "" && deploy delete
     if [ ! -z "$CONFIG" ]; then
 	rm -f $RESOURCES
-	oc delete configmap "$APP_NAME-config"
-	oc delete secret "$APP_NAME-env"
+	exists cm "-config" && oc delete cm "$APP_NAME-config"
+	exists secret "-env" && oc delete secret "$APP_NAME-env"
     fi
     exit 0
 fi
