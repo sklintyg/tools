@@ -24,10 +24,10 @@ while getopts "n:s:cbdh?r" opt; do
     case "$opt" in
 	h|\?)
             echo "usage: $(basename $0) [ -n <app_name> [ -s <stage> ] [ -bcdr ]"
-	    echo "-b: do build (default)"
-	    echo "-b: do config (default)"
+	    echo "-b: do build"
+	    echo "-c: do config"
 	    echo "-d: do deploy"
-	    echo "-r: remove artifact"
+	    echo "-r: remove config, build or deploy  (in combination with other flags)"
             exit 1
             ;;
 	c) 
