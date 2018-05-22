@@ -2,35 +2,32 @@
 #
 # Script to build and deploy and web applications.
 #
-# usage: webapp-tool.sh [ -n <app_name> [ -s <stage> ] [ -bcdr ]
-# 
-# -c: creates configmap and secrets, also assembles resources into a zip archive
-# -b: builds artifact and runtime image (see template buildtemplate-webapp)
-# -d: deploys runtime with service and route (see template deploytemplate-webapp)
-# -r: removes config, build or deploy (require sone or more of flags -c, -b, -d)
+# usage: webapp.sh [ -hbcdr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]
+# -h: print usage options
 #
 # Config:
 # Configurations are stored as a configmap and as a secret, which are mapped into the deployed application (see deploytemplate-webapp).
-# Within the secret a resurze.zip file might exists, and this is unpacked upon application launch to the /tmp/resources folder.
+# Within the secret a resurze.zip file might exist, and this is unpacked upon application launch to the /tmp/resources folder.
 #
 # Build:
-# The script assumes that the actual version (commit) if the code shall be built, i.e. it must have been previously pushed to remote.
+# The script assumes that the actual version (commit) of the code shall be built, i.e. it must have been previously pushed to remote.
 # Typically a particular version tag/ref is built.
 #
-# Deploy
+# Deploy:
+# See deploytemplate-webapp
 # 
 
 while getopts "m:n:s:t:cbdh?r" opt; do
     case "$opt" in
 	h|\?)
-            echo "usage: $(basename $0) [ -n <app_name> [ -s <stage> ] [ -bcdr ]"
-	    echo "-n <app_name>: set application name"
-	    echo "-m <build_version>: set build version"
-	    echo "-t <git_ref>: build from git ref"
-	    echo "-b: do build"
-	    echo "-c: do config"
-	    echo "-d: do deploy"
-	    echo "-r: remove config, build or deploy  (in combination with other flags)"
+            echo "usage: $(basename $0) [ -bcdr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
+	    echo "  -n <app_name>: set application name (default is git project name)"
+	    echo "  -m <build_version>: set build version (default is git tag)"
+	    echo "  -t <git_ref>: build from git ref (default is current)"
+	    echo "  -b: do build"
+	    echo "  -c: do config"
+	    echo "  -d: do deploy"
+	    echo "  -r: remove config, build or deploy  (in combination with other flags)"
             exit 1
             ;;
 	c) 
