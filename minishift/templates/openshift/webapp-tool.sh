@@ -20,7 +20,7 @@
 while getopts "m:n:s:t:cbdh?r" opt; do
     case "$opt" in
 	h|\?)
-            echo "usage: $(basename $0) [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
+		echo "usage: $(basename $0) [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
 	    echo "  -b: do build"
 	    echo "  -c: do config"
 	    echo "  -d: do deploy"
@@ -30,7 +30,7 @@ while getopts "m:n:s:t:cbdh?r" opt; do
 	    echo "  -r: remove config, build or deploy  (in combination with other flags)"
 	    echo "  -s <stage>: stage name (default is test)"
 	    echo "  -t <git_ref>: build from git ref (default is current)"
-            exit 1
+        exit 1
             ;;
 	c) 
 	    CONFIG=1
@@ -96,17 +96,17 @@ function config() {
 }
 
 function exists() {
-    oc get $1 | grep "^${APP_NAME}${2}\ "
+    oc get $1 | grep "^${2}\ "
     return $?
 }
 
 if [ ! -z "$REMOVE" ]; then
-    [ ! -z "$BUILD" ] &&  exists bc  "" && build delete
-    [ ! -z "$DEPLOY" ] && exists dc  "" && deploy delete
+    [ ! -z "$BUILD" ] &&  exists bc "${APP_NAME}" && build delete
+    [ ! -z "$DEPLOY" ] && exists dc  "${APP_NAME}" && deploy delete
     if [ ! -z "$CONFIG" ]; then
 	rm -f $RESOURCES
-	exists cm "-config" && oc delete cm "$APP_NAME-config"
-	exists secret "-env" && oc delete secret "$APP_NAME-env"
+	exists cm "${APP_NAME}-config" && oc delete cm "${APP_NAME}-config"
+	exists secret "${APP_NAME}-env" && oc delete secret "${APP_NAME}-env"
     fi
     exit 0
 fi
