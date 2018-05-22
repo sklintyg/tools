@@ -92,7 +92,6 @@ function assemble_resources() {
 
 function config() {
     assemble_resources $PROJECT_DIR/src/main/resources $RESOURCES
-    assemble_resources $PROJECT_DIR/web/src/main/resources $RESOURCES 
     oc create configmap "$APP_NAME-config" --from-file=$STAGE/config/
     oc create secret generic "$APP_NAME-env" --from-file=$STAGE/env/ --type=Opaque
     return 0
