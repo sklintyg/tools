@@ -18,7 +18,7 @@ parameters:
     value: "intygtestar"
   - name: STAGE
     required: true
-    value: "dev"
+    value: "test"
   - name: BUILDER_IMAGE
     required: true
     value: "s2i-war-builder:latest"

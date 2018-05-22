@@ -12,7 +12,7 @@ parameters:
     value: "latest"
   - name: STAGE
     required: true
-    value: "dev"
+    value: "test"
 objects:
   - apiVersion: v1
     kind: BuildConfig
