@@ -15,7 +15,7 @@
 #
 # Deploy:
 # See deploytemplate-webapp
-# 
+#
 
 function usage() {
     echo "usage: $(basename $0) [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
@@ -36,16 +36,16 @@ while getopts "m:n:s:t:cbdh?r" opt; do
 	h|\?)
 	    usage
 	    ;;
-	c) 
+	c)
 	    CONFIG=1
 	    ;;
-	m) 
+	m)
 	    BUILD_VERSION=$OPTARG
 	    ;;
-	n) 
+	n)
 	    APP_NAME=$OPTARG
 	    ;;
-	s) 
+	s)
 	    STAGE=$OPTARG
 	    ;;
 	d)
@@ -54,7 +54,7 @@ while getopts "m:n:s:t:cbdh?r" opt; do
 	r)
 	    REMOVE=1
 	    ;;
-	t) 
+	t)
 	    GIT_REF=$OPTARG
 	    ;;
 	b)
@@ -72,7 +72,7 @@ GIT_REF=${GIT_REF:-$(git rev-parse HEAD)}
 RESOURCES=$(pwd)/$STAGE/env/resources.zip
 
 function build() {
-    oc process buildtemplate-webapp -p APP_NAME="$APP_NAME" -p GIT_URL="$GIT_URL" -p GIT_REF=$GIT_REF -p BUILD_VERSION=$BUILD_VERSION  -p STAGE=$STAGE | oc $1 -f -    
+    oc process buildtemplate-webapp -p APP_NAME="$APP_NAME" -p GIT_URL="$GIT_URL" -p GIT_REF=$GIT_REF -p BUILD_VERSION=$BUILD_VERSION  -p STAGE=$STAGE | oc $1 -f -
     [ $? != 0 ] && exit 1
     return 0
 }
@@ -128,4 +128,3 @@ fi
 if [ ! -z "$DEPLOY" ]; then
     deploy apply
 fi
-

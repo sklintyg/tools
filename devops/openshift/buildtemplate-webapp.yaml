@@ -20,7 +20,7 @@ parameters:
     required: true
     value: "s2i-war-builder:latest"
   - name: COMMON_VERSION
-    value: 3.6.0.+
+    value: 3.7.0.+
   - name: INFRA_VERSION
     value: 3.7.0.+
   - name: BUILD_VERSION
