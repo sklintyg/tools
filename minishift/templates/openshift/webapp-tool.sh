@@ -68,14 +68,14 @@ function build() {
 }
 
 function deploy() {
-    IMAGE=$(oc get is | grep "^${APP_NAME}\ " | grep $BUILD_VERSION | awk '{ print $2 }')
+    IMAGE=$(oc get is | grep "^${APP_NAME}\ " | awk '{ print $2 }')
     oc process deploytemplate-webapp -p APP_NAME="$APP_NAME" -p IMAGE="${IMAGE}:${BUILD_VERSION}" -p STAGE=$STAGE | oc $1 -f -
     [ $? != 0 ] && exit 1
     return 0
 }
 
 function assemble_resources() {
-    echo "assemble: $1, $2"
+    echo "add: $1"
     [ -d "$1" ] && (cd $(dirname "$1"); zip -ru "$2" resources)
     return 0
 }
