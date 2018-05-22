@@ -17,30 +17,34 @@
 # See deploytemplate-webapp
 # 
 
+function usage() {
+    echo "usage: $(basename $0) [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
+    echo "  -b: do build"
+    echo "  -c: do config"
+    echo "  -d: do deploy"
+    echo "  -h: prints usage options"
+    echo "  -n <app_name>: set application name (default is git project name)"
+    echo "  -m <build_version>: set build version (default is git tag)"
+    echo "  -r: remove config, build or deploy  (in combination with other flags)"
+    echo "  -s <stage>: stage name (default is test)"
+    echo "  -t <git_ref>: build from git ref (default is current)"
+    exit 1
+}
+
 while getopts "m:n:s:t:cbdh?r" opt; do
     case "$opt" in
 	h|\?)
-		echo "usage: $(basename $0) [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
-	    echo "  -b: do build"
-	    echo "  -c: do config"
-	    echo "  -d: do deploy"
-	    echo "  -h: prints usage options"
-	    echo "  -n <app_name>: set application name (default is git project name)"
-	    echo "  -m <build_version>: set build version (default is git tag)"
-	    echo "  -r: remove config, build or deploy  (in combination with other flags)"
-	    echo "  -s <stage>: stage name (default is test)"
-	    echo "  -t <git_ref>: build from git ref (default is current)"
-        exit 1
-            ;;
+	    usage
+	    ;;
 	c) 
 	    CONFIG=1
-            ;;
+	    ;;
 	m) 
 	    BUILD_VERSION=$OPTARG
-            ;;
+	    ;;
 	n) 
 	    APP_NAME=$OPTARG
-            ;;
+	    ;;
 	s) 
 	    STAGE=$OPTARG
 	    ;;
@@ -90,9 +94,10 @@ function assemble_resources() {
 
 function config() {
     assemble_resources $PROJECT_DIR/src/main/resources $RESOURCES
-    assemble_resources $PROJECT_DIR/web/src/main/resources $RESOURCES
+    assemble_resources $PROJECT_DIR/web/src/main/resources $RESOURCES 
     oc create configmap "$APP_NAME-config" --from-file=config/$STAGE/
     oc create secret generic "$APP_NAME-env" --from-file=env/$STAGE/ --type=Opaque
+    return 0
 }
 
 function exists() {
