@@ -63,15 +63,13 @@ while getopts "m:n:s:t:cbdh?r" opt; do
     esac
 done
 
-[ -z "$APP_NAME" ] && APP_NAME=$(cd ..; basename $(pwd))
-[ -z "$STAGE" ] && STAGE=test
-
+PROJECT_DIR=$(git rev-parse --show-toplevel)
+APP_NAME=${APP_NAME:-$(basename $PROJECT_DIR)}
+STAGE=${STAGE:-test}
 GIT_URL=$(git config --get remote.origin.url)
 BUILD_VERSION=${BUILD_VERSION:-$(git describe --tags --dirty=.dirty)}
 GIT_REF=${GIT_REF:-$(git rev-parse HEAD)}
-
 RESOURCES=$(pwd)/$STAGE/env/resources.zip
-PROJECT_DIR=$(git rev-parse --show-toplevel)
 
 function build() {
     oc process buildtemplate-webapp -p APP_NAME="$APP_NAME" -p GIT_URL="$GIT_URL" -p GIT_REF=$GIT_REF -p BUILD_VERSION=$BUILD_VERSION  -p STAGE=$STAGE | oc $1 -f -    
@@ -104,6 +102,7 @@ function exists() {
     oc get $1 | grep "^${2}\ "
     return $?
 }
+
 
 if [ ! -z "$REMOVE" ]; then
     [ ! -z "$BUILD" ] &&  exists bc "${APP_NAME}" && build delete

@@ -13,9 +13,6 @@ parameters:
   - name: GIT_REF
     required: true
     value: "develop"
-  - name: GENERIC_SECRET
-    required: true
-    value: "intygtestar"
   - name: STAGE
     required: true
     value: "test"
@@ -50,12 +47,6 @@ objects:
           uri: ${GIT_URL}
         contextDir: /
         type: Git
-      triggers:
-        - trigger:
-          type: "Generic"
-          generic:
-            secret: ${GENERIC_SECRET}
-            allowEnv: true
       strategy:
         sourceStrategy:
           env:
