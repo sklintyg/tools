@@ -2,7 +2,7 @@
 #
 # Script to build and deploy and web applications.
 #
-# usage: webapp.sh [ -hbcdr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]
+# usage: webapp.sh [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]
 # -h: print usage options
 #
 # Config:
@@ -20,14 +20,16 @@
 while getopts "m:n:s:t:cbdh?r" opt; do
     case "$opt" in
 	h|\?)
-            echo "usage: $(basename $0) [ -bcdr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
-	    echo "  -n <app_name>: set application name (default is git project name)"
-	    echo "  -m <build_version>: set build version (default is git tag)"
-	    echo "  -t <git_ref>: build from git ref (default is current)"
+            echo "usage: $(basename $0) [ -bcdhr ] [ -n <app_name> ] [ -m <build_version> ] [ -t <git_ref> ] [ -s <stage> ]"
 	    echo "  -b: do build"
 	    echo "  -c: do config"
 	    echo "  -d: do deploy"
+	    echo "  -h: prints usage options"
+	    echo "  -n <app_name>: set application name (default is git project name)"
+	    echo "  -m <build_version>: set build version (default is git tag)"
 	    echo "  -r: remove config, build or deploy  (in combination with other flags)"
+	    echo "  -s <stage>: stage name (default is test)"
+	    echo "  -t <git_ref>: build from git ref (default is current)"
             exit 1
             ;;
 	c) 
