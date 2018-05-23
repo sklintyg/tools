@@ -18,5 +18,4 @@ WORKDIR ${APP_ROOT}/app-root
 
 ### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
 ENTRYPOINT [ "uid_entrypoint" ]
-VOLUME ${APP_ROOT}/app-root/logs ${APP_ROOT}/app-root/data
 CMD run.sh
