@@ -5,7 +5,7 @@ RUN yum -y install git curl bzip2 && yum clean all -y
 
 ### Setup user for build execution and application runtime
 ENV APP_ROOT=/opt
-ENV PATH=${APP_ROOT}/bin:${PATH} HOME=${APP_ROOT} JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk 
+ENV PATH=${APP_ROOT}/app-root/bin:${PATH} HOME=${APP_ROOT} JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk 
 ENV JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8
 COPY bin/ ${APP_ROOT}/app-root/bin/
 RUN chmod -R u+x ${APP_ROOT}/app-root/bin && \
