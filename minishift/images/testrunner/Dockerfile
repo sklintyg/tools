@@ -10,7 +10,8 @@ ENV JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8
 COPY bin/ ${APP_ROOT}/app-root/bin/
 RUN chmod -R u+x ${APP_ROOT}/app-root/bin && \
     chgrp -R 0 ${APP_ROOT} && chown -R 1001:0 ${APP_ROOT} && \
-    chmod -R g=u ${APP_ROOT} /etc/passwd
+    chmod -R g=u ${APP_ROOT} /etc/passwd && \
+    chmod -R g+rw /mnt 
 
 ### Containers should NOT run as root as a good practice
 USER 1001
