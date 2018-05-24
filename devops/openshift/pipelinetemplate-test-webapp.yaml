@@ -36,7 +36,7 @@ objects:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
           jenkinsfile: |-
-            // The following variables are expected to be exists (injected from trigger) in the environment:
+            // The following variables are expected to be injected (from trigger) into the environment:
             // [ gitUrl, gitRef, buildVersion, infraVersion, commonVersion ]
             //
             // Build and Deploy temaples must previously have been installed
