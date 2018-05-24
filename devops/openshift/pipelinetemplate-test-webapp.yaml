@@ -14,6 +14,9 @@ parameters:
   - name: DEPLOY_TEMPLATE
     required: true
     value: "deploytemplate-webapp"
+  - name: TESTRUNNER_TEMPLATE
+    required: true
+    value: "testrunner-template"
   - name: ARTIFACT_IMAGE_SUFFIX
     required: true
     value: "artifact"
@@ -121,8 +124,47 @@ objects:
                 stage('Integration Test') {
                   steps {
                     script {
-                      echo "Do test"
-                      sleep 60
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          //Setup callback webhook
+                          hook = registerWebhook()
+
+                          //Random ID to make sure jobs are uniquely named.
+                          def id = UUID.randomUUID().toString()
+
+                          def models = openshift.process("${TESTRUNNER_TEMPLATE}",
+                            "-p", "TARGET_URL=${targetUrl}",
+                            "-p", "GIT_URL='${gitUrl}",
+                            "-p", "COMMON_VERSION=${commonVersion}",
+                            "-p", "INFRA_VERSION=${infraVersion}",
+                            "-p", "BUILD_VERSION=${buildVersion}",
+                            "-p", "JOB_NAME=${env.JOB_NAME}",
+                            "-p", "CALLBACK_URL=${hook.getUrl()}",
+                            "-p", "BUILD_TAG=${env.BUILD_TAG}",
+                            "-p", "ID=${}")
+                          openshift.apply(models)
+                          openshift.selector("job", testrunner-${env.BUILD_TAG}-${id}").create()
+
+                          echo "Waiting for POST to ${hook.getURL()}"
+                          data = waitForWebhook hook
+
+                          echo "Publishing reports for ${JOB_NAME}/${buildVersion}"
+                          publishHTML([
+                            allowMissing: true,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: '/var/lib/jenkins/reports/$JOB_NAME/$buildVersion/',
+                            reportFiles: 'index.html',
+                            reportName: 'RestAssured results',
+                          ])
+
+                          if (data.trim().equals("SUCCESS")) {
+                            echo "Build SUCCESS"
+                          } else {
+                            error("Build failed, see reports for details")
+                          }
+                        }
+                      }
                     }
                   }
                 }
