@@ -127,26 +127,27 @@ objects:
                   }      
                 }
               
-                stage('Integration Test') {
+                stage('Run Integration Tests') {
+                  when {
+                    expression {
+                      // for testing purposes it might be good to skip this step, change to false
+                      return true
+                    }                      
+                  }
                   steps {
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
                           echo "Do test"
-                          // TODO: Find a better way                       
-                          def svc = sh (
-                            script: "oc get svc | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
-                            returnStdout: true
-                          ).trim()
-                          
-                          def targetUrl = "http://${svc}:8080"                         
-                          echo "Service url is: ${targetUrl}"
 
-                          //Setup callback webhook
+                          // Setup callback webhook
                           hook = registerWebhook()
 
-                          //Random ID to make sure jobs are uniquely named.
+                          // Random ID to make sure jobs are uniquely named.
                           def id = UUID.randomUUID().toString()
+
+                          // Just use name
+                          def targetUrl = "http://${APP_NAME}:8080"                         
 
                           def models = openshift.process("${TESTRUNNER_TEMPLATE}",
                             "-p", "TARGET_URL=${targetUrl}",
@@ -187,13 +188,19 @@ objects:
                 }
 
                 stage('Cleanup') {
+                  when {
+                    expression {
+                      // turned off until it works
+                      return false
+                    }                      
+                  }
                   steps {
                     script {
                       echo "Do cleanup"
                       def sel = openshift.selector("dc", "${APP_NAME}")
                       if (sel.exists()) {
                         echo "Tear down deployment"
-                        sel.delete("--all")
+                        sel.delete()
                       }
                     }
                   }
