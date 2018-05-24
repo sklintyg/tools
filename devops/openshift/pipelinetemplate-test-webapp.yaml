@@ -14,6 +14,9 @@ parameters:
   - name: DEPLOY_TEMPLATE
     required: true
     value: "deploytemplate-webapp"
+  - name: ARTIFACT_IMAGE_SUFFIX
+    required: true
+    value: "artifact"
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -38,6 +41,7 @@ objects:
             //
             // Build and Deploy temaples must previously have been installed
             //
+
             pipeline {
               agent any
               stages {
@@ -62,11 +66,12 @@ objects:
                             "-p", "BUILD_VERSION=$buildVersion", 
                             "-p", "STAGE=${STAGE}",
                             "-p", "INFRA_VERSION=$infraVersion",
-                            "-p", "COMMON_VERSION=$commonVersion")
+                            "-p", "COMMON_VERSION=$commonVersion",
+                            "-p", "ARTIFACT_IMAGE_SUFFIX=${ARTIFACT_IMAGE_SUFFIX}")
                           openshift.apply(models)
 
-                          echo "Build artifact image ${APP_NAME}-artifact"
-                          openshift.selector("bc", "${APP_NAME}-artifact").startBuild().untilEach(1) {
+                          echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
+                          openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
                             return it.object().status.phase == "Complete"
                           }
                           echo "Build Completed"
@@ -95,14 +100,13 @@ objects:
                           ).trim()                          
                           echo "Use ImageStream: ${imageStream}"
 
-                          def models = openshift.process("${DEPLOY_TEMPLATE}", 
+                          def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='$imageStream:$buildVersion'", 
                             "-p", "STAGE=${STAGE}")                          
                           echo "Wait for rollout (limited to 5 minutes)"
                           timeout (5) {
-                            def rm = openshift.apply(models).narrow("dc").rollout()
-                            rm.latest()
+                            def rm = openshift.apply(deployModel).narrow("dc").rollout()
                             echo "Waiting for deployment to complete"
                             rm.status()
                             echo "Deployment done."
@@ -118,6 +122,7 @@ objects:
                   steps {
                     script {
                       echo "Do test"
+                      sleep 60
                     }
                   }
                 }
@@ -126,10 +131,8 @@ objects:
                   steps {
                     script {
                       echo "Do cleanup"
-                      def dc = openshift.selector("dc", "${APP_NAME}")
-                      if (dc.exists()) {
-                        echo "Tear down deployment: ${dc.names()}"
-                        dc.delete()
+                      if (deployModel != null) {
+                        echo "Tear down deployment (not yet implemented)"
                       }
                     }
                   }
