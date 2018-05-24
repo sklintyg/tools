@@ -131,9 +131,6 @@ objects:
                   steps {
                     script {
                       echo "Do cleanup"
-                      if (deployModel != null) {
-                        echo "Tear down deployment (not yet implemented)"
-                      }
                     }
                   }
                 }
