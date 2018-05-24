@@ -4,11 +4,10 @@ ls -lah repo
 
 # Execute
 cd repo && ./gradlew assemble restAssuredTest -DbaseUrl=$TARGET_URL -DbuildVersion=$BUILD_VERSION -DcommonVersion=$COMMON_VERSION -DinfraVersion=$INFRA_VERSION
-RESULT=""
 if [ $? -eq 0 ]; then
-  $RESULT="SUCCESS"
+  RESULT="SUCCESS"
 else 
-  $RESULT="FAILED"
+  RESULT="FAILED"
 fi
 
 # Copy test results to persistent volume mount
