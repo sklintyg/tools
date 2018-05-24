@@ -191,17 +191,24 @@ objects:
                   when {
                     expression {
                       // turned off until it works
-                      return false
+                      return true
                     }                      
                   }
                   steps {
                     script {
                       echo "Do cleanup"
-                      def sel = openshift.selector("dc", "${APP_NAME}")
-                      if (sel.exists()) {
-                        echo "Tear down deployment"
-                        sel.delete()
-                      }
+                      // TDOD: find a better way
+                      // Due to some kind of a bug the DSL enters into errors while tearing down deployment
+                      // works fine with command line, though.
+                      echo "Tear down deployment"
+                      def imageStream = sh (
+                        script: "oc get is | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
+                        returnStdout: true
+                      ).trim()                          
+                      sh (
+                        script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
+                        returnStatus: true
+                      )
                     }
                   }
                 }
