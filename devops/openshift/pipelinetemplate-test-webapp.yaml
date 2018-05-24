@@ -1,0 +1,144 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: pipelinetemplate-test-webapp
+parameters:
+  - name: APP_NAME
+    required: true
+  - name: STAGE
+    required: true
+    value: "test"
+  - name: BUILD_TEMPLATE
+    required: true
+    value: "buildtemplate-webapp"
+  - name: DEPLOY_TEMPLATE
+    required: true
+    value: "deploytemplate-webapp"
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${APP_NAME}-${STAGE}-pipeline
+      generation: 1
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      triggers:
+        - generic:
+            allowEnv: true
+            secret: QGHipU39T7guhCil14QR
+          type: Generic
+      strategy:
+        jenkinsPipelineStrategy:
+          type: JenkinsPipeline
+          jenkinsfile: |-
+            // The following variables are expected to be exists (injected from trigger) in the environment:
+            // [ gitUrl, gitRef, buildVersion, infraVersion, commonVersion ]
+            //
+            // Build and Deploy temaples must previously have been installed
+            //
+            pipeline {
+              agent any
+              stages {
+
+                stage('Prepare') {
+                  steps {
+                    script {
+                      echo "Prepare configuration and other stuff"
+                    }
+                  }
+                }
+
+                stage('Build Images') {
+                  steps {
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          def models = openshift.process("${BUILD_TEMPLATE}", 
+                            "-p", "APP_NAME=${APP_NAME}", 
+                            "-p", "GIT_URL=$gitUrl", 
+                            "-p", "GIT_REF=$gitRef",
+                            "-p", "BUILD_VERSION=$buildVersion", 
+                            "-p", "STAGE=${STAGE}",
+                            "-p", "INFRA_VERSION=$infraVersion",
+                            "-p", "COMMON_VERSION=$commonVersion")
+                          openshift.apply(models)
+
+                          echo "Build artifact image ${APP_NAME}-artifact"
+                          openshift.selector("bc", "${APP_NAME}-artifact").startBuild().untilEach(1) {
+                            return it.object().status.phase == "Complete"
+                          }
+                          echo "Build Completed"
+
+                          echo "Build runtime image ${APP_NAME}"
+                          openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
+                            return it.object().status.phase == "Complete"                            
+                          }
+                          echo "Build Completed"
+                        }
+                      }
+                    }
+                  }
+                }
+                
+                stage('Deploy Web App') {
+                  steps {
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          // use shell script to fetch full image repo name
+                          // TDOD: find a better way
+                          def imageStream = sh (
+                            script: "oc get is | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
+                            returnStdout: true
+                          ).trim()                          
+                          echo "Use ImageStream: ${imageStream}"
+
+                          def models = openshift.process("${DEPLOY_TEMPLATE}", 
+                            "-p", "APP_NAME=${APP_NAME}", 
+                            "-p", "IMAGE='$imageStream:$buildVersion'", 
+                            "-p", "STAGE=${STAGE}")                          
+                          echo "Wait for rollout (limited to 5 minutes)"
+                          timeout (5) {
+                            def rm = openshift.apply(models).narrow("dc").rollout()
+                            rm.latest()
+                            echo "Waiting for deployment to complete"
+                            rm.status()
+                            echo "Deployment done."
+                          }
+
+                        }
+                      }
+                    }
+                  }      
+                }
+              
+                stage('Integration Test') {
+                  steps {
+                    script {
+                      echo "Do test"
+                    }
+                  }
+                }
+
+                stage('Cleanup') {
+                  steps {
+                    script {
+                      echo "Do cleanup"
+                      def dc = openshift.selector("dc", "${APP_NAME}")
+                      if (dc.exists()) {
+                        echo "Tear down deployment: ${dc.names()}"
+                        dc.delete()
+                      }
+                    }
+                  }
+                }
+
+              }
+            }
+        
+      
+
+
+
