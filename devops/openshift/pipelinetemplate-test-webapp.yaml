@@ -74,15 +74,15 @@ objects:
                           openshift.apply(models)
 
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
-                          openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
-                            return it.object().status.phase == "Complete"
-                          }
+                          //openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
+                            //return it.object().status.phase == "Complete"
+                          //}
                           echo "Build Completed"
 
                           echo "Build runtime image ${APP_NAME}"
-                          openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
-                            return it.object().status.phase == "Complete"                            
-                          }
+                          //openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
+                            //return it.object().status.phase == "Complete"                            
+                          //}
                           echo "Build Completed"
                         }
                       }
@@ -126,6 +126,16 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
+                          echo "Do test"
+                          // TODO: Find a better way                       
+                          def svc = sh (
+                            script: "oc get svc | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
+                            returnStdout: true
+                          ).trim()
+                          
+                          def targetUrl = "http://${svc}:8080"                         
+                          echo "Service url is: ${targetUrl}"
+
                           //Setup callback webhook
                           hook = registerWebhook()
 
@@ -173,6 +183,11 @@ objects:
                   steps {
                     script {
                       echo "Do cleanup"
+                      def sel = openshift.selector("dc", "${APP_NAME}")
+                      if (sel.exists()) {
+                        echo "Tear down deployment"
+                        sel.delete("--all")
+                      }
                     }
                   }
                 }
