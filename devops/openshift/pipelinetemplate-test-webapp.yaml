@@ -58,6 +58,12 @@ objects:
                 }
 
                 stage('Build Images') {
+                  when {
+                    expression {
+                      // for testing purposes it might be good to skip this step, change to false
+                      return true
+                    }                      
+                  }
                   steps {
                     script {
                       openshift.withCluster() {
@@ -74,15 +80,15 @@ objects:
                           openshift.apply(models)
 
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
-                          //openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
-                            //return it.object().status.phase == "Complete"
-                          //}
+                          openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
+                            return it.object().status.phase == "Complete"
+                          }
                           echo "Build Completed"
 
                           echo "Build runtime image ${APP_NAME}"
-                          //openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
-                            //return it.object().status.phase == "Complete"                            
-                          //}
+                          openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
+                            return it.object().status.phase == "Complete"                            
+                          }
                           echo "Build Completed"
                         }
                       }
@@ -149,11 +155,12 @@ objects:
                             "-p", "INFRA_VERSION=${infraVersion}",
                             "-p", "BUILD_VERSION=${buildVersion}",
                             "-p", "JOB_NAME=${env.JOB_NAME}",
-                            "-p", "CALLBACK_URL=${hook.getUrl()}",
+                            "-p", "CALLBACK_URL=${hook.getURL()}",
                             "-p", "BUILD_TAG=${env.BUILD_TAG}",
-                            "-p", "ID=${}")
+                            "-p", "ID=${id}")
                           openshift.apply(models)
-                          openshift.selector("job", testrunner-${env.BUILD_TAG}-${id}").create()
+                          
+                          //openshift.selector("job", testrunner-${env.BUILD_TAG}-${id}").create()
 
                           echo "Waiting for POST to ${hook.getURL()}"
                           data = waitForWebhook hook
