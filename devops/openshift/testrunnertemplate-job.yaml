@@ -1,7 +1,42 @@
+apiVersion: template.openshift.io/v1
 kind: Template
-apiVersion: v1
 metadata:
   name: testrunner-template
+  namespace: intyg
+objects:
+  - apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: 'testrunner-${BUILD_TAG}'
+    spec:
+      template:
+        metadata:
+          name: testrunner-${BUILD_TAG}
+        spec:
+          containers:
+          - name: 'testrunner-${BUILD_TAG}'
+            image: 'docker-registry.default.svc:5000/intyg/testrunner:latest'
+            env:
+              - name: TARGET_URL
+                value: '${TARGET_URL}'
+              - name: GIT_URL
+                value: '${GIT_URL}'
+              - name: BUILD_VERSION
+                value: '${BUILD_VERSION}'
+              - name: INFRA_VERSION
+                value: '${INFRA_VERSION}'
+              - name: CALLBACK_URL
+                value: '${CALLBACK_URL}'
+              - name: JOB_NAME
+                value: '${JOB_NAME}'
+            volumeMounts:
+              - mountPath: /mnt/reports
+                name: rep-vol
+          restartPolicy: Never
+          volumes:
+            - name: rep-vol
+              persistentVolumeClaim:
+                claimName: test-reports
 parameters:
   - name: TARGET_URL
     required: true
@@ -13,46 +48,9 @@ parameters:
     value: 3.7.0.+
   - name: BUILD_VERSION
     required: true
-    value: 1.0-OPENSHIFT
   - name: JOB_NAME
     required: true
   - name: CALLBACK_URL
     required: true
   - name: BUILD_TAG
     required: true
-  - name: ID
-    required: true
-objects:
-  - apiVersion: v1
-    kind: Job
-    metadata:
-      name: testrunner-${BUILD_TAG}-${ID}
-    spec:
-    template:
-      metadata:
-        name: testrunner-${BUILD_TAG}-${ID}
-      spec:
-        containers:
-        - name: testrunner-${BUILD_TAG}-${ID}
-          image: docker-registry.default.svc:5000/intyg/testrunner:latest
-          env:
-          - name: TARGET_URL
-            value: ${targetUrl}
-          - name: GIT_URL
-            value: ${gitUrl}
-          - name: BUILD_VERSION
-            value: $buildVersion
-          - name: INFRA_VERSION
-            value: $infraVersion
-          - name: CALLBACK_URL
-            value: $callbackUrl
-          - name: JOB_NAME
-            value: $jobName
-          volumeMounts:
-           - mountPath: /mnt/reports
-             name: rep-vol
-        volumes:
-          - name: rep-vol
-            persistentVolumeClaim:
-              claimName: test-reports
-        restartPolicy: Never
