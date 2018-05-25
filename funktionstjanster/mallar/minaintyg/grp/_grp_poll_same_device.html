@@ -3,8 +3,6 @@
 <head>
 <!-- Vid problem ange referens: (PARM{refid}) -->
   <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
   <title>Logga in med BankID</title>
   <link href="/common.css" rel="stylesheet" type="text/css">
   <!--[if IE 7]>
@@ -17,20 +15,17 @@
 PARM{meta-header}
 <!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
 <script type="text/javascript" src="/mg-local/poll.min.js"></script>
-
-    <script type="text/javascript" src="/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="/bootstrap.min.js"></script>
 PARM{include:/grp/grppoll_same-script.html}
 
 </head>
 <body id="commonbody" onload="polling_start()">
 
   PARM{include:/header.html}
-  <div id="containerbody">
-      <div id="backlink">
-          <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
-      </div>
-     <h2>Logga in med BankID</h2>
+
+    <div class="backlink">
+      <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+    </div>
+    <h2>Inloggning med BankID</h2>
 <!-- 1 -->
        <table width="100%">
             <tr>
@@ -87,7 +82,6 @@ PARM{include:/grp/grppoll_same-script.html}
             </tr>
             <tr>
                 <td >
-                    <a href="/">PARM{text-clickhereformainpage}</a>
                     <iframe src="PARM{grp-link}" height=0 width=0></iframe>
                 </td>
             </tr>
@@ -98,7 +92,6 @@ PARM{include:/grp/grppoll_same-script.html}
        </div>
       </div>
     <br>
-</div>
   PARM{include:/footer.html}
 </body>
 </html>

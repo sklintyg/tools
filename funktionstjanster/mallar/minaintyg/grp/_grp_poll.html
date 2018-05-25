@@ -2,22 +2,17 @@ PARM{include:/head.html?title=text-mbi-loginusingmbi}
 <!-- Page used for MBI Authentication Poll -->
 PARM{meta-header}
 <!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/common.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="/mg-local/poll.min.js"></script>
-<script type="text/javascript" src="/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="/bootstrap.min.js"></script>
-
 PARM{include:/grp/grppoll-script.html}
 </head>
 <body id="commonbody" onload="polling_start()">
 
   PARM{include:/header.html}
-  <div id="containerbody">
-    <div id="backlink">
-      <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
-    </div>
+
+  <div class="backlink">
+    <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+  </div>
+
   <h2>Inloggning med Mobilt BankID</h2>
 
   <div id="infotext">PARM{message}</div>
@@ -32,7 +27,6 @@ PARM{include:/grp/grppoll-script.html}
       <a class='button' href="PARM{poll-url}">PARM{text-update}</a>
     </p>
   </div>
-
 <br>
-  </div>
+
 PARM{include:/footer.html}
