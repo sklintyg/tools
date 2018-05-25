@@ -4,39 +4,34 @@ metadata:
   name: testrunner-template
   namespace: intyg
 objects:
-  - apiVersion: batch/v1
-    kind: Job
+  - apiVersion: v1
+    kind: Pod
     metadata:
       name: 'testrunner-${BUILD_TAG}'
     spec:
-      template:
-        metadata:
-          name: testrunner-${BUILD_TAG}
-        spec:
-          containers:
-          - name: 'testrunner-${BUILD_TAG}'
-            image: 'docker-registry.default.svc:5000/intyg/testrunner:latest'
-            env:
-              - name: TARGET_URL
-                value: '${TARGET_URL}'
-              - name: GIT_URL
-                value: '${GIT_URL}'
-              - name: BUILD_VERSION
-                value: '${BUILD_VERSION}'
-              - name: INFRA_VERSION
-                value: '${INFRA_VERSION}'
-              - name: CALLBACK_URL
-                value: '${CALLBACK_URL}'
-              - name: JOB_NAME
-                value: '${JOB_NAME}'
-            volumeMounts:
-              - mountPath: /mnt/reports
-                name: rep-vol
-          restartPolicy: Never
-          volumes:
-            - name: rep-vol
-              persistentVolumeClaim:
-                claimName: test-reports
+      containers:
+        - env:
+            - name: TARGET_URL
+              value: '${TARGET_URL}'
+            - name: GIT_URL
+              value: '${GIT_URL}'
+            - name: BUILD_VERSION
+              value: '${BUILD_VERSION}'
+            - name: INFRA_VERSION
+              value: '${INFRA_VERSION}'
+            - name: CALLBACK_URL
+              value: '${CALLBACK_URL}'
+            - name: JOB_NAME
+              value: '${JOB_NAME}'
+          image: 'docker-registry.default.svc:5000/intyg/testrunner:latest'
+          name: 'testrunner-${BUILD_TAG}'
+          volumeMounts:
+            - mountPath: /mnt/reports
+              name: rep-vol
+      restartPolicy: Never
+      volumes:
+        - claimName: test-reports
+          name: rep-vol
 parameters:
   - name: TARGET_URL
     required: true
