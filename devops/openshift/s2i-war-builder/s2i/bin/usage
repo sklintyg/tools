@@ -14,6 +14,7 @@ fi
 JAVA=$(java -version 2>&1 | head -1)
 
 echo "# This is an openshift S2I Java build container (typically built with a gradle wrapper)."
+echo "# A testrun is initiated with the command line argument \"testrun\". Though, requires a proper environment"
 echo
 echo "# Build Info:"
 cat $S2I_ARTIFACTS_DIR/build.info

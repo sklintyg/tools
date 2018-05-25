@@ -14,8 +14,6 @@ fi
 RESOURCES=/opt/$APP_NAME/env/resources.zip
 if [ -f $RESOURCES ]; then
     (cd /tmp; unzip $RESOURCES)    
-else
-    ln -s /opt/webserver/webapps/ROOT/WEB-INF/classes /tmp/resources
 fi
 
 echo "Running $APP_NAME on $JBOSS_IMAGE_NAME image, version $JBOSS_IMAGE_VERSION"

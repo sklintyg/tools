@@ -68,8 +68,4 @@ else
     exit 1
 fi
 
-# cleanup
-echo "---> Cleaning up"
-rm -rf $S2I_SOURCE_DIR $HOME/.gradle $HOME/.m2
-
 echo "build done."
