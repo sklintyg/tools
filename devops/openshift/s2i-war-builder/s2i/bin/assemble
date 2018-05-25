@@ -14,7 +14,11 @@ SOURCE_ARTIFACTS_DIR=$S2I_SOURCE_DIR/web/build/libs
 TARGET_WAR=$S2I_ARTIFACTS_DIR/ROOT.war
 
 # Setup build nev
-export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -DbuildVersion=$BUILD_VERSION  -DinfraVersion=$INFRA_VERSION -DcommonVersion=$COMMON_VERSION -Dfile.encoding=UTF-8"
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
+-DbuildVersion=$BUILD_VERSION  \
+-DinfraVersion=$INFRA_VERSION \
+-DcommonVersion=$COMMON_VERSION \
+-Dfile.encoding=UTF-8"
 
 # create build info
 create_build_info() {
@@ -34,8 +38,13 @@ BUILDER_IMAGE=${BUILDER_IMAGE}
 EOF
 }
 
+# place .gradle stuff in /tmp
+export GRADLE_USER_HOME=/tmp/.gradle
+
 # Start build using gradle.
 if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
+    echo "---> User $(id) home is $HOME"
+
     GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build -x test"}
 
     echo "---> Building application from source with gradle wrapper GRADLE_ARGS=$GRADLE_ARGS"
@@ -63,6 +72,9 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
 
     echo "---> Create build info"
     create_build_info
+
+    # allow everything
+    chmod -R 777 $GRADLE_USER_HOME $S2I_SOURCE_DIR
 else
     echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
     exit 1

@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: testrunnertemplate-pod
+parameters:
+- name: APP_NAME
+  required: true
+- name: STAGE
+  required: true
+  value: "test"
+- name: TARGET_URL
+  required: true
+- name: GIT_URL
+  required: true
+- name: COMMON_VERSION
+  required: true
+  value: 3.7.0.+
+- name: INFRA_VERSION
+  required: true
+  value: 3.7.0.+
+- name: BUILD_VERSION
+  required: true
+- name: JOB_NAME
+  required: true
+- name: CALLBACK_URL
+  required: true
+- name: BUILD_TAG
+  required: true
+- name: IMAGE
+  required: true
+- name: COMMAND
+  required: true
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: ${APP_NAME}-test-${BUILD_TAG}
+    labels:
+      app: ${APP_NAME}
+      stage: ${STAGE}
+  spec:
+    containers:
+      - env:
+        - name: TARGET_URL
+          value: ${TARGET_URL}
+        - name: GIT_URL
+          value: ${GIT_URL}
+        - name: BUILD_VERSION
+          value: ${BUILD_VERSION}
+        - name: INFRA_VERSION
+          value: ${INFRA_VERSION}
+        - name: CALLBACK_URL
+          value: ${CALLBACK_URL}
+        - name: JOB_NAME
+          value: ${JOB_NAME}
+        image: ${IMAGE}
+        name: ${APP_NAME}-test-${BUILD_TAG}
+        command: [ "/usr/libexec/s2i/run", "testrun", "${COMMAND}" ]
+        volumeMounts:
+        - mountPath: /mnt/reports
+          name: rep-vol
+    restartPolicy: Never
+    volumes:
+      - name: rep-vol
+        persistentVolumeClaim:
+          claimName: test-reports
+

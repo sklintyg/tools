@@ -11,7 +11,9 @@ ADD s2i/bin/ /usr/libexec/s2i/
 
 # Replace launch.sh
 ADD launch.sh /tmp/artifacts/
-RUN chown 1001 /tmp/artifacts
+RUN mkdir -p /tmp/src /opt/app-root/src
+RUN chown 1001 /tmp/artifacts /tmp/src
+RUN chmod 777 /opt/app-root/src
 
 # Run as user default
 USER 1001

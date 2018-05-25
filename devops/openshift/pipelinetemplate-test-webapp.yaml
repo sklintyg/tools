@@ -16,10 +16,12 @@ parameters:
     value: "deploytemplate-webapp"
   - name: TESTRUNNER_TEMPLATE
     required: true
-    value: "testrunner-template"
+    value: "testrunnertemplate-pod"
   - name: ARTIFACT_IMAGE_SUFFIX
     required: true
     value: "artifact"
+  - name: SECRET
+    required: true
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -33,7 +35,7 @@ objects:
       triggers:
         - generic:
             allowEnv: true
-            secret: QGHipU39T7guhCil14QR
+            secret: ${SECRET}
           type: Generic
       strategy:
         jenkinsPipelineStrategy:
@@ -44,6 +46,15 @@ objects:
             //
             // Build and Deploy temaples must previously have been installed
             //
+
+            // TODO: find a better way
+            def getImageStream() {
+              // TDOD: find a better way
+              return sh (
+                script: "oc get is | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
+                returnStdout: true
+              ).trim()                          
+            }
 
             pipeline {
               agent any
@@ -57,7 +68,7 @@ objects:
                   }
                 }
 
-                stage('Build Images') {
+                stage('Create Build Configuration') {
                   when {
                     expression {
                       // for testing purposes it might be good to skip this step, change to false
@@ -78,13 +89,46 @@ objects:
                             "-p", "COMMON_VERSION=$commonVersion",
                             "-p", "ARTIFACT_IMAGE_SUFFIX=${ARTIFACT_IMAGE_SUFFIX}")
                           openshift.apply(models)
+                        }
+                      }
+                    }
+                  }
+                }
 
+                stage('Build App Artifact Image') {
+                  when {
+                    expression {
+                      // for testing purposes it might be good to skip this step, change to false
+                      return true
+                    }                      
+                  }
+                  steps {
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject() {
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
                           openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
                             return it.object().status.phase == "Complete"
                           }
                           echo "Build Completed"
+                        }
+                      }
+                    }
+                  }
+                }
 
+
+                stage('Build App Runtime Image') {
+                  when {
+                    expression {
+                      // for testing purposes it might be good to skip this step, change to false
+                      return true
+                    }                      
+                  }
+                  steps {
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject() {
                           echo "Build runtime image ${APP_NAME}"
                           openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
                             return it.object().status.phase == "Complete"                            
@@ -96,17 +140,12 @@ objects:
                   }
                 }
                 
-                stage('Deploy Web App') {
+                stage('Deploy App') {
                   steps {
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          // use shell script to fetch full image repo name
-                          // TDOD: find a better way
-                          def imageStream = sh (
-                            script: "oc get is | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
-                            returnStdout: true
-                          ).trim()                          
+                          def imageStream = getImageStream()
                           echo "Use ImageStream: ${imageStream}"
 
                           def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
@@ -141,73 +180,78 @@ objects:
                           echo "Do test"
 
                           // Setup callback webhook
-                          hook = registerWebhook()
+                          def hook = registerWebhook()
 
                           // Just use name
-                          def targetUrl = "http://test:8080"
+                          def targetUrl = "http://${APP_NAME}:8080"                         
 
-                          def models = openshift.process("testrunner-template",
-                            "-p", "TARGET_URL=${targetUrl}",
-                            "-p", "GIT_URL=${gitUrl}",
+                          def imageStream = getImageStream()
+                          echo "Use ImageStream: ${imageStream}"
+
+                          def models = openshift.process("${TESTRUNNER_TEMPLATE}",
+                            "-p", "APP_NAME=${APP_NAME}", 
+                            "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${buildVersion}'", 
+                            "-p", "STAGE=${STAGE}",                          
+                            "-p", "TARGET_URL='${targetUrl}'",
+                            "-p", "GIT_URL='${gitUrl}'",
                             "-p", "COMMON_VERSION=${commonVersion}",
                             "-p", "INFRA_VERSION=${infraVersion}",
                             "-p", "BUILD_VERSION=${buildVersion}",
                             "-p", "JOB_NAME=${env.JOB_NAME}",
-                            "-p", "CALLBACK_URL=${hook.getURL()}",
-                            "-p", "BUILD_TAG=${env.BUILD_TAG}")
+                            "-p", "CALLBACK_URL='${hook.getURL()}'",
+                            "-p", "BUILD_TAG=${env.BUILD_TAG}",
+                            "-p", "COMMAND=restAssuredTest")
                           openshift.apply(models)
+                          
+                          def data = ""
+                          timeout (10) {
+                            echo "Waiting for POST to ${hook.getURL()}"
+                            data = waitForWebhook hook
+                            echo "Publishing reports for ${JOB_NAME}/${buildVersion}"
+                            publishHTML([
+                              allowMissing: true,
+                              alwaysLinkToLastBuild: true,
+                              keepAll: true,
+                              reportDir: '/var/lib/jenkins/reports/$JOB_NAME/$buildVersion/',
+                              reportFiles: 'index.html',
+                              reportName: 'RestAssured results',
+                            ])
+                          }
 
-                          echo "Waiting for POST to ${hook.getURL()}"
-                          data = waitForWebhook hook
-
-                          echo "Publishing reports for ${JOB_NAME}/${buildVersion}"
-                          publishHTML([
-                            allowMissing: true,
-                            alwaysLinkToLastBuild: true,
-                            keepAll: true,
-                            reportDir: '/var/lib/jenkins/reports/$JOB_NAME/$buildVersion/',
-                            reportFiles: 'index.html',
-                            reportName: 'RestAssured results',
-                          ])
-
-                          if (data.trim().equals("SUCCESS")) {
-                            echo "Build SUCCESS"
+                          if ("SUCCESS".equals(data.trim())) {
+                            echo "Test SUCCESS"
                           } else {
-                            error("Build failed, see reports for details")
+                            error("Tests FAILED, see the reports for any details")
                           }
                         }
                       }
                     }
                   }
                 }
+              }
 
-                stage('Cleanup') {
-                  when {
-                    expression {
-                      // turned off until it works
-                      return true
-                    }                      
-                  }
-                  steps {
-                    script {
-                      echo "Do cleanup"
-                      // TDOD: find a better way
-                      // Due to some kind of a bug the DSL enters into errors while tearing down deployment
-                      // works fine with command line, though.
-                      echo "Tear down deployment"
-                      def imageStream = sh (
-                        script: "oc get is | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
-                        returnStdout: true
-                      ).trim()                          
-                      sh (
-                        script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
-                        returnStatus: true
-                      )
-                    }
-                  }
+              post {
+                success {
+                  echo "promote application image"                  
+                }
+
+                always {
+                  script {
+                    echo "cleanup"
+                    def imageStream = getImageStream()
+                    sh (
+                      script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
+                      returnStatus: true
+                    )
+                  }                  
+                }
+
+                failure {
+                  echo "Pipeline Failed :("
                 }
 
               }
+
             }
         
       
