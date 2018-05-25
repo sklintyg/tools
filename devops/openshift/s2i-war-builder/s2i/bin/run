@@ -13,7 +13,7 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 
 REPORT_DIR=/mnt/reports/$JOB_NAME/$BUILD_VERSION
 
-if [ $# = 2  ] %% [ "$1" = "testrun" ]; then
+if [ $# = 2  ] && [ "$1" = "testrun" ]; then
     TEST=${2}
     # Test
     GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon assemble $TEST"}
