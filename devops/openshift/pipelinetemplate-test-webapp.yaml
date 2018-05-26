@@ -251,8 +251,10 @@ objects:
                   script {
                     echo "cleanup"
                     openshift.withCluster() {
-                      openshift.withProject() { 
-                        def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                      openshift.withProject() {
+                        def image = openshift.selector("is", "${APP_NAME}").object()
+                        echo "Image: ${image}"
+                        def imageStream = image.status.dockerImageRepository
                         sh (
                           script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
                           returnStatus: true
