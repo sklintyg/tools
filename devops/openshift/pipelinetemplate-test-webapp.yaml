@@ -57,6 +57,12 @@ objects:
                       echo "Prepare configuration and check pre-conditions"
                       openshift.withCluster() {
                         openshift.withProject() {
+                          [ "gitUrl", "gitRef", "buildVersion", "infraVersion", "commonVersion" ].each {
+                            if (!env[it]) {
+                              error("No such required context variable in environment: ${it}")
+                            }
+                          }
+
                           [ "${BUILD_TEMPLATE}", "${DEPLOY_TEMPLATE}", "${TESTRUNNER_TEMPLATE}" ].each {
                             def t = openshift.selector("template", it)
                             if (!t.exists()) {
