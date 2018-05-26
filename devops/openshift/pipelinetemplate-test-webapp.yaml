@@ -238,9 +238,10 @@ objects:
                     openshift.withCluster() {
                       openshift.withProject() { 
                           def image = openshift.selector("is", "${APP_NAME}").object()
-                          image.metadata.labels["se.inera.${STAGE}.status"] = "Approved"
-                          image.metadata.labels["se.inera.${STAGE}.project"] = openshift.project()
-                          openshift.apply(image)
+                          echo "TODO: Tag correct version ${image}"
+                          //image.metadata.labels["se.inera.${STAGE}.status"] = "Approved"
+                          //image.metadata.labels["se.inera.${STAGE}.project"] = openshift.project()
+                          //openshift.apply(image)
                       }
                     }
                   }              
