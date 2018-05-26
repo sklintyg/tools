@@ -11,27 +11,25 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 -DcommonVersion=$COMMON_VERSION \
 -Dfile.encoding=UTF-8"
 
-REPORT_DIR=/mnt/reports/$JOB_NAME/$BUILD_VERSION
-
 # .gradle stuff are in /tmp
 export GRADLE_USER_HOME=/tmp/.gradle
 
-if [ $# = 2  ] && [ "$1" = "testrun" ]; then
-    TEST=${2}
+if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
+    shift
+    TEST=${1}
     RESULT="FAILED"
     echo "---> User $(id) home is $HOME"
 
     # Test
-    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon $TEST -x processResources"}
+    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon ${*}"}
     echo "---> Testing application with GRADLE_ARGS=$GRADLE_ARGS"
     (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
-    if [ $? -eq 0 ]; then
-        echo "---> Test OK, copy test reports to $REPORT_DIR"
-        # Copy test results to persistent volume mount
-        mkdir -p $REPORT_DIR && \
-            cp -R $S2I_SOURCE_DIR/web/build/reports/tests/$TEST/* $REPORT_DIR/. && \
-            RESULT="SUCCESS"
-    fi
+    [ $? -eq 0 ] && RESULT="SUCCESS"
+
+    echo "---> Test $RESULT, copy test reports to $REPORT_DIR"
+    # Copy test results to persistent volume mount
+    mkdir -p $REPORT_DIR && \
+        cp -R $S2I_SOURCE_DIR/web/build/reports/tests/$TEST/* $REPORT_DIR/.
     
     # Report back
     echo "---> Done, report back status $RESULT to $CALLBACK_URL"

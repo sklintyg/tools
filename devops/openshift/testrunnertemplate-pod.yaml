@@ -34,7 +34,7 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    name: ${APP_NAME}-test-${BUILD_TAG}
+    name: ${BUILD_TAG}
     labels:
       app: ${APP_NAME}
       stage: ${STAGE}
@@ -51,11 +51,11 @@ objects:
           value: ${INFRA_VERSION}
         - name: CALLBACK_URL
           value: ${CALLBACK_URL}
-        - name: JOB_NAME
-          value: ${JOB_NAME}
+        - name: REPORT_DIR
+          value: /mnt/reports/${JOB_NAME}/${BUILD_VERSION}
         image: ${IMAGE}
         name: ${APP_NAME}-test-${BUILD_TAG}
-        command: [ "/usr/libexec/s2i/run", "testrun", "${COMMAND}" ]
+        command: [ "/usr/libexec/s2i/run", "testrun", "${COMMAND}", "-x", "processResources" ]
         volumeMounts:
         - mountPath: /mnt/reports
           name: rep-vol

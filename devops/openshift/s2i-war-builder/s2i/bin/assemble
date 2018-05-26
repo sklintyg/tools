@@ -73,8 +73,8 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
     echo "---> Create build info"
     create_build_info
 
-    # allow everything
-    chmod -R 777 $GRADLE_USER_HOME $S2I_SOURCE_DIR
+    # add group write access
+    chmod -R g+w $GRADLE_USER_HOME $S2I_SOURCE_DIR
 else
     echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
     exit 1

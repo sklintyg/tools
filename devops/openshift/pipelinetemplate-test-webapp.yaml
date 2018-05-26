@@ -26,7 +26,7 @@ objects:
   - apiVersion: v1
     kind: BuildConfig
     metadata:
-      name: ${APP_NAME}-${STAGE}-pipeline
+      name: ${APP_NAME}-pipeline
       generation: 1
       labels:
         app: ${APP_NAME}
@@ -47,15 +47,6 @@ objects:
             // Build and Deploy temaples must previously have been installed
             //
 
-            // TODO: find a better way
-            def getImageStream() {
-              // TDOD: find a better way
-              return sh (
-                script: "oc get is | grep '^${APP_NAME}\\ ' | awk '{ print \$2 }'",
-                returnStdout: true
-              ).trim()                          
-            }
-
             pipeline {
               agent any
               stages {
@@ -63,7 +54,17 @@ objects:
                 stage('Prepare') {
                   steps {
                     script {
-                      echo "Prepare configuration and other stuff"
+                      echo "Prepare configuration and check pre-conditions"
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          [ "${BUILD_TEMPLATE}", "${DEPLOY_TEMPLATE}", "${TESTRUNNER_TEMPLATE}" ].each {
+                            def t = openshift.selector("template", it)
+                            if (!t.exists()) {
+                              error("No such required template: ${it}")
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -71,7 +72,6 @@ objects:
                 stage('Create Build Configuration') {
                   when {
                     expression {
-                      // for testing purposes it might be good to skip this step, change to false
                       return true
                     }                      
                   }
@@ -98,7 +98,6 @@ objects:
                 stage('Build App Artifact Image') {
                   when {
                     expression {
-                      // for testing purposes it might be good to skip this step, change to false
                       return true
                     }                      
                   }
@@ -121,7 +120,6 @@ objects:
                 stage('Build App Runtime Image') {
                   when {
                     expression {
-                      // for testing purposes it might be good to skip this step, change to false
                       return true
                     }                      
                   }
@@ -141,13 +139,17 @@ objects:
                 }
                 
                 stage('Deploy App') {
+                  when {
+                    expression {
+                      return true
+                    }                      
+                  }
                   steps {
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          def imageStream = getImageStream()
+                          def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
                           echo "Use ImageStream: ${imageStream}"
-
                           def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='$imageStream:$buildVersion'", 
@@ -169,7 +171,6 @@ objects:
                 stage('Run Integration Tests') {
                   when {
                     expression {
-                      // for testing purposes it might be good to skip this step, change to false
                       return true
                     }                      
                   }
@@ -185,7 +186,7 @@ objects:
                           // Just use name
                           def targetUrl = "http://${APP_NAME}:8080"                         
 
-                          def imageStream = getImageStream()
+                          def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
                           echo "Use ImageStream: ${imageStream}"
 
                           def models = openshift.process("${TESTRUNNER_TEMPLATE}",
@@ -204,9 +205,9 @@ objects:
                           openshift.apply(models)
                           
                           def data = ""
-                          timeout (10) {
+                          timeout (5) {
                             echo "Waiting for POST to ${hook.getURL()}"
-                            data = waitForWebhook hook
+                            data = waitForWebhook(hook).trim()
                             echo "Publishing reports for ${JOB_NAME}/${buildVersion}"
                             publishHTML([
                               allowMissing: true,
@@ -217,11 +218,11 @@ objects:
                               reportName: 'RestAssured results',
                             ])
                           }
-
-                          if ("SUCCESS".equals(data.trim())) {
+                          
+                          if ("SUCCESS".equals(data)) {
                             echo "Test SUCCESS"
                           } else {
-                            error("Tests FAILED, see the reports for any details")
+                            error("Tests FAILED, see reports for any details")
                           }
                         }
                       }
@@ -232,17 +233,31 @@ objects:
 
               post {
                 success {
-                  echo "promote application image"                  
+                  script {
+                    echo "label application image"
+                    openshift.withCluster() {
+                      openshift.withProject() { 
+                          def image = openshift.selector("is", "${APP_NAME}").object()
+                          image.metadata.labels["se.inera.${STAGE}.status"] = "Approved"
+                          image.metadata.labels["se.inera.${STAGE}.project"] = openshift.project()
+                          openshift.apply(image)
+                      }
+                    }
+                  }              
                 }
 
                 always {
                   script {
                     echo "cleanup"
-                    def imageStream = getImageStream()
-                    sh (
-                      script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
-                      returnStatus: true
-                    )
+                    openshift.withCluster() {
+                      openshift.withProject() { 
+                        def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                        sh (
+                          script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
+                          returnStatus: true
+                        )
+                      }
+                    }
                   }                  
                 }
 
