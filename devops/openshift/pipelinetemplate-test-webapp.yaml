@@ -225,8 +225,8 @@ objects:
                               allowMissing: true,
                               alwaysLinkToLastBuild: true,
                               keepAll: true,
-                              reportDir: '/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/',
-                              reportFiles: 'index.html',
+                              reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
+                              reportFiles: "index.html",
                               reportName: 'RestAssured results',
                             ])
                           }
