@@ -63,8 +63,6 @@ objects:
                               error("No such required context variable in environment: ${it}")
                             }
                           }
-                          // check for restricted access
-                          Math.abs(0)
 
                           [ "${BUILD_TEMPLATE}", "${DEPLOY_TEMPLATE}", "${TESTRUNNER_TEMPLATE}" ].each {
                             def t = openshift.selector("template", it)
@@ -115,10 +113,12 @@ objects:
                       openshift.withCluster() {
                         openshift.withProject() {
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
-                          openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
-                            return it.object().status.phase == "Complete"
+                          timeout (20) {
+                            openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
+                              return it.object().status.phase == "Complete"
+                            }
+                            echo "Build Completed"
                           }
-                          echo "Build Completed"
                         }
                       }
                     }
@@ -136,11 +136,13 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          echo "Build runtime image ${APP_NAME}"
-                          openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
-                            return it.object().status.phase == "Complete"                            
+                          timeout (5) {
+                            echo "Build runtime image ${APP_NAME}"
+                            openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
+                              return it.object().status.phase == "Complete"                            
+                            }
+                            echo "Build Completed"
                           }
-                          echo "Build Completed"
                         }
                       }
                     }
@@ -198,10 +200,11 @@ objects:
                           def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
                           echo "Use ImageStream: ${imageStream}"
 
-                          // to make pod name somewhat unique
-                          // TODO: use generateName in pod template when it works
-                          def num = Math.abs(new Random().nextInt() % 100000) + 1
-
+                          // to make the pod name somewhat unique
+                          // TODO: use generateName in Pod template, i.e. when it works
+                          def num = (new Random().nextInt() % 100000) + 1
+                          if (num < 0) num = -num
+                          
                           def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
