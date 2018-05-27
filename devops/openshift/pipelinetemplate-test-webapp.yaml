@@ -57,7 +57,7 @@ objects:
                       echo "Prepare configuration and check pre-conditions"
                       openshift.withCluster() {
                         openshift.withProject() {
-                          // also checks restricted access
+                          // check envrionment
                           [ "gitUrl", "gitRef", "buildVersion", "infraVersion", "commonVersion" ].each {
                             if (!env[it]) {
                               error("No such required context variable in environment: ${it}")
