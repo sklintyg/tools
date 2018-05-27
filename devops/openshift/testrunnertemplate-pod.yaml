@@ -10,8 +10,6 @@ parameters:
   value: "test"
 - name: TARGET_URL
   required: true
-- name: GIT_URL
-  required: true
 - name: COMMON_VERSION
   required: true
   value: 3.7.0.+
@@ -43,8 +41,6 @@ objects:
       - env:
         - name: TARGET_URL
           value: ${TARGET_URL}
-        - name: GIT_URL
-          value: ${GIT_URL}
         - name: BUILD_VERSION
           value: ${BUILD_VERSION}
         - name: INFRA_VERSION

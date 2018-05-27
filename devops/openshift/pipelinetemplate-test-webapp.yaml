@@ -87,12 +87,12 @@ objects:
                         openshift.withProject() {
                           def models = openshift.process("${BUILD_TEMPLATE}", 
                             "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "GIT_URL=$gitUrl", 
-                            "-p", "GIT_REF=$gitRef",
-                            "-p", "BUILD_VERSION=$buildVersion", 
                             "-p", "STAGE=${STAGE}",
-                            "-p", "INFRA_VERSION=$infraVersion",
-                            "-p", "COMMON_VERSION=$commonVersion",
+                            "-p", "GIT_URL=${env.gitUrl}", 
+                            "-p", "GIT_REF=${env.gitRef}",
+                            "-p", "BUILD_VERSION=${env.buildVersion}", 
+                            "-p", "INFRA_VERSION=${env.infraVersion}",
+                            "-p", "COMMON_VERSION=${env.commonVersion}",
                             "-p", "ARTIFACT_IMAGE_SUFFIX=${ARTIFACT_IMAGE_SUFFIX}")
                           openshift.apply(models)
                         }
@@ -158,7 +158,7 @@ objects:
                           echo "Use ImageStream: ${imageStream}"
                           def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
                             "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "IMAGE='$imageStream:$buildVersion'", 
+                            "-p", "IMAGE='$imageStream:${env.buildVersion}'", 
                             "-p", "STAGE=${STAGE}")                          
                           echo "Wait for rollout (limited to 5 minutes)"
                           timeout (5) {
@@ -197,13 +197,12 @@ objects:
 
                           def models = openshift.process("${TESTRUNNER_TEMPLATE}",
                             "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${buildVersion}'", 
+                            "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
                             "-p", "STAGE=${STAGE}",                          
                             "-p", "TARGET_URL='${targetUrl}'",
-                            "-p", "GIT_URL='${gitUrl}'",
-                            "-p", "COMMON_VERSION=${commonVersion}",
-                            "-p", "INFRA_VERSION=${infraVersion}",
-                            "-p", "BUILD_VERSION=${buildVersion}",
+                            "-p", "COMMON_VERSION=${env.commonVersion}",
+                            "-p", "INFRA_VERSION=${env.infraVersion}",
+                            "-p", "BUILD_VERSION=${env.buildVersion}",
                             "-p", "JOB_NAME=${env.JOB_NAME}",
                             "-p", "CALLBACK_URL='${hook.getURL()}'",
                             "-p", "BUILD_TAG=${env.BUILD_TAG}",
@@ -214,12 +213,12 @@ objects:
                           timeout (5) {
                             echo "Waiting for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
-                            echo "Publishing reports for ${JOB_NAME}/${buildVersion}"
+                            echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
                             publishHTML([
                               allowMissing: true,
                               alwaysLinkToLastBuild: true,
                               keepAll: true,
-                              reportDir: '/var/lib/jenkins/reports/$JOB_NAME/$buildVersion/',
+                              reportDir: '/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/',
                               reportFiles: 'index.html',
                               reportName: 'RestAssured results',
                             ])
@@ -243,11 +242,7 @@ objects:
                     echo "label application image"
                     openshift.withCluster() {
                       openshift.withProject() { 
-                          def image = openshift.selector("is", "${APP_NAME}").object()
-                          echo "TODO: Tag correct version ${image}"
-                          //image.metadata.labels["se.inera.${STAGE}.status"] = "Approved"
-                          //image.metadata.labels["se.inera.${STAGE}.project"] = openshift.project()
-                          //openshift.apply(image)
+                          echo "TODO: Tag promote image ${image}"
                       }
                     }
                   }              
@@ -262,7 +257,7 @@ objects:
                         echo "Image: ${image}"
                         def imageStream = image.status.dockerImageRepository
                         sh (
-                          script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
+                          script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
                           returnStatus: true
                         )
                       }
