@@ -32,7 +32,7 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    generateName: ${BUILD_TAG}-
+    generateName: "${BUILD_TAG}"
     labels:
       app: ${APP_NAME}
       stage: ${STAGE}
@@ -50,7 +50,7 @@ objects:
         - name: REPORT_DIR
           value: /mnt/reports/${JOB_NAME}/${BUILD_VERSION}
         image: ${IMAGE}
-        name: ${APP_NAME}-test-${BUILD_TAG}
+        name: ${BUILD_TAG}
         command: [ "/usr/libexec/s2i/run", "testrun", "${COMMAND}", "-x", "processResources" ]
         volumeMounts:
         - mountPath: /mnt/reports

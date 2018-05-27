@@ -57,11 +57,14 @@ objects:
                       echo "Prepare configuration and check pre-conditions"
                       openshift.withCluster() {
                         openshift.withProject() {
+                          // also checks restricted access
                           [ "gitUrl", "gitRef", "buildVersion", "infraVersion", "commonVersion" ].each {
                             if (!env[it]) {
                               error("No such required context variable in environment: ${it}")
                             }
                           }
+                          // check for restricted access
+                          Math.abs(0)
 
                           [ "${BUILD_TEMPLATE}", "${DEPLOY_TEMPLATE}", "${TESTRUNNER_TEMPLATE}" ].each {
                             def t = openshift.selector("template", it)
@@ -195,7 +198,11 @@ objects:
                           def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
                           echo "Use ImageStream: ${imageStream}"
 
-                          def models = openshift.process("${TESTRUNNER_TEMPLATE}",
+                          // to make pod name somewhat unique
+                          // TODO: use generateName in pod template when it works
+                          def num = Math.abs(new Random().nextInt() % 100000) + 1
+
+                          def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
                             "-p", "STAGE=${STAGE}",                          
@@ -205,9 +212,9 @@ objects:
                             "-p", "BUILD_VERSION=${env.buildVersion}",
                             "-p", "JOB_NAME=${env.JOB_NAME}",
                             "-p", "CALLBACK_URL='${hook.getURL()}'",
-                            "-p", "BUILD_TAG=${env.BUILD_TAG}",
+                            "-p", "BUILD_TAG=${env.BUILD_TAG}-${num}",
                             "-p", "COMMAND=restAssuredTest")
-                          openshift.apply(models)
+                          openshift.apply(pod)
                           
                           def data = ""
                           timeout (5) {
