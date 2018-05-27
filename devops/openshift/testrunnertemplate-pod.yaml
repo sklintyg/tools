@@ -32,7 +32,7 @@ objects:
 - apiVersion: v1
   kind: Pod
   metadata:
-    generateName: "${BUILD_TAG}"
+    name: "${BUILD_TAG}"
     labels:
       app: ${APP_NAME}
       stage: ${STAGE}
