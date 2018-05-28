@@ -251,8 +251,9 @@ objects:
                       openshift.withProject() { 
                           def source = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
                           def project = openshift.project()
+                          def target = "${project}/${APP_NAME}-verified"
                           echo "Promote image ${source} to is ${APP_NAME}-verified"
-                          openshift.tag("${source}:${env.buildVersion}", "${project}/${APP_NAME}-verified:${env.buildVersion}", "${project}/${APP_NAME}-verified:latest")
+                          openshift.tag("${source}:${env.buildVersion}", "${target}:${env.buildVersion}", "${target}:latest")
                       }
                     }
                   }              
