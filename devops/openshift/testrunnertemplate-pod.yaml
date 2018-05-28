@@ -12,6 +12,8 @@ parameters:
   required: true
 - name: JOB_NAME
   required: true
+- name: BUILD_VERSION
+  required: true  
 - name: CALLBACK_URL
   required: true
 - name: BUILD_TAG
