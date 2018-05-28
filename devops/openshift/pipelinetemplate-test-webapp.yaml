@@ -246,7 +246,6 @@ objects:
               post {
                 success {
                   script {
-                    echo "label application image"
                     openshift.withCluster() {
                       openshift.withProject() { 
                           def source = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
