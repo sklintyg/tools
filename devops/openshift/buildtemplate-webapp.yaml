@@ -127,3 +127,14 @@ objects:
     spec:
       lookupPolicy:
         local: false
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}-verified
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: false
+        

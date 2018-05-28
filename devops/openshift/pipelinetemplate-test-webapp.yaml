@@ -249,7 +249,10 @@ objects:
                     echo "label application image"
                     openshift.withCluster() {
                       openshift.withProject() { 
-                          echo "TODO: Tag promote image ${image}"
+                          def source = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                          def project = openshift.project()
+                          echo "Promote image ${source} to is ${APP_NAME}-verified"
+                          openshift.tag("${source}:${env.buildVersion}", "${project}/${APP_NAME}-verified:${env.buildVersion}", "${project}/${APP_NAME}-verified:latest")
                       }
                     }
                   }              
