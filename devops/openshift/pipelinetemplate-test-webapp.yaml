@@ -57,6 +57,9 @@ objects:
                       echo "Prepare configuration and check pre-conditions"
                       openshift.withCluster() {
                         openshift.withProject() {
+                          echo "Pipeline started with:"
+                          echo "gitUrl: ${gitUrl}, gitRef: ${gitRef}"
+                          echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${commonVersion}"
                           // check envrionment
                           [ "gitUrl", "gitRef", "buildVersion", "infraVersion", "commonVersion" ].each {
                             if (!env[it]) {
