@@ -22,6 +22,8 @@ objects:
         app: ${NAME}
         stage: ${STAGE}
     spec:
+      successfulBuildsHistoryLimit: 4
+      failedBuildsHistoryLimit: 2
       output:
         to:
           kind: ImageStreamTag
