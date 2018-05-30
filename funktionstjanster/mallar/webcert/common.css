@@ -35,7 +35,7 @@ body {
 	font-family: Roboto, helvetica, arial, sans-serif;
 	font-size: 14px;
 	color: #1a1a1a;
-	overflow: auto
+	overflow: auto;
 	margin: 0px !important;
   	background-color: #fff;
 }
@@ -391,8 +391,20 @@ button {
 }
 
 .btn-success {
-	border-color: #4c7b67 !important;
-	background-color: #4c7b67 !important;
+	border-color: #4C7B67 !important;
+	background-color: #4C7B67 !important;
+}
+
+.btn-success:disabled  {
+	border-color: #E1E1E1 !important;
+	background-color: #E1E1E1 !important;
+	color: #9A9A9A !important;
+	opacity: 1;
+}
+.btn-success:hover:enabled {
+	background-color: #496CEC !important;
+	color: #FFFFFF !important;
+	box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.24);
 }
 
 .btn-primary {
@@ -548,13 +560,7 @@ input[type="submit"]:hover {
 	background-color: #496CEC;
 	color: #FFFFFF;
 }
-/*
-.btn-default {
-	border: 1px solid #3D4260;
-	color: #3D4260;
-	width: 130px;
-}
-*/
+
 #headerwrapper {
 	background-color: #3D4260;
 	display: block;
