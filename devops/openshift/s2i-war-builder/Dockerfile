@@ -3,8 +3,11 @@ FROM openshift/base-centos7
 
 LABEL maintainer="inera.se"
 
-# Install Java
-RUN yum -y install java-1.8.0-openjdk-devel
+# Install Java and Chrome etc.
+ADD google-chrome.repo /etc/yum.repos.d/
+RUN yum -y update
+RUN yum -y install java-1.8.0-openjdk-devel google-chrome-stable
+RUN ln -s /etc/alternatives/google-chrome /usr/bin/chrome
 
 # Add custom S2I scripts
 ADD s2i/bin/ /usr/libexec/s2i/

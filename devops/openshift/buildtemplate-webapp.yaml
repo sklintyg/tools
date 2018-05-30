@@ -52,6 +52,10 @@ objects:
       strategy:
         sourceStrategy:
           env:
+          - name: APP_NAME
+            value: ${APP_NAME}
+          - name: STAGE
+            value: ${STAGE}
           - name: COMMON_VERSION
             value: ${COMMON_VERSION}
           - name: INFRA_VERSION
@@ -80,7 +84,7 @@ objects:
           name: ${APP_NAME}:${BUILD_VERSION}
       source:
         dockerfile: |-
-          FROM registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift:latest
+          FROM registry.access.redhat.com/jboss-webserver-3/webserver31-tomcat8-openshift:latest
           LABEL maintainer="inera.se"
           ENV APP_NAME=${APP_NAME}
 
