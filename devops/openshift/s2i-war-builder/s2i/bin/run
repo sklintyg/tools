@@ -6,6 +6,7 @@ S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"}
 # Setup build nev
 export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 -DbaseUrl=$TARGET_URL \
+-Dprotractor.env=test-pipeline \
 -DbuildVersion=$BUILD_VERSION \
 -DinfraVersion=$INFRA_VERSION \
 -DcommonVersion=$COMMON_VERSION \
@@ -14,26 +15,42 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 # .gradle stuff are in /tmp
 export GRADLE_USER_HOME=/tmp/.gradle
 
+function testrun() {
+    TEST=$1
+    FROM_DIR=$2
+    echo "---> Testing application with GRADLE_ARGS=$TEST"
+    (cd $S2I_SOURCE_DIR; ./gradlew $TEST)
+    ERR=$?
+    [ -d "$FROM_DIR" ] && mkdir -p $REPORT_DIR/$TEST && \
+        cp -R $FROM_DIR/* $REPORT_DIR/$TEST/.
+    return $ERR
+}
+
 if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
-    shift
-    TEST=${1}
-    RESULT="FAILED"
     echo "---> User $(id) home is $HOME"
+    shift
+    TESTS=(${*/,/ })
+    for TEST in ${TESTS[*]}
+    do
+        RESULT=FAILED
+        TEST_REPORTS=none
+        case "$TEST" in
+            restAssuredTest)
+                TEST_REPORTS=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST
+                ;;
+            protractorTests)
+                ;;
+            fitnesseTest)
+                ;;
+        esac
+        testrun $TEST $TEST_REPORTS
+        [ $? -ne 0 ] && break
+        RESULT=SUCCESS
+    done
 
-    # Test
-    GRADLE_ARGS=${GRADLE_ARGS:-"${*}"}
-    echo "---> Testing application with GRADLE_ARGS=$GRADLE_ARGS"
-    (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
-    [ $? -eq 0 ] && RESULT="SUCCESS"
-
-    echo "---> Test $RESULT, copy test reports to $REPORT_DIR"
-    # Copy test results to persistent volume mount
-    mkdir -p $REPORT_DIR && \
-        cp -R $S2I_SOURCE_DIR/web/build/reports/tests/$TEST/* $REPORT_DIR/.
-    
     # Report back
     echo "---> Done, report back status $RESULT to $CALLBACK_URL"
-    curl -X POST -k -d $RESULT $CALLBACK_URL    
+    curl -X POST -k -d $RESULT $CALLBACK_URL
 else
     $(dirname "$0")/usage
 fi
