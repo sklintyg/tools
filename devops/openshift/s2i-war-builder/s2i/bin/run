@@ -21,7 +21,7 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
     echo "---> User $(id) home is $HOME"
 
     # Test
-    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon ${*}"}
+    GRADLE_ARGS=${GRADLE_ARGS:-"${*}"}
     echo "---> Testing application with GRADLE_ARGS=$GRADLE_ARGS"
     (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
     [ $? -eq 0 ] && RESULT="SUCCESS"
