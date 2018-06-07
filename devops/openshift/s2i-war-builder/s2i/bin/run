@@ -16,35 +16,41 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 export GRADLE_USER_HOME=/tmp/.gradle
 
 function testrun() {
-    TEST=$1
-    FROM_DIR=$2
-    echo "---> Testing application with GRADLE_ARGS=$TEST"
-    (cd $S2I_SOURCE_DIR; ./gradlew $TEST)
+    ARGS=$1
+    [ "$ARGS" -eq "fitnesseTest" ] && ARGS="$ARGS -PfileOutput -PoutputFormat=html"
+    ARGS="$ARGS -x processResources"
+    echo "---> Testing application with GRADLE_ARGS=$ARGS"
+    (cd $S2I_SOURCE_DIR; ./gradlew $ARGS)
     ERR=$?
-    [ -d "$FROM_DIR" ] && mkdir -p $REPORT_DIR/$TEST && \
-        cp -R $FROM_DIR/* $REPORT_DIR/$TEST/.
     return $ERR
 }
 
 if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
     echo "---> User $(id) home is $HOME"
+    echo "--> Report dir is $REPORT_DIR"
+    mkdir -p $REPORT_DIR
     shift
     TESTS=(${*/,/ })
     for TEST in ${TESTS[*]}
     do
         RESULT=FAILED
-        TEST_REPORTS=none
+        testrun $TEST $TEST_REPORTS
+        ERR=$?
         case "$TEST" in
             restAssuredTest)
-                TEST_REPORTS=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST
+                FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST
+                [ -d $FROM ] && cp -R $FROM_DIR/* $REPORT_DIR/. && mv $REPORT_DIR/index.html $REPORT_DIR/restassured-results.html 
                 ;;
-            protractorTests)
+            protractorTest)
+                FROM=$S2I_SOURCE_DIR/test/reports/index.html
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/protractor-results.html
                 ;;
             fitnesseTest)
+                FROM=$S2I_SOURCE_DIR/test/fitnesse-results.html
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/
                 ;;
         esac
-        testrun $TEST $TEST_REPORTS
-        [ $? -ne 0 ] && break
+        [ $ERR -ne 0 ] && break
         RESULT=SUCCESS
     done
 

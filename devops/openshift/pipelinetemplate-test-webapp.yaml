@@ -22,6 +22,9 @@ parameters:
     value: "artifact"
   - name: SECRET
     required: true
+  - name: TESTS
+    value: ""
+    required: true
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -185,7 +188,10 @@ objects:
                 stage('Run Integration Tests') {
                   when {
                     expression {
-                      return true
+                      if ("${TESTS}") {
+                        return true
+                      }
+                      return false
                     }                      
                   }
                   steps {
@@ -207,7 +213,6 @@ objects:
                           // TODO: use generateName in Pod template, i.e. when it works
                           def num = (new Random().nextInt() % 100000) + 1
                           if (num < 0) num = -num
-                          
                           def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
@@ -217,24 +222,47 @@ objects:
                             "-p", "JOB_NAME=${env.JOB_NAME}",
                             "-p", "CALLBACK_URL='${hook.getURL()}'",
                             "-p", "BUILD_TAG=${env.BUILD_TAG}-${num}",
-                            "-p", "COMMAND=restAssuredTest")
+                            "-p", "TESTS=${TESTS}")
                           openshift.apply(pod)
                           
                           def data = ""
                           timeout (5) {
                             echo "Waiting for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
-                            echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
-                            publishHTML([
-                              allowMissing: true,
-                              alwaysLinkToLastBuild: true,
-                              keepAll: true,
-                              reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
-                              reportFiles: "index.html",
-                              reportName: 'RestAssured results',
-                            ])
-                          }
-                          
+                            if ("${TESTS}".contains("restAssuredTest")) {
+                              echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
+                              publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
+                                reportFiles: "restassured-results.html",
+                                reportName: 'RestAssured Results',
+                              ])
+                            }
+                            if ("${TESTS}".contains("protractorTest")) {
+                              echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
+                              publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
+                                reportFiles: "protractor-results.html",
+                                reportName: 'UI Protractor Results',
+                              ])
+                            }
+                            if ("${TESTS}".contains("fitnesseTest")) {
+                              echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
+                              publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
+                                reportFiles: "fitnesse-results.html",
+                                reportName: 'Fitnesse Results',
+                              ])
+                            }
+                          }                          
                           if ("SUCCESS".equals(data)) {
                             echo "Test SUCCESS"
                           } else {
@@ -268,7 +296,6 @@ objects:
                     openshift.withCluster() {
                       openshift.withProject() {
                         def image = openshift.selector("is", "${APP_NAME}").object()
-                        echo "Image: ${image}"
                         def imageStream = image.status.dockerImageRepository
                         sh (
                           script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",

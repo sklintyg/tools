@@ -20,7 +20,7 @@ parameters:
   required: true
 - name: IMAGE
   required: true
-- name: COMMAND
+- name: TESTS
   required: true
 objects:
 - apiVersion: v1
@@ -41,7 +41,7 @@ objects:
           value: /mnt/reports/${JOB_NAME}/${BUILD_VERSION}
         image: ${IMAGE}
         name: ${BUILD_TAG}
-        command: [ "/usr/libexec/s2i/run", "testrun", "${COMMAND}", "-x", "processResources" ]
+        command: [ "/usr/libexec/s2i/run", "testrun", "${TESTS}" ]
         volumeMounts:
         - mountPath: /mnt/reports
           name: rep-vol

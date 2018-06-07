@@ -13,6 +13,8 @@ ADD environment /etc/environment
 RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 ENV LANG=en_US.UTF-8
+# Default project UID when run is invoked from a pod  
+ENV RUN_UID=1000130000
 
 # Add custom S2I scripts
 ADD s2i/bin/ /usr/libexec/s2i/

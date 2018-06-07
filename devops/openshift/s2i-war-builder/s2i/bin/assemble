@@ -75,6 +75,7 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
 
     # add group write access
     chmod -R g+w $GRADLE_USER_HOME $S2I_SOURCE_DIR
+    chown -R $RUN_UID $GRADLE_USER_HOME $S2I_SOURCE_DIR
 else
     echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
     exit 1
