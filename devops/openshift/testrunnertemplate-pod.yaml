@@ -31,6 +31,12 @@ objects:
       app: ${APP_NAME}
       stage: ${STAGE}
   spec:
+    securityContext:
+      privileged: true
+    resources:
+      limits:
+        cpu: '1'
+        memory: 4Gi
     containers:
       - env:
         - name: TARGET_URL
@@ -49,5 +55,5 @@ objects:
     volumes:
       - name: rep-vol
         persistentVolumeClaim:
-          claimName: test-reports
+          claimName: "test-reports"
 

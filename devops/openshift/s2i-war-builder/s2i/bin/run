@@ -16,8 +16,8 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 export GRADLE_USER_HOME=/tmp/.gradle
 
 function testrun() {
-    ARGS=$1
-    [ "$ARGS" -eq "fitnesseTest" ] && ARGS="$ARGS -PfileOutput -PoutputFormat=html"
+    ARGS="$1"
+    [ "$ARGS" = "fitnesseTest" ] && ARGS="$ARGS -PfileOutput -PoutputFormat=html"
     ARGS="$ARGS -x processResources"
     echo "---> Testing application with GRADLE_ARGS=$ARGS"
     (cd $S2I_SOURCE_DIR; ./gradlew $ARGS)
@@ -38,15 +38,15 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
         testrun $TEST
         [ $? -ne 0 ] && RESULT=FAILED
         case "$TEST" in
-            restAssuredTest)
+            "restAssuredTest")
                 FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST
                 [ -d $FROM ] && cp -R $FROM_DIR/* $REPORT_DIR/. && mv $REPORT_DIR/index.html $REPORT_DIR/restassured-results.html 
                 ;;
-            protractorTest)
+            "protractorTest")
                 FROM=$S2I_SOURCE_DIR/test/reports/index.html
                 [ -f $FROM ] && cp $FROM $REPORT_DIR/protractor-results.html
                 ;;
-            fitnesseTest)
+            "fitnesseTest")
                 FROM=$S2I_SOURCE_DIR/test/fitnesse-results.html
                 [ -f $FROM ] && cp $FROM $REPORT_DIR/
                 ;;

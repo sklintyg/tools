@@ -226,43 +226,28 @@ objects:
                           openshift.apply(pod)
                           
                           def data = ""
-                          timeout (5) {
+                          timeout (10) {
                             echo "Waiting for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
-                            if ("${TESTS}".contains("restAssuredTest")) {
-                              echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
-                              publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
-                                reportFiles: "restassured-results.html",
-                                reportName: 'RestAssured Results',
-                              ])
+
+                            def testmap = [ "restAssuredTest" : "restassured-results.html", 
+                              "protractorTest" : "protractor-results.html", 
+                              "fitnesseTest" : "fitnesse-results.html" ]
+                            testmap.each { k, v ->
+                              if ("${TESTS}".contains("${k}")) {
+                                echo "Publishing ${k} reports for ${JOB_NAME}/${env.buildVersion}"
+                                publishHTML([
+                                  allowMissing: true,
+                                  alwaysLinkToLastBuild: true,
+                                  keepAll: true,
+                                  reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
+                                  reportFiles: "${v}",
+                                  reportName: "${k.capitalize()} Results",
+                                ])
+                              }
                             }
-                            if ("${TESTS}".contains("protractorTest")) {
-                              echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
-                              publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
-                                reportFiles: "protractor-results.html",
-                                reportName: 'UI Protractor Results',
-                              ])
-                            }
-                            if ("${TESTS}".contains("fitnesseTest")) {
-                              echo "Publishing reports for ${JOB_NAME}/${env.buildVersion}"
-                              publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
-                                reportFiles: "fitnesse-results.html",
-                                reportName: 'Fitnesse Results',
-                              ])
-                            }
-                          }                          
+                          }
+
                           if ("SUCCESS".equals(data)) {
                             echo "Test SUCCESS"
                           } else {
