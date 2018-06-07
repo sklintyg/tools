@@ -34,7 +34,7 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
     for TEST in ${TESTS[*]}
     do
         RESULT=FAILED
-        testrun $TEST $TEST_REPORTS
+        testrun $TEST
         ERR=$?
         case "$TEST" in
             restAssuredTest)
