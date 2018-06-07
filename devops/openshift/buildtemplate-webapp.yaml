@@ -49,6 +49,10 @@ objects:
           uri: ${GIT_URL}
         contextDir: /
         type: Git
+      resources:
+        limits:
+          cpu: '1'
+          memory: 4Gi
       strategy:
         sourceStrategy:
           env:
