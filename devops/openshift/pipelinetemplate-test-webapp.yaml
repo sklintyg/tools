@@ -119,7 +119,7 @@ objects:
                       openshift.withCluster() {
                         openshift.withProject() {
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
-                          timeout (20) {
+                          timeout (30) {
                             openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
                               return it.object().status.phase == "Complete"
                             }
