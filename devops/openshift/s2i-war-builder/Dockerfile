@@ -24,10 +24,11 @@ ADD s2i/bin/ /usr/libexec/s2i/
 # Replace launch.sh
 ADD launch.sh /tmp/artifacts/
 
-# Setup permissions etc. Create necessary folders
-RUN mkdir -p /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share/applications
-RUN chown ${UID} /tmp/artifacts /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share/applications
-RUN chmod 777 /tmp/artifacts /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share/applications
+# S2I uses default user, but when referenced by a testrunner pod another user is active (according to project settings)
+# Setup permissions to enable an unknown user to access different locations used by gradle, npm, bower, chrome, ...
+RUN mkdir -p /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share
+RUN chown ${UID} /tmp/artifacts /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local /opt/app-root/src/.local/share
+RUN chmod 777 /tmp/artifacts /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local /opt/app-root/src/.local/share
 
-# Run as a low-prio user, also see openshift settings for default pod UID
+# Run as user default (for S2I, otheriwse another low-prio)
 USER ${UID}

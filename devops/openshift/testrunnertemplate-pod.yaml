@@ -31,8 +31,6 @@ objects:
       app: ${APP_NAME}
       stage: ${STAGE}
   spec:
-    securityContext:
-      privileged: true
     resources:
       limits:
         cpu: '1'

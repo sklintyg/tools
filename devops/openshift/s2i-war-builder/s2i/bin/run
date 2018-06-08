@@ -39,9 +39,9 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
         [ $? -ne 0 ] && RESULT=FAILED
         case "$TEST" in
             "restAssuredTest")
-                FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST
+                FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST/index.html
                 echo "---> Save reports $FROM"
-                [ -d $FROM ] && cp -R $FROM/* $REPORT_DIR/. && mv $REPORT_DIR/index.html $REPORT_DIR/restassured-results.html 
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/restassured-results.html 
                 ;;
             "protractorTest")
                 FROM=$S2I_SOURCE_DIR/test/reports/index.html
@@ -51,7 +51,7 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
             "fitnesseTest")
                 FROM=$S2I_SOURCE_DIR/test/fitnesse-results.html
                 echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/fitnesse-results.html
                 ;;
         esac
     done
