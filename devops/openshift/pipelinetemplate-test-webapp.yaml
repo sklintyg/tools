@@ -120,7 +120,7 @@ objects:
                         openshift.withProject() {
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
                           def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()                          
-                          sleep(time: 5, unit: 'SECONDS')
+                          sleep(time: 1, unit: 'SECONDS')
                           timeout (20) {
                             build.untilEach(1) {
                               return it.object().status.phase == "Complete"
@@ -146,9 +146,9 @@ objects:
                         openshift.withProject() {
                           echo "Build runtime image ${APP_NAME}"
                           def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()
-                          sleep(time: 5, unit: 'SECONDS')
+                          sleep(time: 1, unit: 'SECONDS')
                           timeout (5) {
-                            build.untilEach() {
+                            build.untilEach(1) {
                               return it.object().status.phase == "Complete"
                             }
                             echo "Build Completed"
