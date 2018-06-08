@@ -152,7 +152,7 @@ objects:
                       openshift.withCluster() {
                         openshift.withProject() {
                           echo "Build runtime image ${APP_NAME}"
-                          def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()
+                          def build = openshift.selector("bc", "${APP_NAME}").startBuild()
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
                           timeout (5) {
