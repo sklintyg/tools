@@ -64,9 +64,9 @@ objects:
                           echo "gitUrl: ${gitUrl}, gitRef: ${gitRef}"
                           echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${commonVersion}"
                           // check envrionment
-                          [ "gitUrl", "gitRef", "buildVersion", "infraVersion", "commonVersion" ].each {
-                            if (!env[it]) {
-                              error("No such required context variable in environment: ${it}")
+                          [ env.gitUrl, env.gitRef, env.buildVersion, env.infraVersion, env.commonVersion ].each {
+                            if (!it) {
+                              error("No such required context variable in environment.")
                             }
                           }
 
@@ -119,8 +119,10 @@ objects:
                       openshift.withCluster() {
                         openshift.withProject() {
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
-                          timeout (30) {
-                            openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild().untilEach(1) {
+                          def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()                          
+                          sleep(time: 5, unit: 'SECONDS')
+                          timeout (20) {
+                            build.untilEach(1) {
                               return it.object().status.phase == "Complete"
                             }
                             echo "Build Completed"
@@ -142,10 +144,12 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
+                          echo "Build runtime image ${APP_NAME}"
+                          def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()
+                          sleep(time: 5, unit: 'SECONDS')
                           timeout (5) {
-                            echo "Build runtime image ${APP_NAME}"
-                            openshift.selector("bc", "${APP_NAME}").startBuild().untilEach(1) {
-                              return it.object().status.phase == "Complete"                            
+                            build.untilEach() {
+                              return it.object().status.phase == "Complete"
                             }
                             echo "Build Completed"
                           }
@@ -212,7 +216,7 @@ objects:
                           // to make the pod name somewhat unique
                           // TODO: use generateName in Pod template, i.e. when it works
                           def num = (new Random().nextInt() % 100000) + 1
-                          if (num < 0) num = -num
+                          def suffix = (num < 0) ? "${num}" : "-${num}"
                           def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
@@ -221,7 +225,7 @@ objects:
                             "-p", "BUILD_VERSION=${env.buildVersion}", 
                             "-p", "JOB_NAME=${env.JOB_NAME}",
                             "-p", "CALLBACK_URL='${hook.getURL()}'",
-                            "-p", "BUILD_TAG=${env.BUILD_TAG}-${num}",
+                            "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
                             "-p", "TESTS=${TESTS}")
                           openshift.apply(pod)
                           

@@ -36,13 +36,13 @@ objects:
         app: ${APP_NAME}
         stage: ${STAGE}
     spec:
+      completionDeadlineSeconds: 1200
       successfulBuildsHistoryLimit: 2
       failedBuildsHistoryLimit: 4
       output:
         to:
           kind: ImageStreamTag
           name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
-      resources: {}
       source:
         git:
           ref: ${GIT_REF}
@@ -51,7 +51,7 @@ objects:
         type: Git
       resources:
         limits:
-          cpu: '1'
+          cpu: 1
           memory: 4Gi
       strategy:
         sourceStrategy:
@@ -80,6 +80,7 @@ objects:
         app: ${APP_NAME}
         stage: ${STAGE}
     spec:
+      completionDeadlineSeconds: 300
       successfulBuildsHistoryLimit: 4
       failedBuildsHistoryLimit: 4
       output:
