@@ -121,9 +121,16 @@ objects:
                           echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
                           def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()                          
                           sleep(time: 1, unit: 'SECONDS')
+                          echo "${build.name()} started" 
                           timeout (20) {
+                            def status = ""
                             build.untilEach(1) {
-                              return it.object().status.phase == "Complete"
+                                status = it.object().status.phase
+                                echo "Build status: ${status}" 
+                                return !["Running", "Pending", "New"].contains(status)                            
+                            }
+                            if (status != "Complete") {
+                              error("Build terminated with status: ${status}")
                             }
                             echo "Build Completed"
                           }
@@ -147,9 +154,16 @@ objects:
                           echo "Build runtime image ${APP_NAME}"
                           def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()
                           sleep(time: 1, unit: 'SECONDS')
+                          echo "${build.name()} started" 
                           timeout (5) {
+                            def status = ""
                             build.untilEach(1) {
-                              return it.object().status.phase == "Complete"
+                                status = it.object().status.phase
+                                echo "Build status: ${status}" 
+                                return !["Running", "Pending", "New"].contains(status)                            
+                            }
+                            if (status != "Complete") {
+                              error("Build terminated with status: ${status}")
                             }
                             echo "Build Completed"
                           }
