@@ -209,7 +209,7 @@ objects:
                       if ("${TESTS}") {
                         return true
                       }
-                      return false
+                      return true
                     }                      
                   }
                   steps {
@@ -244,7 +244,7 @@ objects:
                           openshift.apply(pod)
                           
                           def data = ""
-                          timeout (10) {
+                          timeout (60) {
                             echo "Waiting for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
 
@@ -314,7 +314,6 @@ objects:
                 }
 
               }
-
             }
         
       

@@ -41,7 +41,7 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
             "restAssuredTest")
                 FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST
                 echo "---> Save reports $FROM"
-                [ -d $FROM ] && cp -R $FROM_DIR/* $REPORT_DIR/. && mv $REPORT_DIR/index.html $REPORT_DIR/restassured-results.html 
+                [ -d $FROM ] && cp -R $FROM/* $REPORT_DIR/. && mv $REPORT_DIR/index.html $REPORT_DIR/restassured-results.html 
                 ;;
             "protractorTest")
                 FROM=$S2I_SOURCE_DIR/test/reports/index.html

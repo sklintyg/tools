@@ -15,7 +15,7 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
 # Default project UID  
-ARG UID=1000130000
+ARG UID=1001
 ENV RUN_UID=${UID}
 
 # Add custom S2I scripts
@@ -24,10 +24,10 @@ ADD s2i/bin/ /usr/libexec/s2i/
 # Replace launch.sh
 ADD launch.sh /tmp/artifacts/
 
-# Setup permissions etc
-RUN mkdir -p /tmp/src /opt/app-root/src
-RUN chown ${UID} /tmp/artifacts /tmp/src /opt/app-root/src
-RUN chmod 777 /tmp/artifacts /tmp/src /opt/app-root/src
+# Setup permissions etc. Create necessary folders
+RUN mkdir -p /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share/applications
+RUN chown ${UID} /tmp/artifacts /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share/applications
+RUN chmod 777 /tmp/artifacts /tmp/src /opt/app-root/src /opt/app-root/src/.npm /opt/app-root/src/.local/share/applications
 
 # Run as a low-prio user, also see openshift settings for default pod UID
 USER ${UID}
