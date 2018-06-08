@@ -30,6 +30,10 @@ objects:
             deploymentconfig:  ${APP_NAME}
             stage: ${STAGE}
         spec:
+          resources:
+            limits:
+              cpu: 1
+              memory: 2Gi
           containers:
           - env:
             - name: APP_NAME
