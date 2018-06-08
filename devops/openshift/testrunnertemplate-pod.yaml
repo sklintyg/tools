@@ -43,6 +43,8 @@ objects:
           value: ${CALLBACK_URL}
         - name: REPORT_DIR
           value: /mnt/reports/${JOB_NAME}/${BUILD_VERSION}
+        - name: JAVA_OPTS
+          value: "-Xmx1G"
         image: ${IMAGE}
         name: ${BUILD_TAG}
         command: [ "/usr/libexec/s2i/run", "testrun", "${TESTS}" ]
