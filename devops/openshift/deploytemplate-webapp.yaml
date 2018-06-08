@@ -36,6 +36,8 @@ objects:
               value: ${APP_NAME}
             - name: STAGE
               value: ${STAGE}
+            - name: JAVA_OPTS
+              value: "-Xmx1G"
             image: ${IMAGE}
             imagePullPolicy: Always
             name: ${APP_NAME}
