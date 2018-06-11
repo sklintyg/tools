@@ -209,7 +209,7 @@ objects:
                       if ("${TESTS}") {
                         return true
                       }
-                      return true
+                      return false
                     }                      
                   }
                   steps {
