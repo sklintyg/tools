@@ -21,9 +21,9 @@ export GRADLE_USER_HOME=/tmp/.gradle
 function testrun() {
     ARGS="$1"
     [ "$ARGS" = "fitnesseTest" ] && ARGS="$ARGS -PfileOutput -PoutputFormat=html"
-    ARGS="$ARGS -x processResources"
+    [ "$ARGS" = "restAssuredTest" ] && ARGS="$ARGS -x processResources"
     echo "---> Testing application with GRADLE_ARGS=$ARGS"
-    (cd $S2I_SOURCE_DIR; ./gradlew $ARGS)
+    (cd $S2I_SOURCE_DIR; ./gradlew --no-daemon $ARGS)
     ERR=$?
     return $ERR
 }
@@ -44,17 +44,17 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
             "restAssuredTest")
                 FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST/index.html
                 echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/restassured-results.html 
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/${TEST}.html 
                 ;;
             "protractorTest")
                 FROM=$S2I_SOURCE_DIR/test/reports/index.html
                 echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/protractor-results.html
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/${TEST}.html
                 ;;
             "fitnesseTest")
                 FROM=$S2I_SOURCE_DIR/test/fitnesse-results.html
                 echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/fitnesse-results.html
+                [ -f $FROM ] && cp $FROM $REPORT_DIR/${TEST}.html
                 ;;
         esac
     done

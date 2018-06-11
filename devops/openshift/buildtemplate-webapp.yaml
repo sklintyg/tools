@@ -93,8 +93,9 @@ objects:
           LABEL maintainer="inera.se"
           ENV APP_NAME=${APP_NAME}
 
-          RUN rm -rf /opt/webserver/webapps/*
-
+          RUN rm -rf $JWS_HOME/webapps/* $JWS_HOME/lib/mysql-connector-java.jar
+          
+          ADD http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/javax/servlet/jsp/jstl/javax.servlet.jsp.jstl-api/1.2.1/javax.servlet.jsp.jstl-api-1.2.1.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/org/glassfish/web/javax.servlet.jsp.jstl/1.2.1/javax.servlet.jsp.jstl-1.2.1.jar  $JWS_HOME/lib  
           ADD http://repo1.maven.org/maven2/org/apache/activemq/activemq-client/5.13.0/activemq-client-5.13.0.jar $JWS_HOME/lib

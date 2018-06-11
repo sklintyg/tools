@@ -47,8 +47,9 @@ objects:
         - name: REPORT_DIR
           value: /mnt/reports/${JOB_NAME}/${BUILD_VERSION}
         - name: JAVA_OPTS
-          value: "-Xmx1G"
+          value: "-Xmx512M"
         image: ${IMAGE}
+        imagePullPolicy: Always
         name: ${BUILD_TAG}
         command: [ "/usr/libexec/s2i/run", "testrun", "${TESTS}" ]
         volumeMounts:

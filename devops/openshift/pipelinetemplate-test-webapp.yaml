@@ -249,19 +249,16 @@ objects:
                             echo "Waiting for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
 
-                            def testmap = [ "restAssuredTest" : "restassured-results.html", 
-                              "protractorTest" : "protractor-results.html", 
-                              "fitnesseTest" : "fitnesse-results.html" ]
-                            testmap.each { k, v ->
-                              if ("${TESTS}".contains("${k}")) {
-                                echo "Publishing ${k} reports for ${JOB_NAME}/${env.buildVersion}"
+                            [ "restAssuredTest", "protractorTest", "fitnesseTest" ].each { t ->
+                              if ("${TESTS}".contains("${t}")) {
+                                echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
                                 publishHTML([
                                   allowMissing: true,
                                   alwaysLinkToLastBuild: true,
                                   keepAll: true,
                                   reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
-                                  reportFiles: "${v}",
-                                  reportName: "${k.capitalize()} Results",
+                                  reportFiles: "${t}.html",
+                                  reportName: "${t.capitalize()} Results",
                                 ])
                               }
                             }
