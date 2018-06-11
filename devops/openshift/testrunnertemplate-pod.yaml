@@ -31,13 +31,6 @@ objects:
       app: ${APP_NAME}
       stage: ${STAGE}
   spec:
-    resources:
-      requests:
-        cpu: 1
-        memory: 4Gi
-      limits:
-        cpu: 1
-        memory: 4Gi
     containers:
       - env:
         - name: TARGET_URL
@@ -48,6 +41,13 @@ objects:
           value: /mnt/reports/${JOB_NAME}/${BUILD_VERSION}
         - name: JAVA_OPTS
           value: "-Xmx512M"
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+          limits:
+            cpu: 1
+            memory: 2Gi
         image: ${IMAGE}
         imagePullPolicy: Always
         name: ${BUILD_TAG}

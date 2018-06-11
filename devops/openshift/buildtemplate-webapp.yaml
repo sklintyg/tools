@@ -105,13 +105,15 @@ objects:
           ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar $JWS_HOME/lib
 
           USER root
-          RUN chown jboss /opt/webserver/lib/*
-          RUN chmod 644 /opt/webserver/lib/*
-          USER jboss 
+          RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
+          RUN localedef -i en_US -f UTF-8 en_US.UTF-8
+          RUN chown jboss $JWS_HOME/lib/*
+          RUN chmod 644 $JWS_HOME/lib/*
+          USER jboss
           
-          ADD ROOT.war /opt/webserver/webapps/
-          ADD build.info /opt/webserver/
-          ADD launch.sh /opt/webserver/bin/
+          ADD ROOT.war $JWS_HOME/webapps/
+          ADD build.info $JWS_HOME/
+          ADD launch.sh $JWS_HOME/bin/
         images:
           - from:
               kind: ImageStreamTag
