@@ -1,9 +1,9 @@
 ---
 
-- name: Ensure MySQL Yum repo is installed
-  shell: rpm -Uvh http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-  args:
-    creates: /etc/yum.repos.d/mysql-community.repo
+#- name: Ensure MySQL Yum repo is installed
+#  shell: rpm -Uvh http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+#  args:
+#    creates: /etc/yum.repos.d/mysql-community.repo
 
 - name: Ensure libselinux-python is installed.
   yum:
