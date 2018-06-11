@@ -244,9 +244,8 @@ objects:
                           openshift.apply(pod)
                           
                           def data = ""
-                          // ridiculous timeout but....
-                          timeout (120) {
-                            echo "Waiting for POST to ${hook.getURL()}"
+                          timeout (30) {
+                            echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
 
                             [ "restAssuredTest", "protractorTest", "fitnesseTest" ].each { t ->

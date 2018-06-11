@@ -18,6 +18,7 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 # .gradle stuff are in /tmp
 export GRADLE_USER_HOME=/tmp/.gradle
 
+# runs one test
 function testrun() {
     ARGS="$1"
     [ "$ARGS" = "fitnesseTest" ] && ARGS="$ARGS -PfileOutput -PoutputFormat=html"
@@ -28,6 +29,15 @@ function testrun() {
     return $ERR
 }
 
+# saves result report
+function save_report() {
+    SRC="${1}"
+    DST="${REPORT_DIR}/${2}.html"
+    echo "---> Save report $SRC as $DST"
+    [ -f $SRC ] && cp $SRC $DST
+}
+
+# loop through all tests
 if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
     echo "---> User $(id) home is $HOME"
     echo "---> Report dir is $REPORT_DIR"
@@ -42,19 +52,13 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
         [ $? -ne 0 ] && RESULT=FAILED
         case "$TEST" in
             "restAssuredTest")
-                FROM=$S2I_SOURCE_DIR/web/build/reports/tests/$TEST/index.html
-                echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/${TEST}.html 
+                save_report ${S2I_SOURCE_DIR}/web/build/reports/tests/$TEST/index.html $TEST
                 ;;
             "protractorTest")
-                FROM=$S2I_SOURCE_DIR/test/reports/index.html
-                echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/${TEST}.html
+                save_report ${S2I_SOURCE_DIR}/test/reports/index.html $TEST
                 ;;
             "fitnesseTest")
-                FROM=$S2I_SOURCE_DIR/test/fitnesse-results.html
-                echo "---> Save reports $FROM"
-                [ -f $FROM ] && cp $FROM $REPORT_DIR/${TEST}.html
+                save_report ${S2I_SOURCE_DIR}/test/fitnesse-results.html $TEST
                 ;;
         esac
     done
