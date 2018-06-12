@@ -2,46 +2,46 @@
 CREATE USER 'rehabstod'@'%' IDENTIFIED BY 'rehabstod';
 GRANT ALL PRIVILEGES ON *.* TO 'rehabstod'@'%' IDENTIFIED BY 'rehabstod' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE rehabstod;
+CREATE DATABASE rehabstod CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
 
 
 -- WEBCERT
 CREATE USER 'webcert'@'%' IDENTIFIED BY 'webcert';
 GRANT ALL PRIVILEGES ON *.* TO 'webcert'@'%' IDENTIFIED BY 'webcert' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE webcert;
+CREATE DATABASE webcert CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
 
 
 -- INTYGSTJANST
 CREATE USER 'intyg'@'%' IDENTIFIED BY 'intyg';
 GRANT ALL PRIVILEGES ON *.* TO 'intyg'@'%' IDENTIFIED BY 'intyg' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE intyg;
+CREATE DATABASE intyg CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
 
 
 -- SRS
 CREATE USER 'srs'@'%' IDENTIFIED BY 'srs';
 GRANT ALL PRIVILEGES ON *.* TO 'srs'@'%' IDENTIFIED BY 'srs' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE srs;
+CREATE DATABASE srs CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
 
 
 -- PRIVATLAKARPORTAL
 CREATE USER 'privatlakarportal'@'%' IDENTIFIED BY 'privatlakarportal';
 GRANT ALL PRIVILEGES ON *.* TO 'privatlakarportal'@'%' IDENTIFIED BY 'privatlakarportal' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE privatlakarportal;
+CREATE DATABASE privatlakarportal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
 
 
 -- STATISTIK
 CREATE USER 'statistik'@'%' IDENTIFIED BY 'statistik';
 GRANT ALL PRIVILEGES ON *.* TO 'statistik'@'%' IDENTIFIED BY 'statistik' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE statistik;
+CREATE DATABASE statistik CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
 
 
 -- INTYGSBESTALLNING
 CREATE USER 'intygsbestallning'@'%' IDENTIFIED BY 'intygsbestallning';
 GRANT ALL PRIVILEGES ON *.* TO 'intygsbestallning'@'%' IDENTIFIED BY 'intygsbestallning' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-CREATE DATABASE intygsbestallning;
+CREATE DATABASE intygsbestallning CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;
