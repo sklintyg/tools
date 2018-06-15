@@ -2,7 +2,7 @@
 
 # Cleanup old pods
 
-# Old is 1 day (24h)
+# Old is 1 day (24H)
 OLD=1d
 BEFORE=$(date -v-${OLD} +%s)
 
@@ -14,7 +14,7 @@ function clean() {
     fi
 }
 
-for pod in $(oc get pods -o go-template='{{range .items}}{{if and (ne .status.phase "Running") (ne .status.phase "Pending")}}{{.metadata.name}}{{","}}{{.status.startTime}}{{"\n"}}{{end}}{{end}}')
+for pod in $(oc get pods -o go-template='{{range .items}}{{if and (ne .status.phase "New") (ne .status.phase "Running") (ne .status.phase "Pending")}}{{.metadata.name}}{{","}}{{.status.startTime}}{{"\n"}}{{end}}{{end}}')
 do
     clean ${pod/,/ }
 done
