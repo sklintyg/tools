@@ -8,7 +8,7 @@ BEFORE=$(date -v-${OLD} +%s)
 
 function clean() {
     name=$1
-    time=$(date -j -f%Y-%m-%dT%H:%M:%SZ "$2" +'%s')
+    time=$(date -j -f%Y-%m-%dT%H:%M:%SZ "$2" +%s)
     if [ $time -lt $BEFORE ]; then
         oc delete pod "$name"
     fi
