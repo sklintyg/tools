@@ -1,6 +1,9 @@
 #!/bin/bash
 ####################
+# Detta script körs på maskinen som har mysqldatabasen för Privatläkarportalen.
+#
 # Usage: ./gdpr_pp_part1_pp.sh <database_user> <database_password> <pp_database_name>
+#
 # Två textfiler med databasdumpar skapas i current working directory, pp_gdpr_query_result.txt och pp_allavardgivare_dump.txt
 # Dessa används av nästa script, gdpr_pp_part2_it.sh
 ####################
