@@ -18,19 +18,23 @@
 </head>
 <body id="firstbody" style="margin: 0;">
 
-  PARM{include:/header.html}
-  <div id="containerbody">
-      <div id="backlink">
-          <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
-      </div>
+PARM{include:/header.html}
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
+    </div>
 
-      <h2 >PARM{text-eiderror}</h2>
-        <p >PARM{message}</p>
-        <p >PARM{text-logica-refidmsg} PARM{refid}</p>
-        <p ><a href="/">PARM{text-clickhereformainpage}</a></p>
-  </div>
+    <h2>PARM{text-eiderror}</h2>
 
-  PARM{include:/footer.html}
+    <div class="error-wrapper">
+        <i class="material-icons">warning</i>
+        <p>PARM{message}</p>
+        <p>PARM{text-logica-refidmsg} PARM{refid}</p>
+    </div>
 
-  </body>
+</div>
+
+PARM{include:/footer.html}
+
+</body>
 </html>

@@ -34,7 +34,7 @@ function setFocus(){document.form.ssn.focus();}
         <form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
             <span><p>Ange ditt personnummer<!--PARM{text-mbi-ssn}--></p></span>
             <div class="pnrinput">
-                <input class="form-control inputfield" type="tel" name="ssn" placeholder="ååååmmdd-nnnn" maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
+                <input class="form-control inputfield" type="text" name="ssn" placeholder="ååååmmdd-nnnn" maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
                 oninput="valueCheck()">
                 <button class="button btn btn-success" id="submitButton" type="submit" disabled>
                     <span>Fortsätt</span>

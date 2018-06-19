@@ -19,31 +19,31 @@
 </head>
 <body id="commonbody" style="margin: 0; padding: 0" onLoad="run();">
 
-  PARM{include:/header.html}
-  <div id="containerbody">
-      <div id="backlink">
-          <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
-      </div>
-          <h2>PARM{text-telia}</h2>
-        <div align="left" id="mainbiddiv">
+PARM{include:/header.html}
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
+    </div>
+    <h2>PARM{text-telia}</h2>
+    <div align="left" id="mainbiddiv">
 
+    </div>
+    <noscript>
+        <div id="noscript">
+            PARM{text-require-javascript}
         </div>
-        <noscript>
-          <div id="noscript">
-              PARM{text-require-javascript}
-          </div>
-          <br />
-        </noscript>
+        <br/>
+    </noscript>
 
-        <form name="form" action="/mg-local/auth/ccpPARM{providerid}/result" method="post">
-          <INPUT NAME="signature" value="" type="hidden">
-          <INPUT NAME="errorcode" value="" type="hidden">
-          <INPUT NAME="installed" value="" type="hidden">
-          <input name="providerid" value="PARM{providerid}" type="hidden">
-        </form>
-  </div>
+    <form name="form" action="/mg-local/auth/ccpPARM{providerid}/result" method="post">
+        <INPUT NAME="signature" value="" type="hidden">
+        <INPUT NAME="errorcode" value="" type="hidden">
+        <INPUT NAME="installed" value="" type="hidden">
+        <input name="providerid" value="PARM{providerid}" type="hidden">
+    </form>
+</div>
 
-  PARM{include:/footer.html}
-  
+PARM{include:/footer.html}
+
 </body>
 </html>
