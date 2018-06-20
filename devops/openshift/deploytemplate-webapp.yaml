@@ -9,6 +9,8 @@ parameters:
     required: true
   - name: STAGE
     required: true
+  - name: DATABASE_NAME
+    value: ""
 objects:
   - apiVersion: v1
     kind: DeploymentConfig
@@ -38,6 +40,8 @@ objects:
               value: ${STAGE}
             - name: JAVA_OPTS
               value: "-Xmx512M"
+            - name: DATABASE_NAME
+              value: ${DATABASE_NAME}
             image: ${IMAGE}
             imagePullPolicy: Always
             name: ${APP_NAME}

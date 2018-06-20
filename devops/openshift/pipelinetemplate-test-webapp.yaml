@@ -49,7 +49,13 @@ objects:
             //
             // Build and Deploy temaples must previously have been installed
             //
-
+            def dbName = "${APP_NAME}-pipeline".replace('-', '_')
+            def dbScript(cmd) {
+              sh (
+                script: "oc rsh \$(oc get pods | grep mysql- | grep Running | awk \'{ print \$1 }\')  bash -c \"mysql -u root -e \'${cmd}\'\"",
+                returnStatus: true 
+              ) 
+            }
             pipeline {
               agent any
               stages {
@@ -76,6 +82,12 @@ objects:
                               error("No such required template: ${it}")
                             }
                           }
+
+                          // database
+                          def status = dbScript("create database ${dbName} character set utf8mb4;")
+                          if (status != 0) {
+                            error("Unable to create database ${dbName}")
+                          }                           
                         }
                       }
                     }
@@ -187,7 +199,8 @@ objects:
                           echo "Use ImageStream: ${imageStream}"
                           def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
                             "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "IMAGE='$imageStream:${env.buildVersion}'", 
+                            "-p", "IMAGE='$imageStream:${env.buildVersion}'",
+                            "-p", "DATABASE_NAME=${dbName}",
                             "-p", "STAGE=${STAGE}")                          
                           echo "Wait for rollout (limited to 5 minutes)"
                           timeout (5) {
@@ -301,6 +314,7 @@ objects:
                           script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
                           returnStatus: true
                         )
+                        dbScript("drop database ${dbName};")
                       }
                     }
                   }                  
