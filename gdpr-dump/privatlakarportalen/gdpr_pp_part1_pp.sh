@@ -8,6 +8,10 @@
 # Dessa används av nästa script, gdpr_pp_part2_it.sh
 ####################
 
+# Set to swedish locale, for correct encoding of characters
+LC_ALL="sv_SE.utf8"
+LC_CTYPE="sv_SE.utf8"
+
 USER=$1
 PASSWORD=$2
 # In development, we use 'privatlakarportal'

@@ -8,6 +8,10 @@
 # Dessa används av nästa script, gdpr_it_part2_pp.sh
 ####################
 
+# Set to swedish locale, for correct encoding of characters
+LC_ALL="sv_SE.utf8"
+LC_CTYPE="sv_SE.utf8"
+
 USER=$1
 PASSWORD=$2
 # 'intygstjanst' is used in development.

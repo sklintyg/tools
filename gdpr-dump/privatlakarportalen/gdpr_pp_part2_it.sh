@@ -8,6 +8,10 @@
 # Dessa måste ligga i working directory vid körning. Efter att scriptet körs så läggs resultatet i pp_gdpr_dump_result.txt i working directory.
 ####################
 
+# Set to swedish locale, for correct encoding of characters
+LC_ALL="sv_SE.utf8"
+LC_CTYPE="sv_SE.utf8"
+
 USER=$1
 PASSWORD=$2
 # 'intygstjanst' is used in development.
