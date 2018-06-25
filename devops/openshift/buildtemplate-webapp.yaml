@@ -26,6 +26,9 @@ parameters:
   - name: BUILD_VERSION
     required: true
     value: 1.0-OPENSHIFT
+  - name: CONTEXT_PATH
+    required: true
+    value: ROOT
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -111,7 +114,7 @@ objects:
           RUN chmod 644 $JWS_HOME/lib/*
           USER jboss
           
-          ADD ROOT.war $JWS_HOME/webapps/
+          ADD ROOT.war $JWS_HOME/webapps/${CONTEXT_PATH}.war
           ADD build.info $JWS_HOME/
           ADD launch.sh $JWS_HOME/bin/
         images:

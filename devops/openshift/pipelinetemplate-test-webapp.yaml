@@ -25,6 +25,12 @@ parameters:
   - name: TESTS
     value: ""
     required: true
+  - name: CONTEXT_PATH
+    required: true
+    value: ROOT
+  - name: HEALTH_URI
+    required: true
+    value: /
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -112,6 +118,7 @@ objects:
                             "-p", "BUILD_VERSION=${env.buildVersion}", 
                             "-p", "INFRA_VERSION=${env.infraVersion}",
                             "-p", "COMMON_VERSION=${env.commonVersion}",
+                            "-p", "CONTEXT_PATH=${CONTEXT_PATH}",
                             "-p", "ARTIFACT_IMAGE_SUFFIX=${ARTIFACT_IMAGE_SUFFIX}")
                           openshift.apply(models)
                         }
@@ -201,6 +208,7 @@ objects:
                             "-p", "APP_NAME=${APP_NAME}", 
                             "-p", "IMAGE='$imageStream:${env.buildVersion}'",
                             "-p", "DATABASE_NAME=${dbName}",
+                            "-p", "HEALTH_URI=${HEALTH_URI}",
                             "-p", "STAGE=${STAGE}")                          
                           echo "Wait for rollout (limited to 5 minutes)"
                           timeout (5) {

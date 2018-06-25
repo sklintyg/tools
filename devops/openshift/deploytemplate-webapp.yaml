@@ -10,7 +10,10 @@ parameters:
   - name: STAGE
     required: true
   - name: DATABASE_NAME
-    value: ""
+    required: true
+  - name: HEALTH_URI
+    required: true
+    value: /
 objects:
   - apiVersion: v1
     kind: DeploymentConfig
@@ -55,12 +58,10 @@ objects:
             ports:
               - containerPort: 8080
                 protocol: TCP
-              - containerPort: 5010
-                protocol: TCP
             readinessProbe:
               failureThreshold: 3
               httpGet:
-                path: /
+                path: ${HEALTH_URI}
                 port: 8080
                 scheme: HTTP
               initialDelaySeconds: 5
@@ -70,7 +71,7 @@ objects:
             livenessProbe:
               failureThreshold: 15
               httpGet:
-                path: /
+                path: ${HEALTH_URI}
                 port: 8080
                 scheme: HTTP
               initialDelaySeconds: 15
@@ -112,10 +113,6 @@ objects:
         port: 8080
         protocol: TCP
         targetPort: 8080
-      - name: 5010-tcp
-        port: 5010
-        protocol: TCP
-        targetPort: 5010
       selector:
         deploymentconfig: ${APP_NAME}
       sessionAffinity: None
