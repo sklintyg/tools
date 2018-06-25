@@ -319,7 +319,7 @@ objects:
                         def image = openshift.selector("is", "${APP_NAME}").object()
                         def imageStream = image.status.dockerImageRepository
                         sh (
-                          script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} | oc delete -f -",
+                          script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -",
                           returnStatus: true
                         )
                         dbScript("drop database ${dbName};")
