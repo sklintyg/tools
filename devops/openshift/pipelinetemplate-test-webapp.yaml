@@ -55,7 +55,7 @@ objects:
             //
             // Build and Deploy temaples must previously have been installed
             //
-            def dbName = "${APP_NAME}-${new Random().nextInt() % 1000}".replace('-', '_')
+            def dbName = "${APP_NAME}-${new Random().nextInt() % 1000}".replace('-', '')
             def dbScript(cmd) {
               sh (
                 script: "oc rsh \$(oc get pods | grep mysql- | grep Running | awk \'{ print \$1 }\')  bash -c \"mysql -u root -e \'${cmd}\'\"",
