@@ -12,5 +12,10 @@
 
 - name: Upgrade all packages
   yum:
-    name: "*"
+    name: "{{item}}"
     state: latest
+  with_items:
+   - unzip
+   - man
+   - man-pages
+   - tree
