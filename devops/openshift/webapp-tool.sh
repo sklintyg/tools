@@ -79,7 +79,7 @@ function build() {
 
 function deploy() {
     IMAGE=$(oc get is "$APP_NAME" --template '{{.status.dockerImageRepository}}')
-    oc process deploytemplate-webapp -p APP_NAME="$APP_NAME" -p IMAGE="${IMAGE}:${BUILD_VERSION}" -p STAGE=$STAGE | oc $1 -f -
+    oc process deploytemplate-webapp -p APP_NAME="$APP_NAME" -p IMAGE="${IMAGE}:${BUILD_VERSION}" -p STAGE=$STAGE -p DATABASE_NAME=${APP_NAME//-/_} | oc $1 -f -
     [ $? != 0 ] && exit 1
     return 0
 }
