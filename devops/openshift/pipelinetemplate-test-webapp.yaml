@@ -23,7 +23,7 @@ parameters:
   - name: SECRET
     required: true
   - name: TESTS
-    value: ""
+    value: "-"
     required: true
   - name: CONTEXT_PATH
     required: true
@@ -227,10 +227,10 @@ objects:
                 stage('Run Integration Tests') {
                   when {
                     expression {
-                      if ("${TESTS}") {
-                        return true
+                      if ("${TESTS}" == "-") {
+                        return false
                       }
-                      return false
+                      return true
                     }                      
                   }
                   steps {
