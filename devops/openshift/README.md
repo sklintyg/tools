@@ -1,14 +1,235 @@
-# OpenShift / Intygstjänster
-For Intygstjänster 2018 we are evaluating deployment of our applications on an OpenShift cluster. This document provides som work-in-progress thoughts and findings on the topic.
+# Intygstjänster - OpenShift Container Platform (OCP) 
+For Intygstjänster 2018 we are evaluating deployment of our applications on an OpenShift cluster. This document provides som work-in-progress thoughts and findings on the 
+topic.
 
-### Overview
-Work-in-progress conceptual overview of an OpenShift cluster for test purposes running our applications and supporting services:
+## OCP Web Apps and Dev Pipelines
 
-![img1](docs/openshift-intygsapplikationer.png)
+### Architectural pre-requisites
 
-Each container should only container web server + .war file and any static resources needed to execute. A container image should be runnable from local dev environment to production, i.e. all environment specifics such as configuration properties, certificates, SAML-metadata, logback-files, dynamic text resources etc must be injected or mounted at runtime.
+* Use parameterized and shared OCP templates for all Web Apps
+* Replace ansible for provisioning with base docker images and application controlled software components only
+* Rely on shared conventions for
+  * Build and test folder structure
+  * Configuration, credentials and resources
+  * Logging
+  * Backing services
+  * Monitoring and health-checks
 
-### OpenShift anatomy
+### OCP Templates
+
+Dev pipelines for Web Apps are realized with OCP Templates and the following templates exists:
+
+* buildtemplate-image.yaml - Docker Image Builder
+* buildtemplate-webapp.yaml - Web App Builder (gradle, java, tomcat)
+* deploytemplate-webapp.yaml - Web App Deployer
+* testrunnertemplate-pod.yaml - Pod Test Runner (gradle, java)
+* pipelinetemplate-test-webapp.yaml - Web App Test Pipeline. Depends the templates above
+
+Each template must be installed or updated in the OCP project of question:
+
+```
+$ oc [ create | replace ] -f <template-file>
+```
+ 
+#### Template Docker Image Builder 
+
+For creating docker images (ImageStream) using plain Dockerfiles. Normally the docker layer of the OCP cluster is unreachable for a developer.
+
+**Name:** buildtemplate-image  
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| NAME      | Yes      | The docker image name, ex: `s2i-war-builder` |
+| STAGE     |          | The stage label, default is `test` |        
+| SOURCE    | Yes      | The content of the Dockerfile |
+| BUILD_VERSION |      | The docker image version tag, default is `latest` |
+
+**Outputs:**
+
+A Docker image according to the source spec, and if necessary an new ImageStream.
+
+**Example:**
+
+```
+$ oc process buildtemplate-image -p NAME=s2i-war-builder \
+	-p SOURCE="$(cat Dockerfile)" | oc apply -f -
+```
+
+#### Template Web App Builder 
+
+For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step process first building a WAR artifact and then a tomcat docker image running the WAR.
+
+**Name:** buildtemplate-webapp  
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| APP_NAME  | Yes         | The Web App name, ex: `ib-backend` |
+| STAGE     |             | The stage label, default is `test` |        
+| ARTIFACT\_IMAGE\_SUFFIX | | The suffix of the artifact ImageStream, default is `artifact` |
+| GIT_URL   | Yes         | URL to the git repository to clone |
+| GIT_REF   |             | The ref to build, default is branch `develop` |
+| BUILDER_IMAGE |         | The builder image and tag to use, default is `s2i-war-builder:latest` |
+| COMMON_VERSION |        | The common-version to use, default is `3.7.0.+` | 
+| INFRA_VERSION |         | The infra-version to use, default is `3.7.0.+` | 
+| BUILD_VERSION |         | The build version for the Web App, default is `1.0-OPENSHIFT` |
+| CONTEXT_PATH |          | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
+
+
+**Conventions:**
+
+* gradle wrapper (gradlew) is used to build the Web App
+* build output WAR placed shall be placed in sub-folder `web/build/libs`
+
+**Outputs:**
+
+* S2I docker image (artifact ImageStream) containing the checked out source and built WAR file, scripts to run tests and a build information file named `build.info`. 
+* Web App runtime image (runtime ImageStream) with tomcat and the build WAR file.
+* Verified Web App ImageStream, used by the pipeline if a runtime image passes all tests.
+
+**Example:**
+
+```
+$ oc process buildtemplate-webapp -p APP_NAME=ib-backend-dev  \
+	-p GIT_URL=https://github.com/sklintyg/ib-backend.git \
+	-p STAGE=dev | oc apply -f -
+```
+
+#### Template Web App Deployer 
+
+For deploying Web Apps with service and route endpoints.
+
+**Name:** deploytemplate-webapp  
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| APP_NAME      | Yes         | The Web App name, ex: `ib-backend` |
+| STAGE         |             | The stage label, default is `test` |        
+| IMAGE         | Yes         | The image and tag to deploy |
+| DATABASE_NAME | Yes         | Existing database to connect to. _Please note: overrides environment variable for database to use, and if not applicable any value might be used_   |
+| HEALTH_URI    |             | The path (URI) to the health check service, default is `/`|
+
+**Conventions:**
+
+* The environment variable `DATABASE_NAME` specifies the database to use.
+* A config map exists with name `${APP_NAME}-config` and will be mounted to `/opt/${APP_NAME}/config`
+* A secret exists with name `${APP_NAME}-env` and will mounted to `/opt/${APP_NAME}/env`
+* Web App listens on HTTP port `8080`
+* The health probe uses HTTP `GET` to access the health check service
+* JVM Memory settings and credentials has to be fine-tuned for each unique deployment 
+
+**Outputs:**
+
+* Rolls out a deployment with 1 replica (pod)
+* A service with name `${APP_NAME}`
+* A route terminating TLS (HTTPS) with name `${APP_NAME}-route`
+
+**Example:**
+
+```
+$ oc process deploytemplate-webapp \
+	-p APP_NAME=intygstjanst-test \
+	-p STAGE=test \
+	-p IMAGE=docker-registry.default.svc:5000/dintyg/intygstjanst-test-verified:latest \
+	-p DATABASE_NAME=intygstjanst_test \
+	-p HEALTH_URI=/inera-certificate | oc apply -f - 
+```
+
+#### Template Pod Test Runner 
+
+For running external client test suites from a test pipeline.
+
+**Name:** testrunnertemplate-pod
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| APP_NAME      | Yes         | The Web App name, ex: `ib-backend` |
+| STAGE         |             | The stage label, default is `test` |        
+| TARGET_URL    | Yes         | The target URL of the service to test |
+| JOB_NAME      | Yes         | The pipeline job name for traceability |
+| BUILD_VERSION | Yes         | The Web App build version |
+| CALLBACK_URL  | Yes         | The callback URL to post wither `SUCCESS` or `FAILURE` when all tests have finished |
+| BUILD_TAG     | Yes         | The actual pipeline build tag |
+| IMAGE         | Yes         | The image to run tests. _For the time being tests are only carried out by the Web App artifact image_ |
+| TESTS         | Yes         | A comma separated list of named test(s) to run |
+
+**Conventions:**
+
+* The test script is the default entry-point of the docker image.
+* The pipeline waits until a callback HTTP call is received with a text/plan body containing `SUCCESS` upon success, otherwise it's a failure. 
+* A PVC named `test-report` exists, and is mounted to volume `/mnt/reports`.
+* Test reports (HTML files only) are copied to `/mnt/reports`.
+
+**Outputs:**
+
+* Rolls out a deployment with 1 replica (pod)
+* A service with name `${APP_NAME}`
+* A route terminating TLS (HTTPS) with name `${APP_NAME}-route`
+
+**Example:**
+
+```
+$ oc process deploytemplate-webapp \
+	-p APP_NAME=intygstjanst-test \
+	-p STAGE=test \
+	-p IMAGE=docker-registry.default.svc:5000/dintyg/intygstjanst-test-verified:latest \
+	-p DATABASE_NAME=intygstjanst_test \
+	-p HEALTH_URI=/inera-certificate | oc apply -f - 
+```
+
+#### Template Web App Test Pipeline
+
+For building and testing Web App docker images.
+
+**Name:** pipelinetemplate-test-webapp
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| APP_NAME                | Yes         | The Web App name, ex: `ib-backend` |
+| STAGE                   |             | The stage label, default is `test` |        
+| BUILD_TEMPLATE          |             | Name of the build template, default is: `buildtemplate-webapp` |
+| DEPLOY_TEMPLATE         |             | Name of the deploy template, default is: `deploytemplate-webapp` |
+| TESTRUNNER_TEMPLATE     |             | Name of the testrunner template, default is: `testrunnertemplate-pod` |
+| ARTIFACT\_IMAGE\_SUFFIX |             | The suffix of the artifact ImageStream, default is `artifact` |
+| SECRET                  | Yes         | The secret for triggering the pipeline |
+| CONTEXT_PATH            |             | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
+| HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
+| TESTS                   | Yes         | A comma separated list of  test to run `restAssuredTest`, `protractorTest` and `fitnesseTest`. For no tests shall a dash `-` be specified. |
+
+**Conventions:**
+
+* Required backing services such as mysql, activemq and redis are up and running, and mysql is expected to run in the same OCP project.
+* Web App configuration with config map and secret must exist prior to run the pipeline.
+* Application database users must exists and have admin privileges in the actual database.
+* A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable. 
+* The web hook trigger must contain the following environment variables `gitRef`, `gitUrl`, `buildVersion`, `infraVersion` and `commonVersion`.  
+
+**Outputs:**
+
+* Upon a successful run an image reference is created in the ImageStream `${APP_NAME}-verified` and tagged with the `${buildVersion}` from trigger as well as with the `latest` tag.
+
+**Example:**
+
+```
+$ oc process pipelinetemplate-test-webapp \
+	-p APP_NAME=statistik-test \
+	-p STAGE=test \
+	-p SECRET=nosecret  \
+	-p TESTS="protractorTest,fitnesseTest" | oc apply -f -
+```
+
+
+
+## OpenShift anatomy
 Openshift is a PaaS (Platform as a Service) built on top of the CaaS (Container orchestration as a Service) Kubernetes (K8S). OpenShift and K8S introduces a number of abstractions on top of traditional containers to provide orchestration, routing, resilience, configuration etc.
  
 ![img2](docs/openshift-hierarchy.png)
@@ -106,16 +327,6 @@ Why would you want to do that? Well, just in case:
 
     $ minishift stop
          
-## YAML OpenShift templates
-Inside the "templates" folder we have some YAML files for setting up:
-
-- Build configuration
-- Deployment configuration
-- Service (e.g. Kubernetes Service abstraction)
-- Route (E.g. Kubernetes Ingress Controller)
-
-These files should later be integrated into Ansible playbooks with parameter substitution so we can use Jenkins jobs to provision a whole cluster or individual applications from scratch.
-
 ### A note on supporting services
 Please note that running MySQL and ActiveMQ as containers with mounted storage is _not_ suitable for production usages. Most users of container orchestrators runs their Database and Messaging backends on dedicated hardware outside the cluster - just like BF does for us currently.
 
