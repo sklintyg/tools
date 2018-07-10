@@ -98,10 +98,11 @@ objects:
 
           RUN rm -rf $JWS_HOME/webapps/* $JWS_HOME/lib/mysql-connector-java.jar
           
-          ADD http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar $JWS_HOME/lib
+          ADD http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.40/mysql-connector-java-5.1.40.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/javax/servlet/jsp/jstl/javax.servlet.jsp.jstl-api/1.2.1/javax.servlet.jsp.jstl-api-1.2.1.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/org/glassfish/web/javax.servlet.jsp.jstl/1.2.1/javax.servlet.jsp.jstl-1.2.1.jar  $JWS_HOME/lib  
-          ADD http://repo1.maven.org/maven2/org/apache/activemq/activemq-client/5.13.0/activemq-client-5.13.0.jar $JWS_HOME/lib
+          ADD http://repo1.maven.org/maven2/org/apache/activemq/activemq-client/5.13.5/activemq-client-5.13.5.jar $JWS_HOME/lib
+          ADD http://repo1.maven.org/maven2/org/apache/activemq/activemq-pool/5.13.5/activemq-pool-5.13.5.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/org/fusesource/hawtbuf/hawtbuf/1.9/hawtbuf-1.9.jar $JWS_HOME/lib
           ADD http://repo1.maven.org/maven2/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar $JWS_HOME/lib
