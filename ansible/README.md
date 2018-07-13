@@ -56,14 +56,16 @@ Svara motsv. 1) så bör burken få en IP-adress på samma LAN som hostdatorn.
     
 Vänta tills allt är klart.    
     
-##### 4. ssh:a in och anteckna ip-numret   
-    
-    vagrant ssh
-    ifconfig
-    
-Anteckna IP-numret för eth1, borde vara något i stil med 192.168.0.189
+##### 4. Ta reda på information om din virtuella maskin 
 
-    exit
+Anteckna IP-numret för eth1, borde vara något i stil med 192.168.0.189
+    
+    vagrant ssh -c ifconfig
+
+Alternativt kan du sätta IP och keyFile info i variabler och använda dem i kommandon framöver.
+
+    export VAG_IP=$(vagrant ssh ad28cca -c "ifconfig eth1| grep -oP '(?<=inet addr:)\d+(\.\d+){3}'")
+    export VAG_KEY=$(vagrant ssh-config|grep IdentityFile|grep -o "/.*")
 
 ##### 5. Börja grundprovisionera med ansible
 
@@ -71,8 +73,13 @@ Byt ut IP-numret i exemplet nedan mot det IP-nummer du skrev ned ovan.
     
     cd $INTYG_HOME/tools/ansible
     ansible-playbook -i inventory/webcert/dev provision.yml --extra-vars "vagrantIp=192.168.0.189 vagrantPort=22 keyFile=~/.ssh/vagrant"
+      
+    # Alternativ med miljövariabler:
+    ansible-playbook -i inventory/webcert/dev provision.yml --extra-vars "vagrantIp=${VAG_IP} vagrantPort=22 keyFile=${VAG_KEY} ansible_ssh_pass=" --flush-cache
 
 Detta tar en stund...
+
+_NB: ansible\_ssh\_pass ska ha ett tomt värde._
 
 ##### 6. Provisionera webcert
 Byt mapp till /webcert/ansible
@@ -82,11 +89,18 @@ Om du _inte_ har git-crypt nyckeln, be en snäll kollega om hjälp. Den behöver
 Samma sak igen med IP-numret.
 
     ansible-playbook -i inventory/webcert/dev provision.yml --extra-vars "vagrantIp=192.168.1.22 vagrantPort=22 keyFile=~/.ssh/vagrant"
+     
+    # Alternativ med miljövariabler:
+    ansible-playbook -i inventory/webcert/dev provision.yml --extra-vars "vagrantIp=${VAG_IP} vagrantPort=22 keyFile=${VAG_KEY} ansible_ssh_pass=" --flush-cache
 
 ##### 7. Deploya webcert från lokal burk
 Notera att vi specificerar version=0-SNAPSHOT som parameter, du måste alltså ha byggt webcert lokalt innan!
     
     ansible-playbook -i inventory/webcert/dev deploy.yml --extra-vars "vagrantIp=192.168.1.22 vagrantPort=22 keyFile=~/.ssh/vagrant version=0-SNAPSHOT"
+     
+    # Alternativ med miljövariabler:
+    ansible-playbook -i inventory/webcert/dev deploy.yml --extra-vars "vagrantIp=${VAG_IP} vagrantPort=22 keyFile=${VAG_KEY} ansible_ssh_pass= version=0-SNAPSHOT" --flush-cache
+
 
 ## 8. Klart! 
   

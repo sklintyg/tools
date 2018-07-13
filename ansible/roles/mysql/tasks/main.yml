@@ -1,4 +1,9 @@
 ---
+- name: Ensure MySQL Yum repo is installed
+  yum:
+    name: http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    state: present
+
 - name: Ensure libselinux-python is installed.
   yum:
     name: libselinux-python
@@ -22,8 +27,85 @@
     state: started
     enabled: yes
 
+- name: Get MySQL version
+  command: mysql --version
+  register: mysql_version_cmd
+
+- set_fact:
+    mysql_version: "{{ mysql_version_cmd.stdout | regex_replace('^mysql .*(\\d+.\\d+.\\d+).*','\\1') }}"
+    mysql_user: "root"
+    mysql_password: ""
+
+- name: Find temporary MySQL password
+  shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"
+  when:
+    - mysql_version is version('5.7','>=')
+    - mysql_install_packages is defined
+    - mysql_install_packages.changed
+  register: mysql_tmp_password
+
+- set_fact:
+    mysql_password: "{{ mysql_tmp_password.stdout | default(omit) }}"
+
+- name: Save base MySQL credentials
+  template:
+      src: "my.cnf.j2"
+      dest: "/root/.my.cnf"
+      owner: root
+      group: root
+      mode: 0600
+  when: mysql_install_packages is defined and mysql_install_packages.changed
+
+- name: Generate new MySQL password
+  command: openssl rand -base64 32
+  register: mysql_new_password
+  no_log: True
+  when:
+    - mysql_version is version('5.7','>=')
+    - mysql_install_packages is defined
+    - mysql_install_packages.changed
+
+- name: Set new password
+  command: "mysql --connect-expired-password -u{{ mysql_user }} -p{{ mysql_password }} -Be \"SET PASSWORD = PASSWORD('{{ mysql_new_password.stdout }}');\""
+  register: mysql_password_set
+  no_log: True
+  when:
+    - mysql_version is version('5.7','>=')
+    - mysql_password != ""
+    - mysql_new_password is succeeded
+
+- set_fact:
+    mysql_password: "{{ mysql_new_password.stdout | default(omit) }}"
+  no_log: True
+
+- name: Save new MySQL credentials
+  template:
+      src: "my.cnf.j2"
+      dest: "/root/.my.cnf"
+      owner: root
+      group: root
+      mode: 0600
+  register: mysql_password_saved
+  when:
+    - mysql_version is version('5.7','>=')
+    - mysql_password_set is succeeded
+    - mysql_password_set.changed
+
 - name: Disallow root login remotely
   command: 'mysql -NBe "{{ item }}"'
   with_items:
     - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
   when: mysql_install_packages is defined and mysql_install_packages.changed
+
+- name: Lower MySQL password policy for test/dev/demo
+  command: 'mysql -NBe "{{ item }}"'
+  with_items:
+    - SET GLOBAL validate_password_policy=LOW
+    - SET GLOBAL validate_password_length=3
+    - SET GLOBAL validate_password_mixed_case_count=0
+    - SET GLOBAL validate_password_number_count=0
+    - SET GLOBAL validate_password_special_char_count=0
+  when:
+    - mysql_version is version('5.7','>=')
+    - mysql_install_packages is defined
+    - mysql_install_packages.changed
