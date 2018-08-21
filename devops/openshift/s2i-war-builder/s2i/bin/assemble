@@ -21,7 +21,7 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 -Dfile.encoding=UTF-8"
 
 # create build info
-create_build_info() {
+function create_build_info() {
     SHA256=$(sha256sum $S2I_ARTIFACTS_DIR/ROOT.war | awk '{ print $1 }')
     TIMESTAMP=$(date --iso-8601='seconds')
 cat << EOF > $S2I_ARTIFACTS_DIR/build.info
@@ -38,6 +38,13 @@ BUILDER_IMAGE=${BUILDER_IMAGE}
 EOF
 }
 
+# make writeable
+function make_writeable() {
+    for d in $*; do
+        [ -d "$d" ] && chmod -R a+rwx $d
+    done
+}
+
 # place .gradle stuff in /tmp
 export GRADLE_USER_HOME=/tmp/.gradle
 
@@ -45,7 +52,7 @@ export GRADLE_USER_HOME=/tmp/.gradle
 if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
     echo "---> User $(id) home is $HOME"
 
-    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build -x test"}
+    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build -PuseMinifiedJavaScript"}
 
     echo "---> Building application from source with gradle wrapper GRADLE_ARGS=$GRADLE_ARGS"
     (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
@@ -74,10 +81,7 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
     create_build_info
 
     # add write access
-    chmod -R a+rwx $GRADLE_USER_HOME 
-    chmod -R a+rwx $S2I_SOURCE_DIR
-    chmod -R a+rwx /opt/app-root/src/.npm
-    chmod -R a+rwx /opt/app-root/src/.local
+    make_writeable $GRADLE_USER_HOME $S2I_SOURCE_DIR /opt/app-root/src/.npm /opt/app-root/src/.local
 else
     echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
     exit 1
