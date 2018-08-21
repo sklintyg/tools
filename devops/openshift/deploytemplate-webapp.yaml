@@ -64,17 +64,17 @@ objects:
                 path: ${HEALTH_URI}
                 port: 8080
                 scheme: HTTP
-              initialDelaySeconds: 5
+              initialDelaySeconds: 60
               periodSeconds: 10
               successThreshold: 1
-              timeoutSeconds: 1
+              timeoutSeconds: 2
             livenessProbe:
               failureThreshold: 15
               httpGet:
                 path: ${HEALTH_URI}
                 port: 8080
                 scheme: HTTP
-              initialDelaySeconds: 15
+              initialDelaySeconds: 60
               periodSeconds: 20
               successThreshold: 1
               timeoutSeconds: 5
