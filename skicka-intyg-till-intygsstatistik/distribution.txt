@@ -1,0 +1,7 @@
+README.md
+run.sh
+gradlew
+build.gradle
+app.properties
+gradle/**
+src/main/groovy/**
