@@ -42,11 +42,10 @@ objects:
         - name: JAVA_OPTS
           value: "-Xmx512M"
         resources:
-          requests:
-            cpu: 1
-            memory: 2Gi
           limits:
             cpu: 1
+            memory: 4Gi
+          requests:
             memory: 2Gi
         image: ${IMAGE}
         imagePullPolicy: Always

@@ -49,12 +49,11 @@ objects:
             imagePullPolicy: Always
             name: ${APP_NAME}
             resources:
-              requests:
-                cpu: 1
-                memory: 2Gi
               limits:
                 cpu: 1
                 memory: 2Gi
+              requests:
+                memory: 1Gi
             ports:
               - containerPort: 8080
                 protocol: TCP
