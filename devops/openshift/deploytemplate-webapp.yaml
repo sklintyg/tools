@@ -53,6 +53,7 @@ objects:
                 cpu: 1
                 memory: 2Gi
               requests:
+                cpu: 200m
                 memory: 1Gi
             ports:
               - containerPort: 8080

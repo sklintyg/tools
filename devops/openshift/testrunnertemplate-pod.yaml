@@ -46,6 +46,7 @@ objects:
             cpu: 1
             memory: 4Gi
           requests:
+            cpu: 200m
             memory: 2Gi
         image: ${IMAGE}
         imagePullPolicy: Always
