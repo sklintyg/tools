@@ -25,6 +25,9 @@ parameters:
   - name: TESTS
     value: "-"
     required: true
+  - name: BACKING_SERVICES
+    value: "-"
+    required: true
   - name: CONTEXT_PATH
     required: true
     value: ROOT
@@ -223,6 +226,72 @@ objects:
                     }
                   }      
                 }
+
+              stage('Deploy Backing Services') {
+                  when {
+                      expression {
+                        if ("${BACKING_SERVICES}" == "-") {
+                          return false
+                        }
+                          return true
+                      }
+                  }
+                  steps {
+                      script {
+                          openshift.withCluster() {
+                              openshift.withProject() {
+                                  "${BACKING_SERVICES}".split(",").each {
+                                      def imageStream = openshift.selector("is", "${it}-verified").object().status.dockerImageRepository
+                                      echo "Use ImageStream: ${imageStream}"
+                                      def healthUri = "/"
+                                      // FIXME: dirty work-around!
+                                      if (it.startsWith("intygstjanst")) {
+                                          healthUri += "inera-certificate"
+                                      }
+                                      def backDbName = "${it.replace('-', '')}${dbName}"
+                                      def status = dbScript("create database ${backDbName} character set utf8mb4;")
+                                      if (status != 0) {
+                                          error("Unable to create database ${backDbName}")
+                                      }
+
+                                      def svcAppName = "${it}-${APP_NAME}"
+
+                                      def rc = 0                        
+                                      rc = sh (
+                                        script: "oc get configmap ${it}-config -o yaml | sed \'s/name: ${it}-config/name: ${svcAppName}-config/g\' | oc apply -f -",
+                                        returnStatus: true
+                                      )
+                                      if (rc  != 0) {
+                                        error("Unable to create configmap ${svcAppName}-config")
+                                      }                           
+                                      rc = sh (
+                                        script: "oc get secret ${it}-env -o yaml | sed \'s/name: ${it}-env/name: ${svcAppName}-env/g\' | oc apply -f -",
+                                        returnStatus: true
+                                      )
+                                      if (rc  != 0) {
+                                        error("Unable to create secret ${svcAppName}-env")
+                                      }                           
+
+
+                                      def deployModel = openshift.process("deploytemplate-webapp",
+                                              "-p", "APP_NAME=${svcAppName}",
+                                              "-p", "IMAGE='$imageStream:latest'",
+                                              "-p", "DATABASE_NAME=${backDbName}",
+                                              "-p", "HEALTH_URI=${healthUri}",
+                                              "-p", "STAGE=test")
+                                      echo "Wait for rollout (limited to 5 minutes)"
+                                      timeout(5) {
+                                          def rm = openshift.apply(deployModel).narrow("dc").rollout()
+                                          echo "Waiting for deployment to complete"
+                                          rm.status()
+                                          echo "Deployment done."
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
               
                 stage('Run Integration Tests') {
                   when {
@@ -316,13 +385,38 @@ objects:
                     echo "cleanup"
                     openshift.withCluster() {
                       openshift.withProject() {
+                        sh (
+                            script: "oc logs \$(oc get pods | grep \'^${APP_NAME}-\' | grep Running | grep -v deploy | awk \'{ print \$1 }\')",
+                            returnStdout: true
+                        )
                         def image = openshift.selector("is", "${APP_NAME}").object()
                         def imageStream = image.status.dockerImageRepository
                         sh (
                           script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -",
-                          returnStatus: true
+                          returnStdout: true
                         )
                         dbScript("drop database ${dbName};")
+
+                        if ("${BACKING_SERVICES}" != "-") {
+                            "${BACKING_SERVICES}".split(",").each {
+                                def svcAppName = "${it}-${APP_NAME}"
+                                imageStream = openshift.selector("is", "${it}-verified").object().status.dockerImageRepository
+                                def backDbName = "${it.replace('-', '')}${dbName}"
+                                sh (
+                                  script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${svcAppName}\" -p IMAGE=\"${imageStream}:latest\" -p STAGE=${STAGE} -p DATABASE_NAME=${backDbName} | oc delete -f -",
+                                  returnStdout: true
+                                )
+                                dbScript("drop database ${backDbName};")
+                                sh (
+                                  script: "oc delete configmap ${svcAppName}-config",
+                                  returnStdout: true
+                                )
+                                sh (
+                                  script: "oc delete secret ${svcAppName}-env",
+                                  returnStdout: true
+                                )                               
+                            }
+                        }
                       }
                     }
                   }                  

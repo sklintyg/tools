@@ -117,22 +117,5 @@ objects:
         deploymentconfig: ${APP_NAME}
       sessionAffinity: None
       type: ClusterIP
-  - apiVersion: v1
-    kind: Route
-    metadata:
-      name: ${APP_NAME}-route
-    spec:
-      path: /
-      port:
-        targetPort: 8080-tcp
-      tls:
-        termination: "edge"
-        insecureEdgeTerminationPolicy: "Redirect"
-      to:
-        kind: Service
-        name: ${APP_NAME}
-        weight: 100
-      wildcardPolicy: None
-  
  
 
