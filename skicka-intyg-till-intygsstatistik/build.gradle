@@ -14,7 +14,7 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.7'
     compile 'mysql:mysql-connector-java:5.1.32'
     compile 'org.apache.commons:commons-dbcp2:2.0'
-    compile 'org.apache.activemq:activemq-all:5.10.0'    
+    compile 'org.apache.activemq:activemq-all:5.10.0'
     compile 'com.h2database:h2:1.4.197'
 }
 
@@ -28,45 +28,51 @@ repositories {
 
 task runScript(type: JavaExec) {
     description 'Run Groovy script'
- 
+
     // Set main property to name of Groovy script class.
     main = 'se.inera.intyg.tools.SkickaIntygTillIntygsstatistik'
     mainClassName = 'se.inera.intyg.tools.SkickaIntygTillIntygsstatistik'
- 
+
     // Set classpath for running the Groovy script.
     classpath = sourceSets.main.runtimeClasspath
- 
+
     if (project.hasProperty('DB_URL')) {
-      args 'dataSource.url=' + project.getProperty('DB_URL');
-    } 
+        args 'dataSource.url=' + project.getProperty('DB_URL');
+    }
     if (project.hasProperty('DB_DRIVER')) {
-      args 'dataSource.driver=' + project.getProperty('DB_DRIVER');
-    } 
+        args 'dataSource.driver=' + project.getProperty('DB_DRIVER');
+    }
     if (project.hasProperty('DB_USERNAME')) {
-      args 'dataSource.username=' + project.getProperty('DB_USERNAME');
-    } 
+        args 'dataSource.username=' + project.getProperty('DB_USERNAME');
+    }
     if (project.hasProperty('DB_PASSWORD')) {
-      args 'dataSource.password=' + project.getProperty('DB_PASSWORD');
-    } 
+        args 'dataSource.password=' + project.getProperty('DB_PASSWORD');
+    }
     if (project.hasProperty('BROKER_URL')) {
-      args 'broker.url=' + project.getProperty('BROKER_URL');
-    } 
+        args 'broker.url=' + project.getProperty('BROKER_URL');
+    }
     if (project.hasProperty('BROKER_QUEUE')) {
-      args 'broker.queue=' + project.getProperty('BROKER_QUEUE');
-    } 
+        args 'broker.queue=' + project.getProperty('BROKER_QUEUE');
+    }
+    if (project.hasProperty('BROKER_USERNAME')) {
+        args 'broker.username=' + project.getProperty('BROKER_USERNAME');
+    }
+    if (project.hasProperty('BROKER_PASSWORD')) {
+        args 'broker.password=' + project.getProperty('BROKER_PASSWORD');
+    }
     if (project.hasProperty('INTYGSTYPER')) {
-      args 'sql.where._1.value.intygstyper=' + project.getProperty('INTYGSTYPER')  
-    }     
+        args 'sql.where._1.value.intygstyper=' + project.getProperty('INTYGSTYPER')
+    }
     if (project.hasProperty('DATE_FROM')) {
-      args 'sql.where._2.value.date.from=' + project.getProperty('DATE_FROM')
-    }     
+        args 'sql.where._2.value.date.from=' + project.getProperty('DATE_FROM')
+    }
     if (project.hasProperty('DATE_TO')) {
-      args 'sql.where._2.value.date.to=' + project.getProperty('DATE_TO')     
-    }     
+        args 'sql.where._2.value.date.to=' + project.getProperty('DATE_TO')
+    }
     if (project.hasProperty('DEBUG')) {
-      args 'debug=' + project.getProperty('DEBUG')     
-    }     
-    
+        args 'debug=' + project.getProperty('DEBUG')
+    }
+
 }
- 
+
 defaultTasks 'runScript'

@@ -17,29 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package se.inera.intyg.tools;
+package se.inera.intyg.tools
 
 import groovy.sql.Sql
-
-import java.util.concurrent.atomic.AtomicInteger
-
 import org.apache.activemq.ActiveMQConnectionFactory
-import org.apache.activemq.network.jms.JmsTopicConnector;
-
-import javax.jms.Connection
-import javax.jms.Message
-import javax.jms.MessageProducer
-import javax.jms.Session
-import javax.jms.Destination
-
 import org.apache.commons.dbcp2.BasicDataSource
 
+import javax.jms.*
+import java.util.concurrent.atomic.AtomicInteger
 /**
  * Script for putting all intyg found in Intygtjänsten on a specific JMS queue.
- * 
+ *
  * For intyg that has been revoked, two messages will be sent. One with action 'created'
  * and one with action 'revoked'.
- * 
+ *
  * @author npet
  *
  */
@@ -57,11 +48,11 @@ class SkickaIntygTillIntygsstatistik {
     final AtomicInteger processedCount = new AtomicInteger(0)
     final AtomicInteger createMsgCount = new AtomicInteger(0)
     final AtomicInteger revokeMsgCount = new AtomicInteger(0)
-    
+
     long startTime = 0;
 
     ConfigObject appConf = null
-    
+
     BasicDataSource dataSource = null
     Connection jmsConnection = null
     Session jmsSession = null
@@ -70,8 +61,16 @@ class SkickaIntygTillIntygsstatistik {
     public SkickaIntygTillIntygsstatistik() {
         Properties appProperties = new Properties()
 
-        new File(getClass().getResource('/app.properties').toURI()).withInputStream { stream ->
-            appProperties.load(stream)
+        String fileName = "app.properties";
+        URL url = getClass().getResource('/' + fileName);
+        if (url) {
+            new File(url.toURI()).withInputStream { stream ->
+                appProperties.load(stream)
+            }
+        } else {
+            new File(fileName).withInputStream { stream ->
+                appProperties.load(stream)
+            }
         }
 
         // Init application's default configuration
@@ -83,24 +82,29 @@ class SkickaIntygTillIntygsstatistik {
         if (appConf.debug == true) println 'setupDataSource()'
 
         dataSource = new BasicDataSource(driverClassName: appConf.dataSource.driver, url: appConf.dataSource.url,
-        username: appConf.dataSource.username, password: appConf.dataSource.password,
-        initialSize: 1, maxTotal: 1)
+                username: appConf.dataSource.username, password: appConf.dataSource.password, initialSize: 1, maxTotal: 1)
     }
-    
+
     def setupJMS() {
         if (appConf.debug == true) println 'setupJMS()'
 
-        jmsConnection = new ActiveMQConnectionFactory(brokerURL: appConf.broker.url).createConnection()
+        if (appConf.broker.username) {
+            jmsConnection = new ActiveMQConnectionFactory(userName: appConf.broker.username, password: appConf.broker.password,
+                    brokerURL: appConf.broker.url).createConnection()
+        } else {
+            // Try anonymous login
+            jmsConnection = new ActiveMQConnectionFactory(brokerURL: appConf.broker.url).createConnection()
+        }
         jmsSession = jmsConnection.createSession(false, Session.AUTO_ACKNOWLEDGE)
         jmsDestination = jmsSession.createQueue(appConf.broker.queue)
     }
-    
+
     def tearDownJMS() {
         if (appConf.debug == true) println 'tearDownJMS()'
 
         if (jmsSession) {
             jmsSession.close()
-        }        
+        }
         if (jmsConnection) {
             jmsConnection.close()
         }
@@ -113,12 +117,12 @@ class SkickaIntygTillIntygsstatistik {
 
         def sql = new Sql(dataSource)
 
-        def payloadRow = sql.firstRow(SQL_INTYG_PAYLOAD, [id : intygId])         
+        def payloadRow = sql.firstRow(SQL_INTYG_PAYLOAD, [id : intygId])
         if (payloadRow) {
             intygObj.contents = new String(payloadRow.DOCUMENT, 'UTF-8')
         }
 
-        def revokedRow = sql.firstRow(SQL_INTYG_REVOKED, [id : intygId])        
+        def revokedRow = sql.firstRow(SQL_INTYG_REVOKED, [id : intygId])
         if (revokedRow) {
             intygObj.revoked = (revokedRow.REVOKED != 0)
         }
@@ -126,7 +130,7 @@ class SkickaIntygTillIntygsstatistik {
         sql.close()
         return intygObj
     }
-    
+
     def sendToQueue(Intyg intyg) {
         if (appConf.debug == true) println 'sendToQueue(' + intyg + ')'
 
@@ -134,7 +138,7 @@ class SkickaIntygTillIntygsstatistik {
         MessageProducer msgProducer = jmsSession.createProducer(jmsDestination)
         msgProducer.send(message)
         createMsgCount.incrementAndGet()
-        
+
         if (intyg.revoked) {
            Message revokeMessage = createMessage(jmsSession, intyg, true)
            msgProducer.send(revokeMessage)
@@ -154,10 +158,10 @@ class SkickaIntygTillIntygsstatistik {
             setStringProperty(JMS_PARAM_CERTIFICATE_ID, intyg.id)
             setStringProperty(JMS_PARAM_ACTION, (revoked) ? JMS_ACTION_REVOKED : JMS_ACTION_CREATED)
         }
-        
+
         return message
     }
-    
+
     def calcPercentDone() {
         if (appConf.debug == true) println 'calcPercentDone()'
 
@@ -166,7 +170,7 @@ class SkickaIntygTillIntygsstatistik {
         Float percent = (done/total) * 100
         return percent.trunc(2)
     }
-    
+
     def printProgress() {
         if (appConf.debug == true) println 'printProgress()'
 
@@ -179,7 +183,7 @@ class SkickaIntygTillIntygsstatistik {
 
         println "Program starting..."
         startTime = System.currentTimeMillis()
-        
+
         println("- Fetching list of intyg, might take a while...")
         def bootstrapSql = new Sql(dataSource)
         def intygIds = bootstrapSql.rows(getSqlStmt())
@@ -193,11 +197,11 @@ class SkickaIntygTillIntygsstatistik {
             Intyg intyg = getIntyg(intygIdRow.ID)
             sendToQueue(intyg)
         }
-        
+
         printProgress();
         println "Program done!"
     }
-    
+
     def getSqlStmt() {
         if (appConf.debug == true) println 'getSqlStmt()'
 
@@ -219,6 +223,7 @@ class SkickaIntygTillIntygsstatistik {
             sqlStmt += ' ORDER BY ' + appConf.sql.orderby
         }
 
+        if (appConf.debug == true) println 'sqlStmt = ' + sqlStmt
         return sqlStmt
     }
 
@@ -226,21 +231,21 @@ class SkickaIntygTillIntygsstatistik {
         if (appConf.debug == true) println 'parseArguments(' + args + ')'
 
         if (args) {
-            Properties argsProperties = new Properties()            
+            Properties argsProperties = new Properties()
             args.each() {
                 def index = it.indexOf('=', 0)
                 if (index > -1) {
                     argsProperties.put(it.substring(0, index), it.substring(index + 1))
                 }
-            }            
-        
-            ConfigObject argsConf = new ConfigSlurper().parse(argsProperties)            
+            }
+
+            ConfigObject argsConf = new ConfigSlurper().parse(argsProperties)
             if (!argsConf.isEmpty()) {
                 appConf.merge(argsConf)
             }
-        }    
+        }
     }
-    
+
     def validateArguments() {
         if (appConf.debug == true) println 'validateArguments()'
 
@@ -249,7 +254,7 @@ class SkickaIntygTillIntygsstatistik {
             assert appConf.sql.where._2.value.date.to
         }
     }
-    
+
     static void main(String[] args) {
         SkickaIntygTillIntygsstatistik app = new SkickaIntygTillIntygsstatistik()
         app.parseArguments(args)
