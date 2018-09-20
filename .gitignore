@@ -8,3 +8,4 @@ target
 certificate-metrics/*.csv
 build
 .gradle
+out
