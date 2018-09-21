@@ -155,7 +155,8 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
-                            echo "${build.logs()}"
+                            echo "Logs for artifact build"
+                            build.logs()
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
@@ -189,7 +190,8 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
-                            echo "${build.logs()}"
+                            echo "Logs for docker runtime build"
+                            build.logs()
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
@@ -359,8 +361,7 @@ objects:
                             }
                           }
                           echo "Logs for ${env.BUILD_TAG}${suffix}"
-                          def logs = openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
-                          echo "${logs}"
+                          openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
 
                           if ("SUCCESS".equals(data)) {
                             echo "Test SUCCESS"
@@ -397,8 +398,7 @@ objects:
                         dbScript("drop database ${dbName};")
 
                         echo "Logs for ${APP_NAME}"
-                        def logs = openshift.selector( "dc", "${APP_NAME}" ).logs()
-                        echo "${logs}"
+                        openshift.selector( "dc", "${APP_NAME}" ).logs()
 
                         def image = openshift.selector("is", "${APP_NAME}").object()
                         def imageStream = image.status.dockerImageRepository
@@ -411,8 +411,7 @@ objects:
                             "${BACKING_SERVICES}".split(",").each {
                                 def svcAppName = "${it}-${APP_NAME}"
                                 echo "Logs for ${svcAppName}"
-                                logs = openshift.selector( "dc", "${svcAppName}" ).logs()
-                                echo "${logs}"
+                                openshift.selector( "dc", "${svcAppName}" ).logs()
 
                                 imageStream = openshift.selector("is", "${it}-verified").object().status.dockerImageRepository
                                 def backDbName = "${it.replace('-', '')}${dbName}"
