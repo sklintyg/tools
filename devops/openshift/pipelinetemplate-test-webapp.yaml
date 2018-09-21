@@ -151,6 +151,7 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
+                            echo "${build.logs()}"
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
@@ -184,6 +185,7 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
+                            echo "${build.logs()}"
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
@@ -352,6 +354,9 @@ objects:
                               }
                             }
                           }
+                          echo "Logs for ${env.BUILD_TAG}${suffix}"
+                          def logs = openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
+                          echo "${logs}"
 
                           if ("SUCCESS".equals(data)) {
                             echo "Test SUCCESS"
@@ -385,21 +390,26 @@ objects:
                     echo "cleanup"
                     openshift.withCluster() {
                       openshift.withProject() {
-                        sh (
-                            script: "oc logs \$(oc get pods | grep \'^${APP_NAME}-\' | grep Running | grep -v deploy | awk \'{ print \$1 }\')",
-                            returnStdout: true
-                        )
+                        dbScript("drop database ${dbName};")
+
+                        echo "Logs for ${APP_NAME}"
+                        def logs = openshift.selector( "dc", "${APP_NAME}" ).logs()
+                        echo "${logs}"
+
                         def image = openshift.selector("is", "${APP_NAME}").object()
                         def imageStream = image.status.dockerImageRepository
                         sh (
                           script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -",
                           returnStdout: true
                         )
-                        dbScript("drop database ${dbName};")
 
                         if ("${BACKING_SERVICES}" != "-") {
                             "${BACKING_SERVICES}".split(",").each {
                                 def svcAppName = "${it}-${APP_NAME}"
+                                echo "Logs for ${svcAppName}"
+                                logs = openshift.selector( "dc", "${svcAppName}" ).logs()
+                                echo "${logs}"
+
                                 imageStream = openshift.selector("is", "${it}-verified").object().status.dockerImageRepository
                                 def backDbName = "${it.replace('-', '')}${dbName}"
                                 sh (
