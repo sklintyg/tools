@@ -155,7 +155,7 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
-                            echo "${build.logs()}"
+                            echo "${build.logs().actions[0].out}"
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
@@ -189,7 +189,7 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
-                            echo "${build.logs()}"
+                            echo "${build.logs().actions[0].out}"
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
