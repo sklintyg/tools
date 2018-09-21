@@ -54,11 +54,12 @@ objects:
           type: JenkinsPipeline
           jenkinsfile: |-
             // The following variables are expected to be injected (from trigger) into the environment:
-            // [ gitUrl, gitRef, buildVersion, infraVersion, commonVersion ]
+            // [ gitUrl, gitRef, buildVersion, infraVersion ]
             //
             // Build and Deploy temaples must previously have been installed
             //
             def dbName = "${APP_NAME}-${new Random().nextInt() % 1000}".replace('-', '')
+            def localCommonVersion = "NA"
             def dbScript(cmd) {
               sh (
                 script: "oc rsh \$(oc get pods | grep mysql- | grep Running | awk \'{ print \$1 }\')  bash -c \"mysql -u root -e \'${cmd}\'\"",
@@ -77,9 +78,12 @@ objects:
                         openshift.withProject() {
                           echo "Pipeline started with:"
                           echo "gitUrl: ${gitUrl}, gitRef: ${gitRef}"
-                          echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${commonVersion}"
+                          if (env.commonVersion) {
+                            localCommonVersion = env.commonVersion
+                          }
+                          echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${localCommonVersion}"
                           // check envrionment
-                          [ env.gitUrl, env.gitRef, env.buildVersion, env.infraVersion, env.commonVersion ].each {
+                          [ env.gitUrl, env.gitRef, env.buildVersion, env.infraVersion ].each {
                             if (!it) {
                               error("No such required context variable in environment.")
                             }
@@ -120,7 +124,7 @@ objects:
                             "-p", "GIT_REF=${env.gitRef}",
                             "-p", "BUILD_VERSION=${env.buildVersion}", 
                             "-p", "INFRA_VERSION=${env.infraVersion}",
-                            "-p", "COMMON_VERSION=${env.commonVersion}",
+                            "-p", "COMMON_VERSION=${localCommonVersion}",
                             "-p", "CONTEXT_PATH=${CONTEXT_PATH}",
                             "-p", "ARTIFACT_IMAGE_SUFFIX=${ARTIFACT_IMAGE_SUFFIX}")
                           openshift.apply(models)
