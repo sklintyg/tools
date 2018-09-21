@@ -203,6 +203,7 @@ For building and testing Web App docker images.
 | SECRET                  | Yes         | The secret for triggering the pipeline |
 | CONTEXT_PATH            |             | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
 | HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
+| BACKING_SERVICES        |             | A comma separated list of backing services to start (each needs to have a verified image and working config (secret, configmap). Ex: `BACKING_SERVICES="intygstjanst-test,minaintyg-test"` | 
 | TESTS                   | Yes         | A comma separated list of  test to run `restAssuredTest`, `protractorTest` and `fitnesseTest`. For no tests shall a dash `-` be specified. |
 
 **Conventions:**
