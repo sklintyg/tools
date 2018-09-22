@@ -32,9 +32,13 @@ function testrun() {
 # saves result report
 function save_report() {
     SRC="${1}"
-    DST="${REPORT_DIR}/${2}.html"
+    DST="${REPORT_DIR}/${2}/${2}.html"
     echo "---> Save report $SRC as $DST"
-    [ -f $SRC ] && cp $SRC $DST
+    if [ -f $SRC ]; then
+        DIR=$(dirname $DST)
+        cp -r $(dirname $SRC) $DIR
+        cp ${SRC} ${DST}
+    fi
 }
 
 # loop through all tests

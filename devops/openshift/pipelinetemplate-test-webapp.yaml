@@ -353,7 +353,7 @@ objects:
                                   allowMissing: true,
                                   alwaysLinkToLastBuild: true,
                                   keepAll: true,
-                                  reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/",
+                                  reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
                                   reportFiles: "${t}.html",
                                   reportName: "${t.capitalize()} Results",
                                 ])
