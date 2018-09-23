@@ -36,6 +36,7 @@ function save_report() {
     echo "---> Save report $SRC as $DST"
     if [ -f $SRC ]; then
         DIR=$(dirname $DST)
+        [ -f $DST ] && rm -rf $DIR
         cp -r $(dirname $SRC) $DIR
         cp ${SRC} ${DST}
     fi
