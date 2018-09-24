@@ -1,0 +1,47 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: buildtemplate-nexus
+parameters:
+  - name: APP_NAME
+    required: true
+  - name: IMAGE
+    required: true
+  - name: STAGE
+    required: true
+    value: "test"
+  - name: SECRET
+    required: true
+    value: "nexus-registry"
+  - name: TAG
+    required: true
+    value: "latest"
+  - name: NEXUS_URI
+    required: true
+    value: "docker.drift.inera.se/intyg"
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${APP_NAME}-nexus
+      labels:
+        name: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      output:
+        pushSecret:
+          name: ${SECRET}
+        to:
+          kind: DockerImage
+          name: ${NEXUS_URI}/${APP_NAME}:${TAG}
+      source:
+        type: Dockerfile
+        dockerfile: |-
+          FROM ${IMAGE}:${TAG}
+        contextDir: /
+      strategy:
+        dockerStrategy:
+          from:
+            kind: ImageStreamTag
+            name: ${APP_NAME}-verified:${TAG}
+        type: Docker
