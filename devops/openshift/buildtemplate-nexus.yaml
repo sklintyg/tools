@@ -43,5 +43,5 @@ objects:
         dockerStrategy:
           from:
             kind: ImageStreamTag
-            name: ${APP_NAME}-verified:${TAG}
+            name: ${APP_NAME}:${TAG}
         type: Docker

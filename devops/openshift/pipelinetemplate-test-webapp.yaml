@@ -373,6 +373,42 @@ objects:
                     }
                   }
                 }
+                
+                stage('Promote Image to Nexus') {
+                  steps {
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                          echo "Use ImageStream: ${imageStream}"
+
+                          def model = openshift.process("buildtemplate-nexus",
+                            "-p", "APP_NAME=${APP_NAME}", 
+                            "-p", "IMAGE='${imageStream}'", 
+                            "-p", "STAGE=${STAGE}",                          
+                            "-p", "TAG='${env.buildVersion}'")
+                          openshift.apply(model)
+
+                          def build = openshift.selector("bc", "${APP_NAME}-nexus").startBuild()
+                          echo "${build.name()} started" 
+                          timeout (20) {
+                            def status = ""
+                            build.untilEach(1) {
+                                status = it.object().status.phase
+                                echo "Build status: ${status}" 
+                                return !["Running", "Pending", "New"].contains(status)                            
+                            }
+                          }
+                          echo "Logs for nexus build"
+                          build.logs()
+                          if (status != "Complete") {
+                            error("Build terminated with status: ${status}")
+                          }                          
+                        }
+                      }
+                    }
+                  }
+                }
               }
 
               post {
