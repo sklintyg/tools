@@ -300,14 +300,18 @@ objects:
                       }
                   }
               }
-              
-                stage('Run Integration Tests') {
+
+
+            /* START TESTS */
+
+              // RESTASSURED
+                stage('Run restAssuredTest Tests') {
                   when {
                     expression {
-                      if ("${TESTS}" == "-") {
-                        return false
+                      if ("${TESTS}".contains("restAssuredTest")) {
+                        return true
                       }
-                      return true
+                      return false
                     }                      
                   }
                   steps {
@@ -338,7 +342,7 @@ objects:
                             "-p", "JOB_NAME=${env.JOB_NAME}",
                             "-p", "CALLBACK_URL='${hook.getURL()}'",
                             "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
-                            "-p", "TESTS=${TESTS}")
+                            "-p", "TESTS=restAssuredTest")
                           openshift.apply(pod)
                           
                           def data = ""
@@ -346,7 +350,7 @@ objects:
                             echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
                             data = waitForWebhook(hook).trim()
 
-                            [ "restAssuredTest", "protractorTest", "fitnesseTest" ].each { t ->
+                            [ "restAssuredTest"].each { t ->
                               if ("${TESTS}".contains("${t}")) {
                                 echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
                                 publishHTML([
@@ -373,6 +377,242 @@ objects:
                     }
                   }
                 }
+                // END RESTASSURED
+
+
+               // PROTRACTOR
+               stage('Run Protractor Tests') {
+                 when {
+                   expression {
+                     if ("${TESTS}".contains("protractorTest")) {
+                       return true
+                     }
+                     return false
+                   }
+                 }
+                 steps {
+                   script {
+                     openshift.withCluster() {
+                       openshift.withProject() {
+                         echo "Do test"
+
+                         // Setup callback webhook
+                         def hook = registerWebhook()
+
+                         // Just use name
+                         def targetUrl = "http://${APP_NAME}:8080"
+
+                         def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                         echo "Use ImageStream: ${imageStream}"
+
+                         // to make the pod name somewhat unique
+                         // TODO: use generateName in Pod template, i.e. when it works
+                         def num = (new Random().nextInt() % 100000) + 1
+                         def suffix = (num < 0) ? "${num}" : "-${num}"
+                         def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
+                           "-p", "APP_NAME=${APP_NAME}",
+                           "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'",
+                           "-p", "STAGE=${STAGE}",
+                           "-p", "TARGET_URL='${targetUrl}'",
+                           "-p", "BUILD_VERSION=${env.buildVersion}",
+                           "-p", "JOB_NAME=${env.JOB_NAME}",
+                           "-p", "CALLBACK_URL='${hook.getURL()}'",
+                           "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
+                           "-p", "TESTS=protractorTest")
+                         openshift.apply(pod)
+
+                         def data = ""
+                         timeout (30) {
+                           echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
+                           data = waitForWebhook(hook).trim()
+
+                           [ "protractorTest" ].each { t ->
+                             if ("${TESTS}".contains("${t}")) {
+                               echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
+                               publishHTML([
+                                 allowMissing: true,
+                                 alwaysLinkToLastBuild: true,
+                                 keepAll: true,
+                                 reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
+                                 reportFiles: "${t}.html",
+                                 reportName: "${t.capitalize()} Results",
+                               ])
+                             }
+                           }
+                         }
+                         echo "Logs for ${env.BUILD_TAG}${suffix}"
+                         openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
+
+                         if ("SUCCESS".equals(data)) {
+                           echo "Test SUCCESS"
+                         } else {
+                           error("Tests FAILED, see reports for any details")
+                         }
+                       }
+                     }
+                   }
+                 }
+               }
+               // END protractorTest
+
+
+
+
+            // FITNESSE
+             stage('Run Fitnesse Tests') {
+               when {
+                 expression {
+                   if ("${TESTS}".contains("fitnesseTest")) {
+                     return true
+                   }
+                   return false
+                 }
+               }
+               steps {
+                 script {
+                   openshift.withCluster() {
+                     openshift.withProject() {
+                       echo "Do test"
+
+                       // Setup callback webhook
+                       def hook = registerWebhook()
+
+                       // Just use name
+                       def targetUrl = "http://${APP_NAME}:8080"
+
+                       def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                       echo "Use ImageStream: ${imageStream}"
+
+                       // to make the pod name somewhat unique
+                       // TODO: use generateName in Pod template, i.e. when it works
+                       def num = (new Random().nextInt() % 100000) + 1
+                       def suffix = (num < 0) ? "${num}" : "-${num}"
+                       def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
+                         "-p", "APP_NAME=${APP_NAME}",
+                         "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'",
+                         "-p", "STAGE=${STAGE}",
+                         "-p", "TARGET_URL='${targetUrl}'",
+                         "-p", "BUILD_VERSION=${env.buildVersion}",
+                         "-p", "JOB_NAME=${env.JOB_NAME}",
+                         "-p", "CALLBACK_URL='${hook.getURL()}'",
+                         "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
+                         "-p", "TESTS=fitnesseTest")
+                       openshift.apply(pod)
+
+                       def data = ""
+                       timeout (30) {
+                         echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
+                         data = waitForWebhook(hook).trim()
+
+                         [ "fitnesseTest" ].each { t ->
+                           if ("${TESTS}".contains("${t}")) {
+                             echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
+                             publishHTML([
+                               allowMissing: true,
+                               alwaysLinkToLastBuild: true,
+                               keepAll: true,
+                               reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
+                               reportFiles: "${t}.html",
+                               reportName: "${t.capitalize()} Results",
+                             ])
+                           }
+                         }
+                       }
+                       echo "Logs for ${env.BUILD_TAG}${suffix}"
+                       openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
+
+                       if ("SUCCESS".equals(data)) {
+                         echo "Test SUCCESS"
+                       } else {
+                         error("Tests FAILED, see reports for any details")
+                       }
+                     }
+                   }
+                 }
+               }
+             }
+             // END fitnesseTest
+
+
+
+
+              // CYPRESS
+             stage('Run cypressTest Tests') {
+               when {
+                 expression {
+                   if ("${TESTS}".contains("cypressTest")) {
+                     return true
+                   }
+                   return false
+                 }
+               }
+               steps {
+                 script {
+                   openshift.withCluster() {
+                     openshift.withProject() {
+                       echo "Do test"
+
+                       // Setup callback webhook
+                       def hook = registerWebhook()
+
+                       // Just use name
+                       def targetUrl = "http://${APP_NAME}:8080"
+
+                       def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                       echo "Use ImageStream: ${imageStream}"
+
+                       // to make the pod name somewhat unique
+                       // TODO: use generateName in Pod template, i.e. when it works
+                       def num = (new Random().nextInt() % 100000) + 1
+                       def suffix = (num < 0) ? "${num}" : "-${num}"
+                       def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
+                         "-p", "APP_NAME=${APP_NAME}",
+                         "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'",
+                         "-p", "STAGE=${STAGE}",
+                         "-p", "TARGET_URL='${targetUrl}'",
+                         "-p", "BUILD_VERSION=${env.buildVersion}",
+                         "-p", "JOB_NAME=${env.JOB_NAME}",
+                         "-p", "CALLBACK_URL='${hook.getURL()}'",
+                         "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
+                         "-p", "TESTS=cypressTest")
+                       openshift.apply(pod)
+
+                       def data = ""
+                       timeout (30) {
+                         echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
+                         data = waitForWebhook(hook).trim()
+
+                         [ "cypressTest" ].each { t ->
+                           if ("${TESTS}".contains("${t}")) {
+                             echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
+                             publishHTML([
+                               allowMissing: true,
+                               alwaysLinkToLastBuild: true,
+                               keepAll: true,
+                               reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
+                               reportFiles: "${t}.html",
+                               reportName: "${t.capitalize()} Results",
+                             ])
+                           }
+                         }
+                       }
+                       echo "Logs for ${env.BUILD_TAG}${suffix}"
+                       openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
+
+                       if ("SUCCESS".equals(data)) {
+                         echo "Test SUCCESS"
+                       } else {
+                         error("Tests FAILED, see reports for any details")
+                       }
+                     }
+                   }
+                 }
+               }
+             }
+             // END cypressTest
+
+
+            /* END TESTS */
                 
                 stage('Promote Image to Nexus') {
                   steps {
