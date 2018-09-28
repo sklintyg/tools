@@ -45,6 +45,11 @@ objects:
               value: "-Xmx512M"
             - name: DATABASE_NAME
               value: ${DATABASE_NAME}
+            envFrom:
+              - secretRef:
+                  name: ${APP_NAME}-secret-envvar
+              - configMapRef:
+                  name: ${APP_NAME}-configmap-envvar
             image: ${IMAGE}
             imagePullPolicy: Always
             name: ${APP_NAME}
@@ -87,6 +92,9 @@ objects:
               - mountPath: /opt/${APP_NAME}/env
                 name: ${APP_NAME}-env
                 readOnly: true
+              - mountPath: /opt/${APP_NAME}/certifikat
+                name: ${APP_NAME}-certifikat
+                readOnly: true
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           schedulerName: default-scheduler
@@ -101,6 +109,10 @@ objects:
               secret:
                 defaultMode: 420
                 secretName: ${APP_NAME}-env
+            - name: ${APP_NAME}-certifikat
+              secret:
+                defaultMode: 420
+                secretName: ${APP_NAME}-certifikat
   - apiVersion: v1
     kind: Service
     metadata:
