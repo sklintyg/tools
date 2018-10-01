@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.inera.intyg.tools
 
 import groovy.sql.Sql
@@ -27,12 +26,6 @@ import javax.jms.*
 import java.util.concurrent.atomic.AtomicInteger
 /**
  * Script for putting all intyg found in Intygtjänsten on a specific JMS queue.
- *
- * For intyg that has been revoked, two messages will be sent. One with action 'created'
- * and one with action 'revoked'.
- *
- * @author npet
- *
  */
 class SkickaIntygTillIntygsstatistik {
 
@@ -59,34 +52,32 @@ class SkickaIntygTillIntygsstatistik {
     Destination jmsDestination = null
 
     public SkickaIntygTillIntygsstatistik() {
+        this(null)
+    }
+
+    public SkickaIntygTillIntygsstatistik(String fileName) {
         Properties appProperties = new Properties()
 
-        String fileName = "app.properties";
-        URL url = getClass().getResource('/' + fileName);
-        if (url) {
-            new File(url.toURI()).withInputStream { stream ->
-                appProperties.load(stream)
-            }
-        } else {
-            new File(fileName).withInputStream { stream ->
-                appProperties.load(stream)
+        if (fileName) {
+            this.getClass().getResource('/' + fileName).withInputStream {
+                appProperties.load(it)
             }
         }
 
         // Init application's default configuration
         appConf = new ConfigSlurper().parse(appProperties)
-        appConf.debug = false
+        appConf.debug = true
     }
 
     def setupDataSource() {
-        if (appConf.debug == true) println 'setupDataSource()'
+        if (appConf.debug.toBoolean()) println 'setupDataSource()'
 
-        dataSource = new BasicDataSource(driverClassName: appConf.dataSource.driver, url: appConf.dataSource.url,
-                username: appConf.dataSource.username, password: appConf.dataSource.password, initialSize: 1, maxTotal: 1)
+        dataSource = new BasicDataSource(driverClassName: appConf.db.driver, url: appConf.db.url,
+                username: appConf.db.username, password: appConf.db.password, initialSize: 1, maxTotal: 1)
     }
 
     def setupJMS() {
-        if (appConf.debug == true) println 'setupJMS()'
+        if (appConf.debug.toBoolean()) println 'setupJMS()'
 
         if (appConf.broker.username) {
             jmsConnection = new ActiveMQConnectionFactory(userName: appConf.broker.username, password: appConf.broker.password,
@@ -100,7 +91,7 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def tearDownJMS() {
-        if (appConf.debug == true) println 'tearDownJMS()'
+        if (appConf.debug.toBoolean()) println 'tearDownJMS()'
 
         if (jmsSession) {
             jmsSession.close()
@@ -111,7 +102,7 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def getIntyg(def intygId) {
-        if (appConf.debug == true) println 'getIntyg(' + intygId + ')'
+        //if (appConf.debug.toBoolean()) println 'getIntyg(' + intygId + ')'
 
         Intyg intygObj = new Intyg(intygId)
 
@@ -132,7 +123,7 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def sendToQueue(Intyg intyg) {
-        if (appConf.debug == true) println 'sendToQueue(' + intyg + ')'
+        //if (appConf.debug.toBoolean()) println 'sendToQueue(' + intyg + ')'
 
         Message message = createMessage(jmsSession, intyg, false)
         MessageProducer msgProducer = jmsSession.createProducer(jmsDestination)
@@ -151,7 +142,7 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def createMessage(Session session, Intyg intyg, boolean revoked) {
-        if (appConf.debug == true) println 'createMessage(' + session + ',' + intyg + ',' + revoked + ')'
+        //if (appConf.debug.toBoolean()) println 'createMessage(' + session + ',' + intyg + ',' + revoked + ')'
 
         Message message = session.createTextMessage(intyg.contents)
         message.with {
@@ -163,7 +154,7 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def calcPercentDone() {
-        if (appConf.debug == true) println 'calcPercentDone()'
+        if (appConf.debug.toBoolean()) println 'calcPercentDone()'
 
         Float total = (float) totalCount.get()
         Float done = (float) processedCount.get()
@@ -172,14 +163,14 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def printProgress() {
-        if (appConf.debug == true) println 'printProgress()'
+        if (appConf.debug.toBoolean()) println 'printProgress()'
 
         println "- ${calcPercentDone()}% done at ${(int)((System.currentTimeMillis()-startTime) / 1000)} seconds: " +
         "Create msg: ${createMsgCount.get()} Revoke msg: ${revokeMsgCount.get()}"
     }
 
     def run() {
-        if (appConf.debug == true) println 'run()'
+        if (appConf.debug.toBoolean()) println 'run()'
 
         println "Program starting..."
         startTime = System.currentTimeMillis()
@@ -203,19 +194,19 @@ class SkickaIntygTillIntygsstatistik {
     }
 
     def getSqlStmt() {
-        if (appConf.debug == true) println 'getSqlStmt()'
+        if (appConf.debug.toBoolean()) println 'getSqlStmt()'
 
         def sqlStmt = appConf.sql.select
-        if (appConf.sql.where._1.value.intygstyper || appConf.sql.where._1.value.date.from) {
+        if (!isNullOrEmpty(appConf.intygstyper) || !isNullOrEmpty(appConf.date.from)) {
             sqlStmt += ' WHERE '
-            if (appConf.sql.where._1.value.intygstyper) {
-                sqlStmt += String.format(appConf.sql.where._1.clause, appConf.sql.where._1.value.intygstyper)
-            }
-            if (appConf.sql.where._2.value.date.from) {
-                if (appConf.sql.where._1.value.intygstyper) {
+            if (!isNullOrEmpty(appConf.intygstyper)) {
+                sqlStmt += String.format(appConf.sql.where._1.clause, appConf.intygstyper)
+                if (!isNullOrEmpty(appConf.date.from)) {
                     sqlStmt += ' AND '
+                    sqlStmt += String.format(appConf.sql.where._2.clause, appConf.date.from, appConf.date.to)
                 }
-                sqlStmt += String.format(appConf.sql.where._2.clause, appConf.sql.where._2.value.date.from, appConf.sql.where._2.value.date.to)
+            } else {
+                sqlStmt += String.format(appConf.sql.where._2.clause, appConf.date.from, appConf.date.to)
             }
         }
 
@@ -223,40 +214,112 @@ class SkickaIntygTillIntygsstatistik {
             sqlStmt += ' ORDER BY ' + appConf.sql.orderby
         }
 
-        if (appConf.debug == true) println 'sqlStmt = ' + sqlStmt
+        if (appConf.debug.toBoolean()) println 'sqlStmt = ' + sqlStmt
         return sqlStmt
     }
 
     def parseArguments(String[] args) {
-        if (appConf.debug == true) println 'parseArguments(' + args + ')'
-
+        if (appConf.debug.toBoolean()) println 'parseArguments(' + args + ')'
+        
         if (args) {
             Properties argsProperties = new Properties()
             args.each() {
                 def index = it.indexOf('=', 0)
                 if (index > -1) {
-                    argsProperties.put(it.substring(0, index), it.substring(index + 1))
+                    argsProperties.put(
+                        shVariableToDotNotation(it.substring(0, index)), 
+                        it.substring(index + 1).replaceAll(~/"/, ""))
                 }
             }
+
+            //println "argsProperties: " + argsProperties
 
             ConfigObject argsConf = new ConfigSlurper().parse(argsProperties)
             if (!argsConf.isEmpty()) {
                 appConf.merge(argsConf)
             }
         }
+        //println "appConf: " + appConf
+        return appConf
     }
 
     def validateArguments() {
-        if (appConf.debug == true) println 'validateArguments()'
+        if (appConf.debug.toBoolean()) println 'validateArguments()'
 
-        // This is a tight coupling between build.gradle and this class
-        if (appConf.sql.where._2.value.date.from) {
-            assert appConf.sql.where._2.value.date.to
+        assert isNullOrEmpty(appConf.db.url) == false
+        assert isNullOrEmpty(appConf.db.driver) == false
+        assert isNullOrEmpty(appConf.broker.url) == false
+        assert isNullOrEmpty(appConf.broker.queue) == false
+
+        if (!isNullOrEmpty(appConf.date.from)) {
+            assert !isNullOrEmpty(appConf.date.to)
         }
     }
 
+    /**
+	 * Helper method to convert a camel case property name to a dot notated
+	 * one. For example, myPropertyName would become my.property.name.
+     * Property names that don't start with a lower case letter are assumed to not
+     * be camel case and are returned as is.
+	 * @param propertyName the name of the property to convert
+	 * @return the converted property name
+	 */
+	def String camelCaseToDotNotation(String propertyName) {
+		if ( !propertyName.charAt(0).isLowerCase() ) {
+			return propertyName
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for ( char c : propertyName.getChars() ) {
+			if (c.upperCase) {
+				sb.append(".")
+				sb.append(c.toLowerCase())
+			} else {
+				sb.append(c)
+			}
+		}
+		return sb.toString()
+	}
+
+    /**
+	 * Helper method to convert shell variable name to a dot notated
+	 * one. The convention for a property is that all characters is
+     * written in UPPERCASE and delimited with an underscore to separate
+     * words.
+     * 
+     * For example, BROKER_URL would become broker.url.
+     * 
+     * Property names that are not all upper case are returned as is.
+     * If property name includes a '_' then replace it with a '.' (dot).
+     * 
+	 * @param propertyName the name of the property to convert
+	 * @return the converted property name
+	 */
+	def String shVariableToDotNotation(String propertyName) {
+        if (!isUpperCase(propertyName)) {
+            return propertyName
+        }
+        return propertyName.toLowerCase().replaceAll(~/_/, ".")
+	}
+
+    def boolean isUpperCase(String s) {
+		for (char c : s.getChars()) {
+            if (c.lowerCase) {
+                return false
+            }
+        }
+        return true
+    }
+
+    def boolean isNullOrEmpty(String str) { 
+        if (!str?.trim()) {
+            return true
+        }
+        return false
+    }
+
     static void main(String[] args) {
-        SkickaIntygTillIntygsstatistik app = new SkickaIntygTillIntygsstatistik()
+        SkickaIntygTillIntygsstatistik app = new SkickaIntygTillIntygsstatistik('app.properties')
         app.parseArguments(args)
         app.validateArguments()
         app.setupDataSource()
@@ -274,3 +337,5 @@ class SkickaIntygTillIntygsstatistik {
         }
     }
 }
+
+

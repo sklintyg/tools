@@ -4,6 +4,7 @@ group = 'se.inera.intyg.tools'
 version = '1.0.0'
 
 apply plugin: 'application'
+apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
@@ -16,6 +17,7 @@ dependencies {
     compile 'org.apache.commons:commons-dbcp2:2.0'
     compile 'org.apache.activemq:activemq-all:5.10.0'
     compile 'com.h2database:h2:1.4.197'
+    compile 'junit:junit:4.12'    
 }
 
 repositories {
@@ -37,16 +39,16 @@ task runScript(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
     if (project.hasProperty('DB_URL')) {
-        args 'dataSource.url=' + project.getProperty('DB_URL');
+        args 'db.url=' + project.getProperty('DB_URL');
     }
     if (project.hasProperty('DB_DRIVER')) {
-        args 'dataSource.driver=' + project.getProperty('DB_DRIVER');
+        args 'db.driver=' + project.getProperty('DB_DRIVER');
     }
     if (project.hasProperty('DB_USERNAME')) {
-        args 'dataSource.username=' + project.getProperty('DB_USERNAME');
+        args 'db.username=' + project.getProperty('DB_USERNAME');
     }
     if (project.hasProperty('DB_PASSWORD')) {
-        args 'dataSource.password=' + project.getProperty('DB_PASSWORD');
+        args 'db.password=' + project.getProperty('DB_PASSWORD');
     }
     if (project.hasProperty('BROKER_URL')) {
         args 'broker.url=' + project.getProperty('BROKER_URL');
@@ -61,13 +63,13 @@ task runScript(type: JavaExec) {
         args 'broker.password=' + project.getProperty('BROKER_PASSWORD');
     }
     if (project.hasProperty('INTYGSTYPER')) {
-        args 'sql.where._1.value.intygstyper=' + project.getProperty('INTYGSTYPER')
+        args 'intygstyper=' + project.getProperty('INTYGSTYPER')
     }
     if (project.hasProperty('DATE_FROM')) {
-        args 'sql.where._2.value.date.from=' + project.getProperty('DATE_FROM')
+        args 'date.from=' + project.getProperty('DATE_FROM')
     }
     if (project.hasProperty('DATE_TO')) {
-        args 'sql.where._2.value.date.to=' + project.getProperty('DATE_TO')
+        args 'date.to=' + project.getProperty('DATE_TO')
     }
     if (project.hasProperty('DEBUG')) {
         args 'debug=' + project.getProperty('DEBUG')

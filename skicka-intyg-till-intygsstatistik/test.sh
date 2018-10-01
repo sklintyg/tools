@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 DB_URL=
 DB_DRIVER=
@@ -11,7 +11,7 @@ BROKER_PASSWORD=
 INTYGSTYPER=
 DATE_FROM=
 DATE_TO=
-DEBUG=false
+DEBUG=true
 
 # Exempel
 #DB_URL="jdbc:mysql://localhost:3306/intyg?useCompression=true"
@@ -25,7 +25,7 @@ DEBUG=false
 #INTYGSTYPER="'luse','lisjp'"
 #DATE_FROM="2016-12-01"
 #DATE_TO="2017-08-31"
-#DEBUG=false
+#DEBUG=true
 
 if [ -n "$DATE_FROM" ]; then
   if [ -z "$DATE_TO" ]; then
@@ -66,7 +66,7 @@ if [ ! -z $DATE_TO ]; then
   ARGS+="-PDATE_TO=$DATE_TO "
 fi
 if [ ! -z $DEBUG ]; then
-  ARGS+="-PDEBUG=$DEBUG "
+  ARGS+="-PDEBUG=$DEBUG"
 fi
 
 ./gradlew $ARGS

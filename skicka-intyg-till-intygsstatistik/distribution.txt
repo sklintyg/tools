@@ -1,6 +1,0 @@
-README.md
-run.sh
-gradlew
-build.gradle
-gradle/**
-src/main/groovy/**
