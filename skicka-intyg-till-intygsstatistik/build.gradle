@@ -1,15 +1,13 @@
-description = "Skicka intyg till Intygsstatistik"
-
-group = 'se.inera.intyg.tools'
-version = '1.0.0'
-
 apply plugin: 'application'
-apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: "maven-publish"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+repositories {
+    mavenLocal()
+    maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.7'
@@ -20,12 +18,22 @@ dependencies {
     compile 'junit:junit:4.12'    
 }
 
-repositories {
-     maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
-     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/" }
-     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
-     maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/" }
-     maven { url "http://repo.maven.apache.org/maven2" }
+description = "Skicka intyg till Intygsstatistik"
+
+group = 'se.inera.intyg.tools'
+version = '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+artifacts { 
+    archives distZip 
+}
+
+uploadArchives.repositories.mavenDeployer {
+    repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
+        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+    }
 }
 
 task runScript(type: JavaExec) {
@@ -76,5 +84,8 @@ task runScript(type: JavaExec) {
     }
 
 }
+
+distZip.dependsOn build
+uploadArchives.dependsOn distZip
 
 defaultTasks 'runScript'
