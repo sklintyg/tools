@@ -638,12 +638,13 @@ objects:
                                 echo "Build status: ${status}" 
                                 return !["Running", "Pending", "New"].contains(status)                            
                             }
-                          }
-                          echo "Logs for nexus build"
-                          build.logs()
-                          if (status != "Complete") {
-                            error("Build terminated with status: ${status}")
-                          }                          
+
+                            echo "Logs for nexus build"
+                            build.logs()
+                            if (status != "Complete") {
+                              error("Build terminated with status: ${status}")
+                            }  
+                          }                 
                         }
                       }
                     }
