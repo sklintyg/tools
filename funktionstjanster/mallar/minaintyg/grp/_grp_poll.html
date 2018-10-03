@@ -1,5 +1,7 @@
 PARM{include:/head.html?title=text-mbi-loginusingmbi}
-<!-- Page used for MBI Authentication Poll -->
+<!--
+  PARM{include:/head.html?title=text-mbi-loginusingmbi}
+  <!-- Page used for MBI Authentication Poll -->
 PARM{meta-header}
 <!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
 <script type="text/javascript" src="/mg-local/poll.min.js"></script>
@@ -7,26 +9,26 @@ PARM{include:/grp/grppoll-script.html}
 </head>
 <body id="commonbody" onload="polling_start()">
 
-  PARM{include:/header.html}
+PARM{include:/header.html}
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
+    </div>
+    <h2>Inloggning med Mobilt BankID</h2>
 
-  <div class="backlink">
-    <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
-  </div>
+    <div id="infotext">PARM{message}</div>
 
-  <h2>Inloggning med Mobilt BankID</h2>
+    <i class="spinner-position material-icons animate-spin">refresh</i>
 
-  <div id="infotext">PARM{message}</div>
+    <div id='nojavascript'>
+        <p>
+            PARM{text-automaticupdate}
+        </p>
+        <p>
+            <a class='button' href="PARM{poll-url}">PARM{text-update}</a>
+        </p>
+    </div>
 
-  <img class="progressRotation" src="/mg-local/mg-gfx/rotation.gif" alt="In progress-icon">
-
-  <div id='nojavascript'>
-    <p>
-      PARM{text-automaticupdate}
-    </p>
-    <p>
-      <a class='button' href="PARM{poll-url}">PARM{text-update}</a>
-    </p>
-  </div>
-<br>
-
+    <br>
+</div>
 PARM{include:/footer.html}

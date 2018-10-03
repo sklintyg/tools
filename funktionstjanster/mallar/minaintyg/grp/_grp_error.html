@@ -10,19 +10,20 @@ PARM{include:/head.html?title=text-genericerror}
 
     }
 </style>
+
 </head>
 <body id="errorbody">
 
 PARM{include:/header.html}
-
-    <div class="backlink">
-      <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
     </div>
 
     <h2>Inloggningen misslyckades</h2>
-    <div class="alert alert-danger">
-      <p class="wordwrap">PARM{message}</p>
-      <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
-    </div>
+    <p class="wordwrap">PARM{message}</p>
+    <p class="wordwrap">PARM{text-logica-refidmsg} PARM{refid}</p>
+
+</div>
 
 PARM{include:/footer.html}

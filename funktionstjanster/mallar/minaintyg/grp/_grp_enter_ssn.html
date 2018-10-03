@@ -1,16 +1,57 @@
 PARM{include:/header.html}
-<div class="backlink">
-  <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
-</div>
-<h2>Inloggning med Mobilt BankID</h2>
-<form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
-    <p>
-        <h3>Ange ditt personnummer<!--PARM{text-mbi-ssn}--></h3>
-        <input type="tel" name="ssn" placeholder="ÅÅÅÅMMDD-NNNN">
-        <input class="btn btn-primary" type="submit" value="Fortsätt">
-    </p>
 
-    <p class="alert alert-danger errortxt">PARM{error-message}</p>
-</form>
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
+    </div>
+    <h2>Inloggning med Mobilt BankID</h2>
+    <form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
+        <span><p>Ange ditt personnummer<!--PARM{text-mbi-ssn}--></p></span>
+        <div class="pnrinput">
+            <input class="form-control inputfield" type="text" name="ssn" placeholder="ååååmmdd-nnnn" maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
+                   oninput="valueCheck()">
+            <button class="button btn btn-success" id="submitButton" type="submit" disabled>
+                <span>Fortsätt</span>
+            </button>
+        </div>
+        <p class="errortxt">PARM{error-message}</p>
+    </form>
+</div>
+
+<script>
+    var oldValue = document.getElementById("numberInput").value;
+
+    function valueCheck() {
+        var newValue = document.getElementById("numberInput").value;
+
+        if (newValue.match(/(^\d{1,8}$|^[0-9]{8}[-]{1}[0-9]{0,4}$)/)) {
+            oldValue = newValue;
+        } else if (newValue.length > 1) {
+            document.getElementById("numberInput").value = oldValue;
+        } else {
+            document.getElementById("numberInput").value = '';
+        }
+
+    }
+    function inputCheck(event) {
+
+        var inputValue = document.getElementById("numberInput").value;
+
+        if (inputValue.match(/(^\d{1,8}$|^[0-9]{8}[-]{1}[0-9]{0,4}$)/)) {
+            var key = event.keyCode || event.charCode;
+
+            if (inputValue.length === 8 && key !== 8){
+                document.getElementById("numberInput").value = inputValue + '-';
+            }
+        }
+
+        if(inputValue.match(/[0-9]{8}[-]{1}[0-9]{4}/))   {
+            document.getElementById("submitButton").disabled = false;
+        } else {
+            document.getElementById("submitButton").disabled = true;
+        }
+    }
+</script>
+
 
 PARM{include:/footer.html}

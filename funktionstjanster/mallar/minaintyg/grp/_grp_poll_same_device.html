@@ -1,97 +1,88 @@
 <!doctype html>
 <html>
 <head>
-<!-- Vid problem ange referens: (PARM{refid}) -->
-  <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
-  <title>Logga in med BankID</title>
-  <link href="/common.css" rel="stylesheet" type="text/css">
-  <!--[if IE 7]>
-    <link href="/ie.css" rel="stylesheet" type="text/css">
-  <![endif]-->
-  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
-
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-
-PARM{meta-header}
-<!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
-<script type="text/javascript" src="/mg-local/poll.min.js"></script>
 PARM{include:/grp/grppoll_same-script.html}
 
 </head>
 <body id="commonbody" onload="polling_start()">
 
-  PARM{include:/header.html}
-
-    <div class="backlink">
-      <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+PARM{include:/header.html}
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
     </div>
-    <h2>Inloggning med BankID</h2>
-<!-- 1 -->
-       <table width="100%">
-            <tr>
-                <td >
-                    <div class="centeredleftouter"><div id="infotext" class="wordwrap">PARM{message}</div></div><br><br>
-                </td>
-            </tr>
-            <tr>
-                <td >
-                    <img class="progressRotation" src="/mg-local/mg-gfx/rotation.gif" alt="In progress-icon">
-                </td>
-            </tr>
-        </table>
-        <table width="100%" id='nojavascript'>
-            <tr>
-                <td>
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td >
-                    PARM{text-automaticupdate}<br><br>
-                </td>
-            </tr>
-            <tr>
-                <td colspan=4>
-                    <a class='button' href="/mg-localPARM{refresh}">PARM{text-update}</a>
-                </td>
-            </tr>
-        </table>
-        <table width=100%>
-            <tr>
-                <td>
-                    &nbsp;
-  	        </td>
- 	    </tr>
-            <tr>
-                <td id="manualstart" style="PARM{grp-visibility-manual-link}" >
+    <h2>Logga in med BankID</h2>
+    <!-- 1 -->
+    <table width="100%">
+        <tr>
+            <td>
+                <div class="centeredleftouter">
+                    <div id="infotext" class="wordwrap">PARM{message}</div>
+                </div>
+                <br><br>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <i class="spinner-position material-icons animate-spin">refresh</i>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" id='nojavascript'>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                PARM{text-automaticupdate}<br><br>
+            </td>
+        </tr>
+        <tr>
+            <td colspan=4>
+                <a class='button' href="/mg-localPARM{refresh}">PARM{text-update}</a>
+            </td>
+        </tr>
+    </table>
+    <table width=100%>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td id="manualstart" style="PARM{grp-visibility-manual-link}">
                 <!--<a class='button' href="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}">PARM{text-rfa18}</a> -->
-                   <a class='button' href="PARM{grp-link}">PARM{text-grp-rfa18}</a>
-                </td>
-        <!--
-        <td align=center >
-            <form>
-                <input type="button" value="Starta BankID på den här enheten" onClick="startBankID();">
-            </form>
-        </td>
-        -->
-            </tr>
-            <tr>
-                <td>
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td >
-                    <iframe src="PARM{grp-link}" height=0 width=0></iframe>
-                </td>
-            </tr>
-        </table>
-<!-- 1 -->
-        </div>
-        <div class="clearFloat"></div>
-       </div>
-      </div>
-    <br>
-  PARM{include:/footer.html}
+                <a class='button' href="PARM{grp-link}">PARM{text-grp-rfa18}</a>
+            </td>
+            <!--
+            <td align=center >
+                <form>
+                    <input type="button" value="Starta BankID på den här enheten" onClick="startBankID();">
+                </form>
+            </td>
+            -->
+        </tr>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a href="/">PARM{text-clickhereformainpage}</a>
+                <iframe src="PARM{grp-link}" height=0 width=0></iframe>
+            </td>
+        </tr>
+    </table>
+    <!-- 1 -->
+</div>
+<div class="clearFloat"></div>
+</div>
+</div>
+<br>
+</div>
+PARM{include:/footer.html}
 </body>
 </html>

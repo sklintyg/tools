@@ -1,37 +1,36 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<!--Vid problem ange referens: (PARM{refid})-->
-  <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
+  <!--Vid problem ange referens: (PARM{refid})-->
+
   <title>PARM{text-loginfail}</title>
-  <link href="/common.css" rel="stylesheet" type="text/css">
+
   <!--[if IE 7]>
-    <link href="/ie.css" rel="stylesheet" type="text/css">
+  <link href="/ie.css" rel="stylesheet" type="text/css">
   <![endif]-->
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-  <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
+
 </head>
 <body id="firstbody" style="margin: 0;">
 
 
-  PARM{include:/header.html}
+PARM{include:/header.html}
 
-  <div class="backlink">
-    <a href="/"><i class="icon-angle-left"></i>Tillbaka till inloggningssidan</a>
+<div id="containerbody">
+  <div id="backlink">
+    <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
   </div>
 
-      <h2>PARM{text-loginfail}</h2>
+  <h2>PARM{text-loginfail}</h2>
 
-      <div class="alert alert-danger">
-        <p >PARM{text-suppliedincorrect}</p>
+  <p>PARM{text-suppliedincorrect}</p>
 
-        <p >PARM{text-notusemethod}</p>
+  <p>PARM{text-notusemethod}</p>
 
-        <p >PARM{text-iferrorpersist}</p>
-        <p >PARM{text-logica-refidmsg} PARM{refid}</p>
-      </div>
+  <p>PARM{text-iferrorpersist}</p>
+  <p>PARM{text-logica-refidmsg} PARM{refid}</p>
 
-  PARM{include:/footer.html}
+</div>
+PARM{include:/footer.html}
 
-  </body>
+</body>
 </html>
