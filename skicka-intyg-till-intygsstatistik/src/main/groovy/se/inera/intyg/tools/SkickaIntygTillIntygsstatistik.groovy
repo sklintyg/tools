@@ -34,16 +34,17 @@ class SkickaIntygTillIntygsstatistik {
     static final JMS_PARAM_CERTIFICATE_ID = "certificate-id"
     static final JMS_PARAM_ACTION = "action"
 
-    static final SQL_INTYG_PAYLOAD = "SELECT DOCUMENT FROM ORIGINAL_CERTIFICATE WHERE ID = :id"
-    static final SQL_INTYG_REVOKED = "SELECT COUNT(CERTIFICATE_ID) AS REVOKED FROM CERTIFICATE_STATE WHERE CERTIFICATE_ID = :id AND STATE = 'CANCELLED'"
+    static final SQL_INTYG_PAYLOAD = "SELECT DOCUMENT FROM ORIGINAL_CERTIFICATE WHERE CERTIFICATE_ID = :id"
 
     final AtomicInteger totalCount = new AtomicInteger(0)
     final AtomicInteger processedCount = new AtomicInteger(0)
     final AtomicInteger createMsgCount = new AtomicInteger(0)
-    final AtomicInteger revokeMsgCount = new AtomicInteger(0)
+    final AtomicInteger emptyMsgCount = new AtomicInteger(0)
 
     long startTime = 0;
 
+    final lock = new Object()
+ 
     ConfigObject appConf = null
 
     BasicDataSource dataSource = null
@@ -66,7 +67,7 @@ class SkickaIntygTillIntygsstatistik {
 
         // Init application's default configuration
         appConf = new ConfigSlurper().parse(appProperties)
-        appConf.debug = true
+        appConf.debug = false
     }
 
     def setupDataSource() {
@@ -101,24 +102,15 @@ class SkickaIntygTillIntygsstatistik {
         }
     }
 
-    def getIntyg(def intygId) {
+    def getIntyg(Sql sql, String intygId) {
         //if (appConf.debug.toBoolean()) println 'getIntyg(' + intygId + ')'
-
-        Intyg intygObj = new Intyg(intygId)
-
-        def sql = new Sql(dataSource)
-
-        def payloadRow = sql.firstRow(SQL_INTYG_PAYLOAD, [id : intygId])
-        if (payloadRow) {
-            intygObj.contents = new String(payloadRow.DOCUMENT, 'UTF-8')
+        
+        Intyg intygObj = new Intyg(intygId)        
+        def row = sql.firstRow SQL_INTYG_PAYLOAD, [id: intygId]
+        if (row) {
+            intygObj.contents = new String(row.DOCUMENT, 'UTF-8');
         }
 
-        def revokedRow = sql.firstRow(SQL_INTYG_REVOKED, [id : intygId])
-        if (revokedRow) {
-            intygObj.revoked = (revokedRow.REVOKED != 0)
-        }
-
-        sql.close()
         return intygObj
     }
 
@@ -166,7 +158,7 @@ class SkickaIntygTillIntygsstatistik {
         if (appConf.debug.toBoolean()) println 'printProgress()'
 
         println "- ${calcPercentDone()}% done at ${(int)((System.currentTimeMillis()-startTime) / 1000)} seconds: " +
-        "Create msg: ${createMsgCount.get()} Revoke msg: ${revokeMsgCount.get()}"
+        "Create msg: ${createMsgCount.get()} Empty msg: ${emptyMsgCount.get()}"
     }
 
     def run() {
@@ -176,18 +168,28 @@ class SkickaIntygTillIntygsstatistik {
         startTime = System.currentTimeMillis()
 
         println("- Fetching list of intyg, might take a while...")
-        def bootstrapSql = new Sql(dataSource)
+        
+        def bootstrapSql = Sql.newInstance(dataSource)
         def intygIds = bootstrapSql.rows(getSqlStmt())
-        totalCount.addAndGet(intygIds.size())
         bootstrapSql.close()
+        totalCount.addAndGet(intygIds.size())
 
         println "- ${totalCount.get()} intyg found"
         println "- Starting putting intyg on queue: ${appConf.broker.queue}"
 
-        for (intygIdRow in intygIds) {
-            Intyg intyg = getIntyg(intygIdRow.ID)
-            sendToQueue(intyg)
+        def sql = Sql.newInstance(dataSource)
+
+        intygIds.each {            
+            Intyg intyg = getIntyg(sql, it.ID)
+            if (intyg.contents != null) {
+              sendToQueue(intyg)
+            } else {
+              emptyMsgCount.incrementAndGet()
+              println "No content for intyg with id '${it.ID}')"
+            }
         }
+
+        sql.close()
 
         printProgress();
         println "Program done!"
@@ -231,7 +233,6 @@ class SkickaIntygTillIntygsstatistik {
                         it.substring(index + 1).replaceAll(~/"/, ""))
                 }
             }
-
             //println "argsProperties: " + argsProperties
 
             ConfigObject argsConf = new ConfigSlurper().parse(argsProperties)

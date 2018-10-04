@@ -21,7 +21,7 @@ dependencies {
 description = "Skicka intyg till Intygsstatistik"
 
 group = 'se.inera.intyg.tools'
-version = '1.0.0'
+version = '1.0.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -84,8 +84,5 @@ task runScript(type: JavaExec) {
     }
 
 }
-
-distZip.dependsOn build
-uploadArchives.dependsOn distZip
 
 defaultTasks 'runScript'

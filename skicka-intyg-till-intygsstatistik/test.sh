@@ -11,7 +11,7 @@ BROKER_PASSWORD=
 INTYGSTYPER=
 DATE_FROM=
 DATE_TO=
-DEBUG=true
+DEBUG=false
 
 # Exempel
 #DB_URL="jdbc:mysql://localhost:3306/intyg?useCompression=true"
