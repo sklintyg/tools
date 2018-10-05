@@ -1,28 +1,11 @@
 <!doctype html>
 <html>
 <head>
-    <!-- Vid problem ange referens: (PARM{refid}) -->
-    <link rel="shortcut icon" type="image/x-icon" media="screen" href="/images/favicon.ico">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <title>Logga in med BankID</title>
-    <link href="/common.css" rel="stylesheet" type="text/css">
-    <!--[if IE 7]>
-    <link href="/ie.css" rel="stylesheet" type="text/css">
-    <![endif]-->
-    <meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no"/>
-
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-
-    PARM{meta-header}
-    <!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
-    <script type="text/javascript" src="/mg-local/poll.min.js"></script>
-
-    <script type="text/javascript" src="/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="/bootstrap.min.js"></script>
-    PARM{include:/grp/grppoll_same-script.html}
+PARM{include:/grp/grppoll_same-script.html}
 
 </head>
+
+PARM{include:/head.html}
 <body id="commonbody" onload="polling_start()">
 
 PARM{include:/header.html}
@@ -30,6 +13,9 @@ PARM{include:/header.html}
     <div id="backlink">
         <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
     </div>
+
+    PARM{include:/content.html}
+
     <h2>Logga in med BankID</h2>
     <!-- 1 -->
     <table width="100%">

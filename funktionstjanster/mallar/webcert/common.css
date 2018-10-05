@@ -17,18 +17,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url('https://cdn.rawgit.com/google/material-design-icons/a6145e16/iconfont/MaterialIcons-Regular.eot');
+    /* For IE6-8 */
+    src: url('https://cdn.rawgit.com/google/material-design-icons/a6145e16/iconfont/MaterialIcons-Regular.woff2') format('woff2'),
+    url('https://cdn.rawgit.com/google/material-design-icons/a6145e16/iconfont/MaterialIcons-Regular.woff') format('woff'),
+    url('https://cdn.rawgit.com/google/material-design-icons/a6145e16/iconfont/MaterialIcons-Regular.ttf') format('truetype');
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 400;
+    src: local('Roboto'), local('Roboto-Regular'),
+    url('/fonts/Roboto-Regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */ url('/fonts/Roboto-Regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    /* Preferred icon size */
+    display: inline-block;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
 html {
     position: relative;
     min-height: 100%;
-}
-
-@font-face {
-	font-family: Roboto;
-	font-style: normal;
-	font-weight: 400;
-	src: local('Roboto'), local('Roboto-Regular'),
-	url('/fonts/Roboto-Regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-	url('/fonts/Roboto-Regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 body {
@@ -50,21 +79,16 @@ body#commonbody #header .right {
 #containerbody {
     margin-right: auto;
     margin-left: auto;
-    padding-left: 15px;
-    padding-right: 15px;
-    max-width: 1280px;
     width: 100%;
     -ms-flex: 1 0 auto;
     flex: 1 0 auto;
 }
 
 .containerfooter {
-    max-width: 1280px;
     margin-left: auto;
     margin-right: auto;
     width: 100%;
     padding-left: 15px;
-
 }
 
 #header {
@@ -85,7 +109,6 @@ body#commonbody #header .right {
 
 #maindiv {
     width: 100%;
-    padding: 10px 0 30px;
 }
 
 .left,
@@ -112,6 +135,7 @@ body#commonbody #header .right {
     flex-direction: row;
     align-items: center;
     margin: 14px 0 35px 0;
+    padding-left: 160px;
 }
 
 #backlink a {
@@ -121,6 +145,10 @@ body#commonbody #header .right {
 #backlink i.material-icons {
     font-weight: bold;
     text-decoration: none;
+}
+
+#backlink .inner {
+    padding-left: 160px;
 }
 
 #loginLinksWrp {
@@ -381,7 +409,8 @@ input[type=text]::-ms-clear {
 }
 
 .form-control {
-    width: 9.5em;
+    width: 138px;
+    height: 35px;
     padding: 0 0.9em;
     margin-right: 0.5em;
     margin-top: 0.5em;
@@ -390,8 +419,13 @@ input[type=text]::-ms-clear {
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
+/* Prevent autofill yellow color */
 input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     background-color: #FFFFFF !important;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
 }
 
 .pnrinput {
@@ -400,11 +434,6 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     flex-wrap: wrap;
 }
 
-/*
-input.form-control.ng-invalid-valid-pnr {
-	border-color: #fff;
-}
-*/
 input.form-control:focus {
     outline: none !important;
     border: 1px solid #496CEC;
@@ -462,31 +491,6 @@ button {
     color: #DA4453;
 }
 
-input[type=text] {
-    /*width: 200px;
-    border: 1px solid #bbb;
-    border-bottom: 1px solid #7a7a7a;
-    border-radius: 3px;
-    padding: 5px 5px;
-    height: 22px;*/
-}
-
-input[type="submit"] {
-    /*
-    border: 1px solid #bbb;
-    border-bottom: 1px solid #7a7a7a;
-    padding: 8px 14px;
-    margin: 0;
-    border-radius: 3px;
-    background: #fff; */
-}
-
-input[type="submit"]:hover {
-    /*
-    background: #f5f5f5;
-    cursor: pointer; */
-}
-
 #startBtn {
     text-align: center;
 }
@@ -509,6 +513,10 @@ input[type="submit"]:hover {
 #footer .inner {
     display: flex;
     flex-direction: row;
+}
+
+#footer .cookies {
+    padding-top: 5px;
 }
 
 #footer .leftFooter {
@@ -555,8 +563,19 @@ input[type="submit"]:hover {
 }
 
 #footer i.material-icons {
-    vertical-align: middle;
     padding-left: 4px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.smallWrapper p {
+    display: inline;
+}
+
+.smallWrapper i.material-icons {
+    padding-left: 4px;
+    display: inline-block;
+    vertical-align: inherit;
 }
 
 .modal-body a {
@@ -606,13 +625,13 @@ input[type="submit"]:hover {
 }
 
 #headerwrapper .headercontent {
-    max-width: 1440px;
     margin: auto;
     display: flex;
     align-items: stretch;
     justify-content: space-between;
     background-color: #3D4260;
     height: 80px;
+    padding-left: 70px;
 }
 
 #headerwrapper .logo {
@@ -638,7 +657,7 @@ input[type="submit"]:hover {
 
 .inner {
     width: 100%;
-    max-width: 1280px;
+    padding-left: 165px;
     margin: 0 auto;
     -ms-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -660,12 +679,6 @@ input[type="submit"]:hover {
     display: none;
 }
 
-.testa_eleg span {
-    display: inline-block;
-    vertical-align: middle;
-    padding-left: 4px;
-}
-
 .spinner-position {
     margin-left: 50%;
     margin-top: 70px;
@@ -675,6 +688,7 @@ input[type="submit"]:hover {
 i.material-icons.spinner-position {
     font-size: 24px !important;
 }
+
 /*
 Animation example, for spinners
 */
@@ -686,6 +700,7 @@ Animation example, for spinners
     animation: spin 2s infinite linear;
     display: inline-block;
 }
+
 @-moz-keyframes spin {
     0% {
         -moz-transform: rotate(0deg);
@@ -701,6 +716,7 @@ Animation example, for spinners
         transform: rotate(359deg);
     }
 }
+
 @-webkit-keyframes spin {
     0% {
         -moz-transform: rotate(0deg);
@@ -716,6 +732,7 @@ Animation example, for spinners
         transform: rotate(359deg);
     }
 }
+
 @-o-keyframes spin {
     0% {
         -moz-transform: rotate(0deg);
@@ -731,6 +748,7 @@ Animation example, for spinners
         transform: rotate(359deg);
     }
 }
+
 @-ms-keyframes spin {
     0% {
         -moz-transform: rotate(0deg);
@@ -746,6 +764,7 @@ Animation example, for spinners
         transform: rotate(359deg);
     }
 }
+
 @keyframes spin {
     0% {
         -moz-transform: rotate(0deg);
@@ -762,71 +781,18 @@ Animation example, for spinners
     }
 }
 
-
-
-
-
-
-
-@media all and (max-width: 1124px) {
-
-    #maindiv .left {
-
-    }
-
-    #maindiv .right {
-        margin-left: 8%;
-    }
-
-    #curve {
-        display: none;
-    }
-
-    #curve_mobile {
-        display: block;
-    }
-
-    .inner {
-        padding: 0 10px;
-    }
-
-    #footer .inner {
-        margin: 0 0 0 10px;
-    }
-}
-
-@media all and (max-width: 650px) {
-
-    #topdiv {
-        padding: 50px 50px;
-    }
-
-    .inner {
-        padding: 0 20px;
-        box-sizing: border-box;
-    }
-}
-
-@media (max-height: 700px) {
-    #footer {
-        position: relative;
-        height: auto;
-    }
-}
-
 @media all and (max-width: 480px) {
-
-    body {
-        margin: 0 0 294px !important;
-    }
-
-    #topdiv {
-        padding: 0px 20px;
+    .inner {
+        padding-left: 38px;
+        box-sizing: border-box;
     }
 
     #topdiv .inner {
-        margin-left: -24px;
         margin-top: -26px;
+    }
+
+    #headerwrapper .headercontent {
+        padding-left: 10px;
     }
 
     #header img {
@@ -844,7 +810,7 @@ Animation example, for spinners
     }
 
     #backlink {
-        margin-left: 5px;
+        padding-left: 34px;
     }
 
     #loginLinksWrp .indexlist {
@@ -884,11 +850,6 @@ Animation example, for spinners
     #maindiv .right {
         margin-left: 0;
         width: 100%;
-    }
-
-    .inner {
-        padding: 0 20px;
-        box-sizing: border-box;
     }
 
     h1 {
@@ -953,9 +914,11 @@ Animation example, for spinners
         border-top: 1px solid #bbb;
     }
 
-    /*#footer {
-        height: 170px;
-    }*/
+    #footer {
+        height: unset;
+        position: unset;
+    }
+
     #footer .inner {
         flex-direction: column;
         margin: 0;
@@ -966,10 +929,6 @@ Animation example, for spinners
     }
 
     #footer .middleFooter {
-        width: 100%;
-    }
-
-    #footer .rightFooter {
         width: 100%;
     }
 
@@ -1008,3 +967,4 @@ Animation example, for spinners
 .pull-right {
     float: right !important;
 }
+
