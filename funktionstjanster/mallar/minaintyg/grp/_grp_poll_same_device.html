@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-PARM{include:/grp/grppoll_same-script.html}
-
+    PARM{include:/grp/grppoll_same-script.html}
+    PARM{include:/head.html}
 </head>
 <body id="commonbody" onload="polling_start()">
 
@@ -11,6 +11,9 @@ PARM{include:/header.html}
     <div id="backlink">
         <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
     </div>
+
+    PARM{include:/content.html}
+
     <h2>Logga in med BankID</h2>
     <!-- 1 -->
     <table width="100%">
@@ -56,13 +59,6 @@ PARM{include:/header.html}
                 <!--<a class='button' href="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}">PARM{text-rfa18}</a> -->
                 <a class='button' href="PARM{grp-link}">PARM{text-grp-rfa18}</a>
             </td>
-            <!--
-            <td align=center >
-                <form>
-                    <input type="button" value="Starta BankID på den här enheten" onClick="startBankID();">
-                </form>
-            </td>
-            -->
         </tr>
         <tr>
             <td>

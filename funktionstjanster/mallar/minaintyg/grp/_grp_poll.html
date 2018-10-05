@@ -6,6 +6,7 @@ PARM{meta-header}
 <!-- Static meta-header: <meta http-equiv="Content-type" content="PARM{mbi-poll-time};url=PARM{poll-url}"> -->
 <script type="text/javascript" src="/mg-local/poll.min.js"></script>
 PARM{include:/grp/grppoll-script.html}
+PARM{include:/head.html}
 </head>
 <body id="commonbody" onload="polling_start()">
 
@@ -14,6 +15,9 @@ PARM{include:/header.html}
     <div id="backlink">
         <i class="material-icons">keyboard_arrow_left</i><a href="/">Tillbaka till inloggningssidan</a>
     </div>
+
+    PARM{include:/content.html}
+
     <h2>Inloggning med Mobilt BankID</h2>
 
     <div id="infotext">PARM{message}</div>

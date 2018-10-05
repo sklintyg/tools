@@ -114,7 +114,6 @@ a.internalLink {
 #containerbody {
     margin-right: auto;
     margin-left: auto;
-    padding-left: 15px;
     padding-right: 15px;
     width: 100%;
     -ms-flex: 1 0 auto;
@@ -147,7 +146,6 @@ a.internalLink {
 
 #maindiv {
     width: 100%;
-    padding: 10px 0 30px 140px;
 }
 
 .left,
@@ -174,6 +172,11 @@ a.internalLink {
     flex-direction: row;
     align-items: center;
     margin: 14px 0 35px 0;
+    padding-left: 160px;
+}
+
+#backlink .inner {
+    padding-left: 160px;
 }
 
 #backlink i.material-icons {
@@ -374,7 +377,8 @@ input[type=text]::-ms-clear {
 }
 
 .form-control {
-    width: 9.5em;
+    width: 138px;
+    height: 35px;
     padding: 0 0.9em;
     margin-right: 0.5em;
     margin-top: 0.5em;
@@ -456,7 +460,7 @@ button {
 }
 
 #footer {
-    padding: 30px 0 30px 140px;
+    padding: 30px 0;
     width: 100%;
     color: #3C3C3C;
     font-size: 14px;
@@ -562,6 +566,9 @@ button {
 }
 
 .inner {
+    width: 100%;
+    padding-left: 165px;
+    margin: 0 auto;
     -ms-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -692,13 +699,18 @@ Animation example, for spinners
 
 @media all and (max-width: 480px) {
 
-    #topdiv {
-        padding: 0px 20px;
+    .inner {
+        padding-left: 38px;
+        box-sizing: border-box;
     }
 
+
     #topdiv .inner {
-        margin-left: -24px;
         margin-top: -26px;
+    }
+
+    #headerwrapper .headercontent {
+        padding-left: 10px;
     }
 
     #header img {
@@ -719,7 +731,7 @@ Animation example, for spinners
     }
 
     #backlink {
-        margin-left: 5px;
+        padding-left: 34px;
     }
 
     #loginLinksWrp .indexlist {
@@ -799,7 +811,6 @@ Animation example, for spinners
     #footer {
         position: unset;
         height: auto;
-        padding-left: 36px;
     }
 
     #footer .inner {
@@ -812,10 +823,6 @@ Animation example, for spinners
     }
 
     #footer .middleFooter {
-        width: 100%;
-    }
-
-    #footer .rightFooter {
         width: 100%;
     }
 
