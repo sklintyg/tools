@@ -1,14 +1,17 @@
 PARM{include:/head.html}
 PARM{include:/header.html}
 
-<div id="maindiv">
-  <div class="inner">
-
-    <div class="right">
-      <h1>PARM{text-logoutconfirmed}</h1>
-      <p>PARM{text-youarenolongerloggedin}.</p>
+<div id="maindiv" class="center-wrapper">
+  <div id="loggedout-content">
+    <h1>PARM{text-logoutconfirmed}</h1>
+    <p class="padding">PARM{text-youarenolongerloggedin}.</p>
+    <p>Logga in med e-legitimation</p>
+    <div id="logginButton">
+      <button class="button btn btn-success" id="logginButton" type="button"
+              onclick="location.href='https://webcert.intygstjanster.se'">
+        <span>Fortsätt</span>
+      </button>
     </div>
-    <div class="clearFloat"></div>
   </div>
 </div>
 

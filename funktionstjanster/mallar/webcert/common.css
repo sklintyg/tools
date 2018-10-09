@@ -665,6 +665,34 @@ button {
     box-sizing: border-box;
 }
 
+.center-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
+#loggedout-content {
+    max-width: 50%;
+    justify-content: center;
+    padding-top: 100px;
+}
+
+#loggedout-content h1{
+    text-align: center;
+}
+
+#loggedout-content p {
+    text-align: center;
+}
+
+#loggedout-content .padding{
+    padding-bottom: 50px;
+}
+
+#logginButton {
+    display: flex;
+    justify-content: center;
+}
+
 .clearFloat {
     height: 1px;
     width: 100%;
