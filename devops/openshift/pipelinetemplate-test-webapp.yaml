@@ -264,22 +264,52 @@ objects:
 
                                       def svcAppName = "${it}-${APP_NAME}"
 
-                                      def rc = 0                        
+                                      def rc = 0
+
+                                      // Configmap for /$STAGE/config
                                       rc = sh (
-                                        script: "oc get configmap ${it}-config -o yaml | sed \'s/name: ${it}-config/name: ${svcAppName}-config/g\' | oc apply -f -",
+                                        script: "oc get configmap ${it}-config -o yaml --export | sed \'s/name: ${it}-config/name: ${svcAppName}-config/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
                                         error("Unable to create configmap ${svcAppName}-config")
-                                      }                           
+                                      }
+
+                                      // Secret for /$STAGE/env
                                       rc = sh (
-                                        script: "oc get secret ${it}-env -o yaml | sed \'s/name: ${it}-env/name: ${svcAppName}-env/g\' | oc apply -f -",
+                                        script: "oc get secret ${it}-env -o yaml --export | sed \'s/name: ${it}-env/name: ${svcAppName}-env/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
                                         error("Unable to create secret ${svcAppName}-env")
-                                      }                           
+                                      }
 
+                                      // Certificates /$STAGE/certifikat
+                                      rc = sh (
+                                        script: "oc get secret ${it}-certifikat -o yaml --export | sed \'s/name: ${it}-certifikat/name: ${svcAppName}-certifikat/g\' | oc apply -f -",
+                                        returnStatus: true
+                                      )
+                                      if (rc  != 0) {
+                                        error("Unable to create secret ${svcAppName}-certifikat")
+                                      }
+
+                                      // Secret for envvars
+                                      rc = sh (
+                                        script: "oc get secret ${it}-secret-envvar -o yaml --export | sed \'s/name: ${it}-secret-envvar/name: ${svcAppName}-secret-envvar/g\' | oc apply -f -",
+                                        returnStatus: true
+                                      )
+                                      if (rc  != 0) {
+                                        error("Unable to create secret ${svcAppName}-secret-envvar")
+                                      }
+
+                                      // Config-map for envvars
+                                      rc = sh (
+                                        script: "oc get configmap ${it}-configmap-envvar -o yaml --export | sed \'s/name: ${it}-configmap-envvar/name: ${svcAppName}-configmap-envvar/g\' | oc apply -f -",
+                                        returnStatus: true
+                                      )
+                                      if (rc  != 0) {
+                                        error("Unable to create configmap ${svcAppName}-configmap-envvar")
+                                      }
 
                                       def deployModel = openshift.process("deploytemplate-webapp",
                                               "-p", "APP_NAME=${svcAppName}",
@@ -630,9 +660,10 @@ objects:
                           openshift.apply(model)
 
                           def build = openshift.selector("bc", "${APP_NAME}-nexus").startBuild()
-                          echo "${build.name()} started" 
+                          echo "${build.name()} started"
+                          def status = ""
                           timeout (20) {
-                            def status = ""
+
                             build.untilEach(1) {
                                 status = it.object().status.phase
                                 echo "Build status: ${status}" 
@@ -697,14 +728,32 @@ objects:
                                   returnStdout: true
                                 )
                                 dbScript("drop database ${backDbName};")
+
+                                // Delete /config configmap
                                 sh (
                                   script: "oc delete configmap ${svcAppName}-config",
                                   returnStdout: true
                                 )
+                                // Delete /env secret
                                 sh (
                                   script: "oc delete secret ${svcAppName}-env",
                                   returnStdout: true
-                                )                               
+                                )
+                                // Delete /certifikat secret
+                                sh (
+                                  script: "oc delete secret ${svcAppName}-certifikat",
+                                  returnStdout: true
+                                )
+                                // Delete configmap envvar
+                                sh (
+                                  script: "oc delete configmap ${svcAppName}-configmap-envvar",
+                                  returnStdout: true
+                                )
+                                // Delete secret envvar
+                                sh (
+                                  script: "oc delete secret ${svcAppName}-secret-envvar",
+                                  returnStdout: true
+                                )
                             }
                         }
                       }

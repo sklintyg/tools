@@ -248,6 +248,12 @@ Openshift is a PaaS (Platform as a Service) built on top of the CaaS (Container 
 - If we want our container(s) within a _pod_ to be visible _within_ the cluster, we need to define a **service** that provides an internal DNS name so our applications can talk to each other. The _service_ abstraction provides internal load-balancing, e.g. if we have one _pod_ running three instances of the _intygstjanst_ container image, requests for the logical service name "intygstjanst" will be load-balanced automatically amongst the three instances.
 - If we want a _service_ (for example Webcert) to be accessible from outside of the cluster, we need to declare a **route** connecting the service to the outside world, including a port mapping and possibly an external hostname.
 
+### Editing egress network policy
+You may need to open egress for accessing github or similar. If your user has the correct authorization:
+
+    oc edit egressnetworkpolicy
+    
+
 ## Minishift on Mac instructions
 This folder contains some work-in-progress instructions and notes on how to get OpenShift Origin running using "minishift" on a local virtualbox virtual machine.
 
