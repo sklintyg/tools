@@ -65,6 +65,9 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
             "fitnesseTest")
                 save_report ${S2I_SOURCE_DIR}/test/fitnesse-results.html $TEST
                 ;;
+            "cypressTest")
+                save_report ${S2I_SOURCE_DIR}/test/build/test-results/mochawesome.html $TEST
+                ;;
         esac
     done
 
