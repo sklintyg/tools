@@ -31,14 +31,19 @@ function testrun() {
 
 # saves result report
 function save_report() {
-    SRC="${1}"
+    SRC=$(dirname $1)/${2}.html
+    mv $1 $SRC
     DST="${REPORT_DIR}/${2}/${2}.html"
     echo "---> Save report $SRC as $DST"
     if [ -f $SRC ]; then
         DIR=$(dirname $DST)
         [ -f $DST ] && rm -rf $DIR
-        cp -r $(dirname $SRC) $DIR
-        cp ${SRC} ${DST}
+        if [ "$3" == "d" ]; then
+            cp -r $(dirname $SRC) $DIR
+        else
+            mkdir -p $DIR
+            cp ${SRC} ${DST}
+        fi
     fi
 }
 
@@ -57,16 +62,16 @@ if [ $# -gt 1  ] && [ "$1" = "testrun" ]; then
         [ $? -ne 0 ] && RESULT=FAILED
         case "$TEST" in
             "restAssuredTest")
-                save_report ${S2I_SOURCE_DIR}/web/build/reports/tests/$TEST/index.html $TEST
+                save_report ${S2I_SOURCE_DIR}/web/build/reports/tests/$TEST/index.html $TEST d
                 ;;
             "protractorTest")
-                save_report ${S2I_SOURCE_DIR}/test/reports/index.html $TEST
+                save_report ${S2I_SOURCE_DIR}/test/reports/index.html $TEST d
                 ;;
             "fitnesseTest")
-                save_report ${S2I_SOURCE_DIR}/test/fitnesse-results.html $TEST
+                save_report ${S2I_SOURCE_DIR}/test/fitnesse-results.html $TEST f
                 ;;
             "cypressTest")
-                save_report ${S2I_SOURCE_DIR}/test/build/test-results/mochawesome.html $TEST
+                save_report ${S2I_SOURCE_DIR}/test/build/test-results/mochawesome.html $TEST d
                 ;;
         esac
     done
