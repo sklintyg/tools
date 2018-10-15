@@ -59,17 +59,75 @@ objects:
             // Build and Deploy temaples must previously have been installed
             //
             def dbName = "${APP_NAME}-${new Random().nextInt() % 1000}".replace('-', '')
-            def localCommonVersion = "NA"
+            def localCommonVersion = (env.commonVersion) ? env.commonVersion : "NA"
+            def localBackingServices = (env.backingServices) ? env.backingServices : "${BACKING_SERVICES}"
+
+            // function to run database commands
             def dbScript(cmd) {
               sh (
                 script: "oc rsh \$(oc get pods | grep mysql- | grep Running | awk \'{ print \$1 }\')  bash -c \"mysql -u root -e \'${cmd}\'\"",
                 returnStatus: true 
               ) 
             }
+
+            // function to perform a named test
+            def performTest(testName) {
+              echo "Do ${testName}"
+
+              // Setup callback webhook
+              def hook = registerWebhook()
+
+              // Just use name
+              def targetUrl = "http://${APP_NAME}:8080"                         
+
+              def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+              echo "Use ImageStream: ${imageStream}"
+
+              // to make the pod name somewhat unique
+              // TODO: use generateName in Pod template, i.e. when it works
+              def num = (new Random().nextInt() % 100000) + 1
+              def suffix = (num < 0) ? "${num}" : "-${num}"
+              def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
+                "-p", "APP_NAME=${APP_NAME}", 
+                "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
+                "-p", "STAGE=${STAGE}",                          
+                "-p", "TARGET_URL='${targetUrl}'",
+                "-p", "BUILD_VERSION=${env.buildVersion}", 
+                "-p", "JOB_NAME=${env.JOB_NAME}",
+                "-p", "CALLBACK_URL='${hook.getURL()}'",
+                "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
+                "-p", "TESTS=restAssuredTest")
+              openshift.apply(pod)
+              
+              def data = ""
+              timeout (30) {
+                echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
+                data = waitForWebhook(hook).trim()
+
+                echo "Publishing ${testName} reports for ${JOB_NAME}/${env.buildVersion}"
+                publishHTML([
+                  allowMissing: true,
+                  alwaysLinkToLastBuild: true,
+                  keepAll: true,
+                  reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${testName}/",
+                  reportFiles: "${testName}.html",
+                  reportName: "${testName.capitalize()} Results",
+                ])
+              }
+
+              echo "Logs for ${env.BUILD_TAG}${suffix}"
+              openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
+
+              if ("SUCCESS".equals(data)) {
+                echo "Test SUCCESS"
+              } else {
+                error("${testName} FAILED, see HTML report for details")
+              }
+            }
+
             pipeline {
               agent any
               stages {
-
                 stage('Prepare') {
                   steps {
                     script {
@@ -78,10 +136,9 @@ objects:
                         openshift.withProject() {
                           echo "Pipeline started with:"
                           echo "gitUrl: ${gitUrl}, gitRef: ${gitRef}"
-                          if (env.commonVersion) {
-                            localCommonVersion = env.commonVersion
-                          }
                           echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${localCommonVersion}"
+                          echo "backingServices: ${localBackingServices}"
+
                           // check envrionment
                           [ env.gitUrl, env.gitRef, env.buildVersion, env.infraVersion ].each {
                             if (!it) {
@@ -238,7 +295,7 @@ objects:
               stage('Deploy Backing Services') {
                   when {
                       expression {
-                        if ("${BACKING_SERVICES}" == "-") {
+                        if (localBackingServices == "-") {
                           return false
                         }
                           return true
@@ -248,27 +305,30 @@ objects:
                       script {
                           openshift.withCluster() {
                               openshift.withProject() {
-                                  "${BACKING_SERVICES}".split(",").each {
-                                      def imageStream = openshift.selector("is", "${it}-verified").object().status.dockerImageRepository
-                                      echo "Use ImageStream: ${imageStream}"
+                                  localBackingServices.split(",").each {
+                                      // [ name, tag ] default version is latest
+                                      def svc = (it.contains(":") ? it : it + ":latest").split(":")
+
+                                      def imageStream = openshift.selector("is", "${svc[0]}-verified").object().status.dockerImageRepository
+                                      echo "Use ImageStream: ${imageStream}:${svc[1]}"
                                       def healthUri = "/"
                                       // FIXME: dirty work-around!
-                                      if (it.startsWith("intygstjanst")) {
+                                      if (svc[0].startsWith("intygstjanst")) {
                                           healthUri += "inera-certificate"
                                       }
-                                      def backDbName = "${it.replace('-', '')}${dbName}"
+                                      def backDbName = "${svc[0].replace('-', '')}${dbName}"
                                       def status = dbScript("create database ${backDbName} character set utf8mb4;")
                                       if (status != 0) {
                                           error("Unable to create database ${backDbName}")
                                       }
 
-                                      def svcAppName = "${it}-${APP_NAME}"
+                                      def svcAppName = "${svc[0]}-${APP_NAME}"
 
                                       def rc = 0
 
                                       // Configmap for /$STAGE/config
                                       rc = sh (
-                                        script: "oc get configmap ${it}-config -o yaml --export | sed \'s/name: ${it}-config/name: ${svcAppName}-config/g\' | oc apply -f -",
+                                        script: "oc get configmap ${svc[0]}-config -o yaml --export | sed \'s/name: ${svc[0]}-config/name: ${svcAppName}-config/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
@@ -277,7 +337,7 @@ objects:
 
                                       // Secret for /$STAGE/env
                                       rc = sh (
-                                        script: "oc get secret ${it}-env -o yaml --export | sed \'s/name: ${it}-env/name: ${svcAppName}-env/g\' | oc apply -f -",
+                                        script: "oc get secret ${svc[0]}-env -o yaml --export | sed \'s/name: ${svc[0]}-env/name: ${svcAppName}-env/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
@@ -286,7 +346,7 @@ objects:
 
                                       // Certificates /$STAGE/certifikat
                                       rc = sh (
-                                        script: "oc get secret ${it}-certifikat -o yaml --export | sed \'s/name: ${it}-certifikat/name: ${svcAppName}-certifikat/g\' | oc apply -f -",
+                                        script: "oc get secret ${svc[0]}-certifikat -o yaml --export | sed \'s/name: ${svc[0]}-certifikat/name: ${svcAppName}-certifikat/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
@@ -295,7 +355,7 @@ objects:
 
                                       // Secret for envvars
                                       rc = sh (
-                                        script: "oc get secret ${it}-secret-envvar -o yaml --export | sed \'s/name: ${it}-secret-envvar/name: ${svcAppName}-secret-envvar/g\' | oc apply -f -",
+                                        script: "oc get secret ${svc[0]}-secret-envvar -o yaml --export | sed \'s/name: ${svc[0]}-secret-envvar/name: ${svcAppName}-secret-envvar/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
@@ -304,7 +364,7 @@ objects:
 
                                       // Config-map for envvars
                                       rc = sh (
-                                        script: "oc get configmap ${it}-configmap-envvar -o yaml --export | sed \'s/name: ${it}-configmap-envvar/name: ${svcAppName}-configmap-envvar/g\' | oc apply -f -",
+                                        script: "oc get configmap ${svc[0]}-configmap-envvar -o yaml --export | sed \'s/name: ${svc[0]}-configmap-envvar/name: ${svcAppName}-configmap-envvar/g\' | oc apply -f -",
                                         returnStatus: true
                                       )
                                       if (rc  != 0) {
@@ -313,7 +373,7 @@ objects:
 
                                       def deployModel = openshift.process("deploytemplate-webapp",
                                               "-p", "APP_NAME=${svcAppName}",
-                                              "-p", "IMAGE='$imageStream:latest'",
+                                              "-p", "IMAGE='${imageStream}:${svc[1]}'",
                                               "-p", "DATABASE_NAME=${backDbName}",
                                               "-p", "HEALTH_URI=${healthUri}",
                                               "-p", "STAGE=test")
@@ -332,429 +392,200 @@ objects:
               }
 
 
-            /* START TESTS */
+              /* START TESTS */
 
               // RESTASSURED
-                stage('Run restAssuredTest Tests') {
-                  when {
-                    expression {
-                      if ("${TESTS}".contains("restAssuredTest")) {
-                        return true
-                      }
-                      return false
-                    }                      
-                  }
-                  steps {
-                    script {
-                      openshift.withCluster() {
-                        openshift.withProject() {
-                          echo "Do test"
-
-                          // Setup callback webhook
-                          def hook = registerWebhook()
-
-                          // Just use name
-                          def targetUrl = "http://${APP_NAME}:8080"                         
-
-                          def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                          echo "Use ImageStream: ${imageStream}"
-
-                          // to make the pod name somewhat unique
-                          // TODO: use generateName in Pod template, i.e. when it works
-                          def num = (new Random().nextInt() % 100000) + 1
-                          def suffix = (num < 0) ? "${num}" : "-${num}"
-                          def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
-                            "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
-                            "-p", "STAGE=${STAGE}",                          
-                            "-p", "TARGET_URL='${targetUrl}'",
-                            "-p", "BUILD_VERSION=${env.buildVersion}", 
-                            "-p", "JOB_NAME=${env.JOB_NAME}",
-                            "-p", "CALLBACK_URL='${hook.getURL()}'",
-                            "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
-                            "-p", "TESTS=restAssuredTest")
-                          openshift.apply(pod)
-                          
-                          def data = ""
-                          timeout (30) {
-                            echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
-                            data = waitForWebhook(hook).trim()
-
-                            [ "restAssuredTest"].each { t ->
-                              if ("${TESTS}".contains("${t}")) {
-                                echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
-                                publishHTML([
-                                  allowMissing: true,
-                                  alwaysLinkToLastBuild: true,
-                                  keepAll: true,
-                                  reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
-                                  reportFiles: "${t}.html",
-                                  reportName: "${t.capitalize()} Results",
-                                ])
-                              }
-                            }
-                          }
-                          echo "Logs for ${env.BUILD_TAG}${suffix}"
-                          openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
-
-                          if ("SUCCESS".equals(data)) {
-                            echo "Test SUCCESS"
-                          } else {
-                            error("Tests FAILED, see reports for any details")
-                          }
-                        }
-                      }
-                    }
-                  }
+              stage('Run RestAssured Tests') {
+                when {
+                  expression {
+                    return "${TESTS}".contains("restAssuredTest")
+                  }                      
                 }
-                // END RESTASSURED
-
-
-               // PROTRACTOR
-               stage('Run Protractor Tests') {
-                 when {
-                   expression {
-                     if ("${TESTS}".contains("protractorTest")) {
-                       return true
-                     }
-                     return false
-                   }
-                 }
-                 steps {
-                   script {
-                     openshift.withCluster() {
-                       openshift.withProject() {
-                         echo "Do test"
-
-                         // Setup callback webhook
-                         def hook = registerWebhook()
-
-                         // Just use name
-                         def targetUrl = "http://${APP_NAME}:8080"
-
-                         def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                         echo "Use ImageStream: ${imageStream}"
-
-                         // to make the pod name somewhat unique
-                         // TODO: use generateName in Pod template, i.e. when it works
-                         def num = (new Random().nextInt() % 100000) + 1
-                         def suffix = (num < 0) ? "${num}" : "-${num}"
-                         def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
-                           "-p", "APP_NAME=${APP_NAME}",
-                           "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'",
-                           "-p", "STAGE=${STAGE}",
-                           "-p", "TARGET_URL='${targetUrl}'",
-                           "-p", "BUILD_VERSION=${env.buildVersion}",
-                           "-p", "JOB_NAME=${env.JOB_NAME}",
-                           "-p", "CALLBACK_URL='${hook.getURL()}'",
-                           "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
-                           "-p", "TESTS=protractorTest")
-                         openshift.apply(pod)
-
-                         def data = ""
-                         timeout (30) {
-                           echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
-                           data = waitForWebhook(hook).trim()
-
-                           [ "protractorTest" ].each { t ->
-                             if ("${TESTS}".contains("${t}")) {
-                               echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
-                               publishHTML([
-                                 allowMissing: true,
-                                 alwaysLinkToLastBuild: true,
-                                 keepAll: true,
-                                 reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
-                                 reportFiles: "${t}.html",
-                                 reportName: "${t.capitalize()} Results",
-                               ])
-                             }
-                           }
-                         }
-                         echo "Logs for ${env.BUILD_TAG}${suffix}"
-                         openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
-
-                         if ("SUCCESS".equals(data)) {
-                           echo "Test SUCCESS"
-                         } else {
-                           error("Tests FAILED, see reports for any details")
-                         }
-                       }
-                     }
-                   }
-                 }
-               }
-               // END protractorTest
-
-
-
-
-            // FITNESSE
-             stage('Run Fitnesse Tests') {
-               when {
-                 expression {
-                   if ("${TESTS}".contains("fitnesseTest")) {
-                     return true
-                   }
-                   return false
-                 }
-               }
-               steps {
-                 script {
-                   openshift.withCluster() {
-                     openshift.withProject() {
-                       echo "Do test"
-
-                       // Setup callback webhook
-                       def hook = registerWebhook()
-
-                       // Just use name
-                       def targetUrl = "http://${APP_NAME}:8080"
-
-                       def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                       echo "Use ImageStream: ${imageStream}"
-
-                       // to make the pod name somewhat unique
-                       // TODO: use generateName in Pod template, i.e. when it works
-                       def num = (new Random().nextInt() % 100000) + 1
-                       def suffix = (num < 0) ? "${num}" : "-${num}"
-                       def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
-                         "-p", "APP_NAME=${APP_NAME}",
-                         "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'",
-                         "-p", "STAGE=${STAGE}",
-                         "-p", "TARGET_URL='${targetUrl}'",
-                         "-p", "BUILD_VERSION=${env.buildVersion}",
-                         "-p", "JOB_NAME=${env.JOB_NAME}",
-                         "-p", "CALLBACK_URL='${hook.getURL()}'",
-                         "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
-                         "-p", "TESTS=fitnesseTest")
-                       openshift.apply(pod)
-
-                       def data = ""
-                       timeout (30) {
-                         echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
-                         data = waitForWebhook(hook).trim()
-
-                         [ "fitnesseTest" ].each { t ->
-                           if ("${TESTS}".contains("${t}")) {
-                             echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
-                             publishHTML([
-                               allowMissing: true,
-                               alwaysLinkToLastBuild: true,
-                               keepAll: true,
-                               reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
-                               reportFiles: "${t}.html",
-                               reportName: "${t.capitalize()} Results",
-                             ])
-                           }
-                         }
-                       }
-                       echo "Logs for ${env.BUILD_TAG}${suffix}"
-                       openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
-
-                       if ("SUCCESS".equals(data)) {
-                         echo "Test SUCCESS"
-                       } else {
-                         error("Tests FAILED, see reports for any details")
-                       }
-                     }
-                   }
-                 }
-               }
-             }
-             // END fitnesseTest
-
-
-
-
-              // CYPRESS
-             stage('Run cypressTest Tests') {
-               when {
-                 expression {
-                   if ("${TESTS}".contains("cypressTest")) {
-                     return true
-                   }
-                   return false
-                 }
-               }
-               steps {
-                 script {
-                   openshift.withCluster() {
-                     openshift.withProject() {
-                       echo "Do test"
-
-                       // Setup callback webhook
-                       def hook = registerWebhook()
-
-                       // Just use name
-                       def targetUrl = "http://${APP_NAME}:8080"
-
-                       def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                       echo "Use ImageStream: ${imageStream}"
-
-                       // to make the pod name somewhat unique
-                       // TODO: use generateName in Pod template, i.e. when it works
-                       def num = (new Random().nextInt() % 100000) + 1
-                       def suffix = (num < 0) ? "${num}" : "-${num}"
-                       def pod = openshift.process("${TESTRUNNER_TEMPLATE}",
-                         "-p", "APP_NAME=${APP_NAME}",
-                         "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'",
-                         "-p", "STAGE=${STAGE}",
-                         "-p", "TARGET_URL='${targetUrl}'",
-                         "-p", "BUILD_VERSION=${env.buildVersion}",
-                         "-p", "JOB_NAME=${env.JOB_NAME}",
-                         "-p", "CALLBACK_URL='${hook.getURL()}'",
-                         "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
-                         "-p", "TESTS=cypressTest")
-                       openshift.apply(pod)
-
-                       def data = ""
-                       timeout (30) {
-                         echo "Waiting (max 30 min) for POST to ${hook.getURL()}"
-                         data = waitForWebhook(hook).trim()
-
-                         [ "cypressTest" ].each { t ->
-                           if ("${TESTS}".contains("${t}")) {
-                             echo "Publishing ${t} reports for ${JOB_NAME}/${env.buildVersion}"
-                             publishHTML([
-                               allowMissing: true,
-                               alwaysLinkToLastBuild: true,
-                               keepAll: true,
-                               reportDir: "/var/lib/jenkins/reports/$JOB_NAME/${env.buildVersion}/${t}/",
-                               reportFiles: "${t}.html",
-                               reportName: "${t.capitalize()} Results",
-                             ])
-                           }
-                         }
-                       }
-                       echo "Logs for ${env.BUILD_TAG}${suffix}"
-                       openshift.selector( "pod", "${env.BUILD_TAG}${suffix}" ).logs()
-
-                       if ("SUCCESS".equals(data)) {
-                         echo "Test SUCCESS"
-                       } else {
-                         error("Tests FAILED, see reports for any details")
-                       }
-                     }
-                   }
-                 }
-               }
-             }
-             // END cypressTest
-
-
-            /* END TESTS */
-                
-                stage('Promote Image to Nexus') {
-                  steps {
-                    script {
-                      openshift.withCluster() {
-                        openshift.withProject() {
-                          def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                          echo "Use ImageStream: ${imageStream}"
-
-                          def model = openshift.process("buildtemplate-nexus",
-                            "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "IMAGE='${imageStream}'", 
-                            "-p", "STAGE=${STAGE}",                          
-                            "-p", "TAG='${env.buildVersion}'")
-                          openshift.apply(model)
-
-                          def build = openshift.selector("bc", "${APP_NAME}-nexus").startBuild()
-                          echo "${build.name()} started"
-                          def status = ""
-                          timeout (20) {
-
-                            build.untilEach(1) {
-                                status = it.object().status.phase
-                                echo "Build status: ${status}" 
-                                return !["Running", "Pending", "New"].contains(status)                            
-                            }
-
-                            echo "Logs for nexus build"
-                            build.logs()
-                            if (status != "Complete") {
-                              error("Build terminated with status: ${status}")
-                            }  
-                          }                 
-                        }
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        performTest("restAssuredTest")
                       }
                     }
                   }
                 }
               }
+              // END restAssuredTest
 
-              post {
-                success {
-                  script {
-                    openshift.withCluster() {
-                      openshift.withProject() { 
-                          def source = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                          def project = openshift.project()
-                          def target = "${project}/${APP_NAME}-verified"
-                          echo "Promote image ${source} to is ${APP_NAME}-verified"
-                          openshift.tag("${source}:${env.buildVersion}", "${target}:${env.buildVersion}", "${target}:latest")
-                      }
-                    }
-                  }              
+
+              // PROTRACTOR
+              stage('Run Protractor Tests') {
+                when {
+                  expression {
+                    return "${TESTS}".contains("protractorTest")
+                  }
                 }
-
-                always {
+                steps {
                   script {
-                    echo "cleanup"
                     openshift.withCluster() {
                       openshift.withProject() {
-                        dbScript("drop database ${dbName};")
+                        performTest("protractorTest")
+                      }
+                    }
+                  }
+                }
+              }
+              // END protractorTest
 
-                        echo "Logs for ${APP_NAME}"
-                        openshift.selector( "dc", "${APP_NAME}" ).logs()
+              // FITNESSE
+              stage('Run Fitnesse Tests') {
+                when {
+                  expression {
+                    return "${TESTS}".contains("fitnesseTest")
+                  }
+                }
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        performTest("fitnesseTest")
+                      }
+                    }
+                  }
+                }
+              }
+              // END fitnesseTest
 
-                        def image = openshift.selector("is", "${APP_NAME}").object()
-                        def imageStream = image.status.dockerImageRepository
-                        sh (
-                          script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -",
-                          returnStdout: true
-                        )
+              // CYPRESS
+              stage('Run Cypress Tests') {
+                when {
+                  expression {
+                    return "${TESTS}".contains("cypressTest")
+                  }
+                }
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        performTest("cypressTest")
+                      }
+                    }
+                  }
+                }
+              }
+              // END cypressTest
 
-                        if ("${BACKING_SERVICES}" != "-") {
-                            "${BACKING_SERVICES}".split(",").each {
-                                def svcAppName = "${it}-${APP_NAME}"
-                                echo "Logs for ${svcAppName}"
-                                openshift.selector( "dc", "${svcAppName}" ).logs()
+              /* END TESTS */
+                
+              stage('Promote Image to Nexus') {
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                        echo "Use ImageStream: ${imageStream}"
 
-                                imageStream = openshift.selector("is", "${it}-verified").object().status.dockerImageRepository
-                                def backDbName = "${it.replace('-', '')}${dbName}"
-                                sh (
-                                  script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${svcAppName}\" -p IMAGE=\"${imageStream}:latest\" -p STAGE=${STAGE} -p DATABASE_NAME=${backDbName} | oc delete -f -",
-                                  returnStdout: true
-                                )
-                                dbScript("drop database ${backDbName};")
+                        def model = openshift.process("buildtemplate-nexus",
+                          "-p", "APP_NAME=${APP_NAME}", 
+                          "-p", "IMAGE='${imageStream}'", 
+                          "-p", "STAGE=${STAGE}",                          
+                          "-p", "TAG='${env.buildVersion}'")
+                        openshift.apply(model)
 
-                                // Delete /config configmap
-                                sh (
-                                  script: "oc delete configmap ${svcAppName}-config",
-                                  returnStdout: true
-                                )
-                                // Delete /env secret
-                                sh (
-                                  script: "oc delete secret ${svcAppName}-env",
-                                  returnStdout: true
-                                )
-                                // Delete /certifikat secret
-                                sh (
-                                  script: "oc delete secret ${svcAppName}-certifikat",
-                                  returnStdout: true
-                                )
-                                // Delete configmap envvar
-                                sh (
-                                  script: "oc delete configmap ${svcAppName}-configmap-envvar",
-                                  returnStdout: true
-                                )
-                                // Delete secret envvar
-                                sh (
-                                  script: "oc delete secret ${svcAppName}-secret-envvar",
-                                  returnStdout: true
-                                )
-                            }
+                        def build = openshift.selector("bc", "${APP_NAME}-nexus").startBuild()
+                        echo "${build.name()} started"
+                        def status = ""
+                        timeout (20) {
+
+                          build.untilEach(1) {
+                              status = it.object().status.phase
+                              echo "Build status: ${status}" 
+                              return !["Running", "Pending", "New"].contains(status)                            
+                          }
+
+                          echo "Logs for nexus build"
+                          build.logs()
+                          if (status != "Complete") {
+                            error("Build terminated with status: ${status}")
+                          }  
+                        }                 
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            post {
+              success {
+                script {
+                  openshift.withCluster() {
+                    openshift.withProject() { 
+                        def source = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                        def project = openshift.project()
+                        def target = "${project}/${APP_NAME}-verified"
+                        echo "Promote image ${source} to is ${APP_NAME}-verified"
+                        openshift.tag("${source}:${env.buildVersion}", "${target}:${env.buildVersion}", "${target}:latest")
+                    }
+                  }
+                }              
+              }
+
+              always {
+                script {
+                  echo "cleanup"
+                  openshift.withCluster() {
+                    openshift.withProject() {
+                      dbScript("drop database ${dbName};")
+
+                      echo "Logs for ${APP_NAME}"
+                      openshift.selector( "dc", "${APP_NAME}" ).logs()
+
+                      def image = openshift.selector("is", "${APP_NAME}").object()
+                      def imageStream = image.status.dockerImageRepository
+                      sh (
+                        script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -",
+                        returnStdout: true
+                      )
+
+                      if (localBackingServices != "-") {
+                          localBackingServices.split(",").each {
+                              def svc = (it.contains(":") ? it : it + ":latest").split(":")
+                              
+                              def svcAppName = "${svc[0]}-${APP_NAME}"
+                              echo "Logs for ${svcAppName}"
+                              openshift.selector( "dc", "${svcAppName}" ).logs()
+
+                              imageStream = openshift.selector("is", "${svc[0]}-verified").object().status.dockerImageRepository
+                              def backDbName = "${svc[0].replace('-', '')}${dbName}"
+                              sh (
+                                script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${svcAppName}\" -p IMAGE=\"${imageStream}:${svc[1]}\" -p STAGE=${STAGE} -p DATABASE_NAME=${backDbName} | oc delete -f -",
+                                returnStdout: true
+                              )
+                              dbScript("drop database ${backDbName};")
+
+                              // Delete /config configmap
+                              sh (
+                                script: "oc delete configmap ${svcAppName}-config",
+                                returnStdout: true
+                              )
+                              // Delete /env secret
+                              sh (
+                                script: "oc delete secret ${svcAppName}-env",
+                                returnStdout: true
+                              )
+                              // Delete /certifikat secret
+                              sh (
+                                script: "oc delete secret ${svcAppName}-certifikat",
+                                returnStdout: true
+                              )
+                              // Delete configmap envvar
+                              sh (
+                                script: "oc delete configmap ${svcAppName}-configmap-envvar",
+                                returnStdout: true
+                              )
+                              // Delete secret envvar
+                              sh (
+                                script: "oc delete secret ${svcAppName}-secret-envvar",
+                                returnStdout: true
+                              )
+                          }
                         }
                       }
                     }
@@ -764,7 +595,6 @@ objects:
                 failure {
                   echo "Pipeline Failed :("
                 }
-
               }
             }
         
