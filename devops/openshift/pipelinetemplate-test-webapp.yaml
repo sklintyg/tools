@@ -93,10 +93,10 @@ objects:
                 "-p", "STAGE=${STAGE}",                          
                 "-p", "TARGET_URL='${targetUrl}'",
                 "-p", "BUILD_VERSION=${env.buildVersion}", 
-                "-p", "JOB_NAME=${env.JOB_NAME}",
+                "-p", "JOB_NAME=${JOB_NAME}",
                 "-p", "CALLBACK_URL='${hook.getURL()}'",
-                "-p", "BUILD_TAG=${env.BUILD_TAG}${suffix}",
-                "-p", "TESTS=restAssuredTest")
+                "-p", "BUILD_TAG=${BUILD_TAG}${suffix}",
+                "-p", "TESTS=${testName}")
               openshift.apply(pod)
               
               def data = ""
