@@ -61,11 +61,25 @@ objects:
             def dbName = "${APP_NAME}-${new Random().nextInt() % 1000}".replace('-', '')
             def localCommonVersion = (env.commonVersion) ? env.commonVersion : "NA"
             def localBackingServices = (env.backingServices) ? env.backingServices : "${BACKING_SERVICES}"
+            def tmpDir = "tmp"
 
             // function to run database commands
             def dbScript(cmd) {
               sh (
                 script: "oc rsh \$(oc get pods | grep mysql- | grep Running | awk \'{ print \$1 }\')  bash -c \"mysql -u root -e \'${cmd}\'\"",
+                returnStatus: true 
+              ) 
+            }
+
+            // function to extract openshift stage configuration only from repo. dir must not exist
+            def extractConfig(dir, url, ref, stage) {
+              sh (
+                script: "mkdir ${dir}; cd ${dir}; \
+                git init; \
+                git remote add origin -f ${url}; \
+                git config core.sparsecheckout true;  \
+                echo 'devops/openshift/${stage}/*' >> .git/info/sparse-checkout; \
+                git checkout ${ref}",
                 returnStatus: true 
               ) 
             }
@@ -164,7 +178,7 @@ objects:
                   }
                 }
 
-                stage('Create Build Configuration') {
+                stage('Create Build Config') {
                   when {
                     expression {
                       return true
@@ -259,7 +273,48 @@ objects:
                     }
                   }
                 }
-                
+
+                stage('Setup Deploy Config') {
+                  when {
+                    expression {
+                      return true
+                    }                      
+                  }
+                  steps {
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          def status = sh (
+                            script: "rm -rf ${tmpDir}",
+                            returnStatus: true 
+                          )
+                          if (status != 0) {
+                            error("Unable to remove tmp folder")
+                          }
+                          status = extractConfig(tmpDir, env.gitUrl, env.gitRef, "${STAGE}")
+                          if (status != 0) {
+                            error("Unable to extract deployment configuration")
+                          }
+                          sh (
+                            script: "oc delete configmap ${APP_NAME}-config; \
+                            oc delete configmap ${APP_NAME}-configmap-envvar",
+                            returnStatus: true 
+                          )
+                          status = sh (
+                            script: "cd ${tmpDir}/devops/openshift; \
+                            oc replace -f ${STAGE}/configmap-vars.yaml; \
+                            oc create configmap ${APP_NAME}-config --from-file=${STAGE}/config/",
+                            returnStatus: true 
+                          )
+                          if (status != 0) {
+                            error("Unable to setup deploy configuration")
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
                 stage('Deploy App') {
                   when {
                     expression {
