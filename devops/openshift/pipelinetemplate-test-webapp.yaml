@@ -61,7 +61,7 @@ objects:
             def dbName = "${APP_NAME}-${new Random().nextInt() % 1000}".replace('-', '')
             def localCommonVersion = (env.commonVersion) ? env.commonVersion : "NA"
             def localBackingServices = (env.backingServices) ? env.backingServices : "${BACKING_SERVICES}"
-            def tmpDir = "tmp"
+            def tmpDir = "${APP_NAME}-tmp"
 
             // function to run database commands
             def dbScript(cmd) {
@@ -71,17 +71,33 @@ objects:
               ) 
             }
 
-            // function to extract openshift stage configuration only from repo. dir must not exist
-            def extractConfig(dir, url, ref, stage) {
+            // run shell command, return status code
+            def shell(cmd) {
               sh (
-                script: "mkdir ${dir}; cd ${dir}; \
-                git init; \
-                git remote add origin -f ${url}; \
-                git config core.sparsecheckout true;  \
-                echo 'devops/openshift/${stage}/*' >> .git/info/sparse-checkout; \
-                git checkout ${ref}",
+                script: cmd,
                 returnStatus: true 
               ) 
+            }
+
+            // run shell command and signal an error on failure
+            def eshell(cmd) {
+              def rc = shell(cmd)
+              if (rc != 0) {
+                error("Error: shell command exited with error code ${rc}")
+              }
+            }
+
+            // function to extract openshift stage configuration only from repo. dir must not exist
+            def extractConfig(dir, url, ref, stage) {
+              eshell("rm -rf ${dir}")
+              eshell("mkdir ${dir}")
+
+              def wd = "cd ${dir}; "
+              eshell(wd + "git init")
+              eshell(wd + "git remote add origin -f ${url}")
+              eshell(wd + "git config core.sparsecheckout true")
+              eshell(wd + "echo 'devops/openshift/${stage}/*' >> .git/info/sparse-checkout")
+              eshell(wd + "git checkout ${ref}")
             }
 
             // function to perform a named test
@@ -284,31 +300,20 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          def status = sh (
-                            script: "rm -rf ${tmpDir}",
-                            returnStatus: true 
-                          )
-                          if (status != 0) {
-                            error("Unable to remove tmp folder")
-                          }
-                          status = extractConfig(tmpDir, env.gitUrl, env.gitRef, "${STAGE}")
-                          if (status != 0) {
-                            error("Unable to extract deployment configuration")
-                          }
-                          sh (
-                            script: "oc delete configmap ${APP_NAME}-config; \
-                            oc delete configmap ${APP_NAME}-configmap-envvar",
-                            returnStatus: true 
-                          )
-                          status = sh (
-                            script: "cd ${tmpDir}/devops/openshift; \
-                            oc replace -f ${STAGE}/configmap-vars.yaml; \
-                            oc create configmap ${APP_NAME}-config --from-file=${STAGE}/config/",
-                            returnStatus: true 
-                          )
-                          if (status != 0) {
-                            error("Unable to setup deploy configuration")
-                          }
+                          extractConfig(tmpDir, env.gitUrl, env.gitRef, "${STAGE}")
+
+                          shell("oc delete configmap ${APP_NAME}-config")
+                          shell("oc delete secret ${APP_NAME}-env")
+                          shell("oc delete configmap ${APP_NAME}-configmap-envvar")
+                          
+                          // TODO: Finalize handling of secret vars
+                          shell("[ -f ${STAGE}/secret-vars.yaml ] && oc delete secret ${APP_NAME}-secret-envvar || true")
+                          
+                          def wd = "cd ${tmpDir}/devops/openshift; "
+                          eshell(wd + "[ -f ${STAGE}/configmap-vars.yaml ] && oc create -f ${STAGE}/configmap-vars.yaml || true")
+                          eshell(wd + "[ -f ${STAGE}/secret-vars.yaml ] && oc create -f ${STAGE}/secret-vars.yaml || true")
+                          eshell(wd + "oc create configmap ${APP_NAME}-config --from-file=${STAGE}/config/")
+                          eshell(wd + "oc create secret generic ${APP_NAME}-env --from-file=${STAGE}/env/ --type=Opaque")
                         }
                       }
                     }
@@ -379,52 +384,20 @@ objects:
 
                                       def svcAppName = "${svc[0]}-${APP_NAME}"
 
-                                      def rc = 0
-
                                       // Configmap for /$STAGE/config
-                                      rc = sh (
-                                        script: "oc get configmap ${svc[0]}-config -o yaml --export | sed \'s/name: ${svc[0]}-config/name: ${svcAppName}-config/g\' | oc apply -f -",
-                                        returnStatus: true
-                                      )
-                                      if (rc  != 0) {
-                                        error("Unable to create configmap ${svcAppName}-config")
-                                      }
+                                      eshell("oc get configmap ${svc[0]}-config -o yaml --export | sed \'s/name: ${svc[0]}-config/name: ${svcAppName}-config/g\' | oc apply -f -")
 
                                       // Secret for /$STAGE/env
-                                      rc = sh (
-                                        script: "oc get secret ${svc[0]}-env -o yaml --export | sed \'s/name: ${svc[0]}-env/name: ${svcAppName}-env/g\' | oc apply -f -",
-                                        returnStatus: true
-                                      )
-                                      if (rc  != 0) {
-                                        error("Unable to create secret ${svcAppName}-env")
-                                      }
+                                      eshell("oc get secret ${svc[0]}-env -o yaml --export | sed \'s/name: ${svc[0]}-env/name: ${svcAppName}-env/g\' | oc apply -f -")
 
                                       // Certificates /$STAGE/certifikat
-                                      rc = sh (
-                                        script: "oc get secret ${svc[0]}-certifikat -o yaml --export | sed \'s/name: ${svc[0]}-certifikat/name: ${svcAppName}-certifikat/g\' | oc apply -f -",
-                                        returnStatus: true
-                                      )
-                                      if (rc  != 0) {
-                                        error("Unable to create secret ${svcAppName}-certifikat")
-                                      }
+                                      eshell("oc get secret ${svc[0]}-certifikat -o yaml --export | sed \'s/name: ${svc[0]}-certifikat/name: ${svcAppName}-certifikat/g\' | oc apply -f -")
 
                                       // Secret for envvars
-                                      rc = sh (
-                                        script: "oc get secret ${svc[0]}-secret-envvar -o yaml --export | sed \'s/name: ${svc[0]}-secret-envvar/name: ${svcAppName}-secret-envvar/g\' | oc apply -f -",
-                                        returnStatus: true
-                                      )
-                                      if (rc  != 0) {
-                                        error("Unable to create secret ${svcAppName}-secret-envvar")
-                                      }
+                                      eshell("oc get secret ${svc[0]}-secret-envvar -o yaml --export | sed \'s/name: ${svc[0]}-secret-envvar/name: ${svcAppName}-secret-envvar/g\' | oc apply -f -")
 
                                       // Config-map for envvars
-                                      rc = sh (
-                                        script: "oc get configmap ${svc[0]}-configmap-envvar -o yaml --export | sed \'s/name: ${svc[0]}-configmap-envvar/name: ${svcAppName}-configmap-envvar/g\' | oc apply -f -",
-                                        returnStatus: true
-                                      )
-                                      if (rc  != 0) {
-                                        error("Unable to create configmap ${svcAppName}-configmap-envvar")
-                                      }
+                                      eshell("oc get configmap ${svc[0]}-configmap-envvar -o yaml --export | sed \'s/name: ${svc[0]}-configmap-envvar/name: ${svcAppName}-configmap-envvar/g\' | oc apply -f -")
 
                                       def deployModel = openshift.process("deploytemplate-webapp",
                                               "-p", "APP_NAME=${svcAppName}",
@@ -594,10 +567,8 @@ objects:
 
                       def image = openshift.selector("is", "${APP_NAME}").object()
                       def imageStream = image.status.dockerImageRepository
-                      sh (
-                        script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -",
-                        returnStdout: true
-                      )
+                      
+                      shell("oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${APP_NAME}\" -p IMAGE=\"${imageStream}:${env.buildVersion}\" -p STAGE=${STAGE} -p DATABASE_NAME=${dbName} | oc delete -f -")
 
                       if (localBackingServices != "-") {
                           localBackingServices.split(",").each {
@@ -609,37 +580,20 @@ objects:
 
                               imageStream = openshift.selector("is", "${svc[0]}-verified").object().status.dockerImageRepository
                               def backDbName = "${svc[0].replace('-', '')}${dbName}"
-                              sh (
-                                script: "oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${svcAppName}\" -p IMAGE=\"${imageStream}:${svc[1]}\" -p STAGE=${STAGE} -p DATABASE_NAME=${backDbName} | oc delete -f -",
-                                returnStdout: true
-                              )
+
+                              shell("oc process ${DEPLOY_TEMPLATE} -p APP_NAME=\"${svcAppName}\" -p IMAGE=\"${imageStream}:${svc[1]}\" -p STAGE=${STAGE} -p DATABASE_NAME=${backDbName} | oc delete -f -")
                               dbScript("drop database ${backDbName};")
 
                               // Delete /config configmap
-                              sh (
-                                script: "oc delete configmap ${svcAppName}-config",
-                                returnStdout: true
-                              )
+                              shell("oc delete configmap ${svcAppName}-config")
                               // Delete /env secret
-                              sh (
-                                script: "oc delete secret ${svcAppName}-env",
-                                returnStdout: true
-                              )
+                              shell("oc delete secret ${svcAppName}-env")          
                               // Delete /certifikat secret
-                              sh (
-                                script: "oc delete secret ${svcAppName}-certifikat",
-                                returnStdout: true
-                              )
+                              shell("oc delete secret ${svcAppName}-certifikat")
                               // Delete configmap envvar
-                              sh (
-                                script: "oc delete configmap ${svcAppName}-configmap-envvar",
-                                returnStdout: true
-                              )
+                              shell("oc delete configmap ${svcAppName}-configmap-envvar")
                               // Delete secret envvar
-                              sh (
-                                script: "oc delete secret ${svcAppName}-secret-envvar",
-                                returnStdout: true
-                              )
+                              shell("oc delete secret ${svcAppName}-secret-envvar")
                           }
                         }
                       }
