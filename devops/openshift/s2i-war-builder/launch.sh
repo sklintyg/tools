@@ -13,7 +13,7 @@ fi
 
 RESOURCES=/opt/$APP_NAME/env/resources.zip
 if [ -f $RESOURCES ]; then
-    (cd /tmp; unzip $RESOURCES)    
+    (mkdir -p /tmp/resources; cd /tmp/resources; unzip $RESOURCES)    
 fi
 
 echo "Running $APP_NAME on $JBOSS_IMAGE_NAME image, version $JBOSS_IMAGE_VERSION"
