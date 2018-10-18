@@ -212,11 +212,13 @@ For building and testing Web App docker images.
 * Web App configuration with config map and secret must exist prior to run the pipeline.
 * Application database users must exists and have admin privileges in the actual database.
 * A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable. 
-* The web hook trigger must contain the following environment variables `gitRef`, `gitUrl`, `buildVersion`, `infraVersion` and `commonVersion`.  
+* The web hook trigger must contain the following environment variables `gitRef`, `gitUrl`, `buildVersion` and `infraVersion`. And may also specify `commonVersion` and `backingServices` (overriding `BACKING_SERVCIES`), also see below.
+* Secret for envvars and certifikat are expected to already exist in environment as well as configuration settings for any backing services.    
 
 **Outputs:**
 
 * Upon a successful run an image reference is created in the ImageStream `${APP_NAME}-verified` and tagged with the `${buildVersion}` from trigger as well as with the `latest` tag.
+* Updated configmap (config), secret (env) and configmap-envvars for the app. 
 
 **Example:**
 
@@ -228,6 +230,63 @@ $ oc process pipelinetemplate-test-webapp \
 	-p TESTS="protractorTest,fitnesseTest" | oc apply -f -
 ```
 
+**Trigger**
+
+The pipeline trigger contains meta-data about the build, environment variables are passed in the `env` section as an array of name and value properties..
+
+Example trigger for building webcert from branch develop.
+
+```json
+{
+  "git": {
+    "uri": "https://github.com/sklintyg/webcert.git",
+    "ref": "develop",
+    "commit": "8ed96c44af556d4aee3663f142f804603bea75c9",
+    "author": {
+      "name": "Peter Larsson",
+      "email": "advptr@gmail.com"
+    },
+    "committer": {
+      "name": "Peter Larsson",
+      "email": "advptr@gmail.com"
+    },
+    "message": "noop"
+  },
+  "env": [
+    {
+      "name": "gitRef",
+      "value": "develop"
+    },
+    {
+      "name": "gitUrl",
+      "value": "https://github.com/sklintyg/webcert.git"
+    },
+    {
+      "name": "buildVersion",
+      "value": "T1"
+    },
+    {
+      "name": "infraVersion",
+      "value": "3.8.0.+"
+    },
+    {
+      "name": "commonVersion",
+      "value": "3.8.0.+"
+    }
+  ]
+}
+```
+
+Trigger properties:
+
+| Name | Required | Description |
+| ---- | -------- | ----------- |
+| gitUrl | Yes | Repository URL |
+| gitRef | Yes | Branch, tag or commit ref to build |
+| buildVersion | Yes | The build version |
+| infraVersion | Yes | The infra dependency version, ex latest 3.8.0 `3.8.0.+` |
+| commonVersion | No | The common dependency version if any exists, otherwise it shall be omitted |
+| backingServices | No | Overrides `BACKING_SERVICES`, see above, for the pipeline. A comma separated list of `<name>[:<tag>]` pairs. Ex: `intygstjanst-test:3.7.0.53`. Default tag is `latest`. Typically used for release branches with dependencies to specific versions. |
 
 
 ## OpenShift anatomy
