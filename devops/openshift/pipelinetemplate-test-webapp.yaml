@@ -307,11 +307,11 @@ objects:
                           shell("oc delete configmap ${APP_NAME}-configmap-envvar")
                           
                           // TODO: Finalize handling of secret vars
-                          shell("[ -f ${STAGE}/secret-vars.yaml ] && oc delete secret ${APP_NAME}-secret-envvar || true")
+                          // shell("[ -f ${STAGE}/secret-vars.yaml ] && oc delete secret ${APP_NAME}-secret-envvar || true")
                           
                           def wd = "cd ${tmpDir}/devops/openshift; "
                           eshell(wd + "[ -f ${STAGE}/configmap-vars.yaml ] && oc create -f ${STAGE}/configmap-vars.yaml || true")
-                          eshell(wd + "[ -f ${STAGE}/secret-vars.yaml ] && oc create -f ${STAGE}/secret-vars.yaml || true")
+                          // eshell(wd + "[ -f ${STAGE}/secret-vars.yaml ] && oc create -f ${STAGE}/secret-vars.yaml || true")
                           eshell(wd + "oc create configmap ${APP_NAME}-config --from-file=${STAGE}/config/")
                           eshell(wd + "oc create secret generic ${APP_NAME}-env --from-file=${STAGE}/env/ --type=Opaque")
                         }
