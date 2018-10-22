@@ -5,6 +5,8 @@ metadata:
 parameters:
   - name: APP_NAME
     required: true
+  - name: NEXUS_NAME
+    required: true
   - name: IMAGE
     required: true
   - name: STAGE
@@ -33,7 +35,7 @@ objects:
           name: ${SECRET}
         to:
           kind: DockerImage
-          name: ${NEXUS_URI}/${APP_NAME}:${TAG}
+          name: ${NEXUS_URI}/${NEXUS_NAME}:${TAG}
       source:
         type: Dockerfile
         dockerfile: |-

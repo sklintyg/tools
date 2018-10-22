@@ -509,8 +509,14 @@ objects:
                         def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
                         echo "Use ImageStream: ${imageStream}"
 
+                        def nexusName = "${APP_NAME}"
+                        if (nexusName.endsWith("-test")) {
+                          nexusName = nexusName.take(nexusName.lastIndexOf("-test"))
+                        }
+
                         def model = openshift.process("buildtemplate-nexus",
                           "-p", "APP_NAME=${APP_NAME}", 
+                          "-p", "NEXUS_NAME=${nexusName}", 
                           "-p", "IMAGE='${imageStream}'", 
                           "-p", "STAGE=${STAGE}",                          
                           "-p", "TAG='${env.buildVersion}'")
@@ -520,7 +526,6 @@ objects:
                         echo "${build.name()} started"
                         def status = ""
                         timeout (20) {
-
                           build.untilEach(1) {
                               status = it.object().status.phase
                               echo "Build status: ${status}" 
