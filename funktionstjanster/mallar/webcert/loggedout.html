@@ -1,18 +1,26 @@
-PARM{include:/head.html}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    PARM{include:/head.html}
+</head>
+<body>
 PARM{include:/header.html}
 
 <div id="maindiv" class="center-wrapper">
-  <div id="loggedout-content">
-    <h1>PARM{text-logoutconfirmed}</h1>
-    <p class="padding">PARM{text-youarenolongerloggedin}.</p>
-    <p>Logga in med e-legitimation</p>
-    <div id="logginButton">
-      <button class="button btn btn-success" id="logginButton" type="button"
-              onclick="location.href='https://webcert.intygstjanster.se'">
-        <span>Fortsätt</span>
-      </button>
+    <div id="loggedout-content">
+        <h1>PARM{text-logoutconfirmed}</h1>
+        <p class="padding">PARM{text-youarenolongerloggedin}.</p>
+        <p>Logga in med e-legitimation</p>
+        <div id="logginButton">
+            <button class="button btn btn-success" id="logginButton" type="button"
+                    onclick="location.href='https://webcert.intygstjanster.se'">
+                <span>Fortsätt</span>
+            </button>
+        </div>
     </div>
-  </div>
 </div>
 
 PARM{include:/footer.html}
+
+</body>
+</html>

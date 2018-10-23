@@ -1,26 +1,29 @@
-<!doctype html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
-PARM{include:/head.html}
-
+<head>
+    PARM{include:/head.html}
+</head>
 <body id="commonbody">
-  PARM{include:/header.html}
+PARM{include:/header.html}
 
-  <div id="containerbody">
-  <div id="backlink">
-      <i class="material-icons">keyboard_arrow_left</i><a href="https://webcert.intygstjanster.se">Tillbaka till startsidan</a>
-  </div>
+<div id="containerbody">
+    <div id="backlink">
+        <i class="material-icons">keyboard_arrow_left</i><a href="https://webcert.intygstjanster.se">Tillbaka till
+        startsidan</a>
+    </div>
 
-  PARM{include:/content.html}
+    PARM{include:/content.html}
 
-  <div id="loginLinksWrp" style="display:PARM{showidp}">
-      <h1>Välj inloggning</h1>
-      <a href="/mg-local/login?type=ccp11"><span PARM{viewsccp11} class=indexlist >Mobilt BankID<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp11}</span></a>
-      <a href="/mg-local/login?type=ccp10"><span PARM{viewsccp10} class=indexlist>BankID eller Nordea<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp10}</span></a>
-      <a href="/mg-local/login?type=ccp8"><span PARM{viewsccp8} class=indexlist>Telia<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp8}</span></a>
-  </div>
-  </div>
-  PARM{include:/footer.html}
+    <div id="loginLinksWrp" style="display:PARM{showidp}">
+        <h1>Välj inloggning</h1>
+        <a href="/mg-local/login?type=ccp11"><span PARM{viewsccp11} class=indexlist>Mobilt BankID<i
+                class="material-icons">keyboard_arrow_right</i>PARM{vieweccp11}</span></a>
+        <a href="/mg-local/login?type=ccp10"><span PARM{viewsccp10} class=indexlist>BankID eller Nordea<i
+                class="material-icons">keyboard_arrow_right</i>PARM{vieweccp10}</span></a>
+        <a href="/mg-local/login?type=ccp8"><span PARM{viewsccp8} class=indexlist>Telia<i class="material-icons">keyboard_arrow_right</i>PARM{vieweccp8}</span></a>
+    </div>
+</div>
+PARM{include:/footer.html}
 
 </body>
 </html>
