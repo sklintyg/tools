@@ -1,4 +1,9 @@
-PARM{include:/head.html}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    PARM{include:/head.html}
+</head>
+<body>
 PARM{include:/header.html}
 
 <div id="containerbody">
@@ -12,7 +17,8 @@ PARM{include:/header.html}
     <form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
         <span><p>Ange ditt personnummer<!--PARM{text-mbi-ssn}--></p></span>
         <div class="pnrinput">
-            <input autocomplete="off" class="form-control inputfield" type="text" name="ssn" placeholder="ååååmmdd-nnnn" maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
+            <input autocomplete="off" class="form-control inputfield" type="text" name="ssn" placeholder="ååååmmdd-nnnn"
+                   maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
                    oninput="valueCheck()">
             <button class="button btn btn-success" id="submitButton" type="submit" disabled>
                 <span>Fortsätt</span>
@@ -37,6 +43,7 @@ PARM{include:/header.html}
         }
 
     }
+
     function inputCheck(event) {
 
         var inputValue = document.getElementById("numberInput").value;
@@ -44,12 +51,12 @@ PARM{include:/header.html}
         if (inputValue.match(/(^\d{1,8}$|^[0-9]{8}[-]{1}[0-9]{0,4}$)/)) {
             var key = event.keyCode || event.charCode;
 
-            if (inputValue.length === 8 && key !== 8){
+            if (inputValue.length === 8 && key !== 8) {
                 document.getElementById("numberInput").value = inputValue + '-';
             }
         }
 
-        if(inputValue.match(/[0-9]{8}[-]{1}[0-9]{4}/))   {
+        if (inputValue.match(/[0-9]{8}[-]{1}[0-9]{4}/)) {
             document.getElementById("submitButton").disabled = false;
         } else {
             document.getElementById("submitButton").disabled = true;
@@ -57,5 +64,6 @@ PARM{include:/header.html}
     }
 </script>
 
-
 PARM{include:/footer.html}
+</body>
+</html>

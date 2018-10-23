@@ -1,8 +1,10 @@
-PARM{include:/head.html?title=text-mbi}
-<!-- Page used for GRP Authentication -->
-<script language="javascript" type="text/javascript">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
 
-</script>
+    PARM{include:/head.html?title=text-mbi}
+    <!-- Page used for GRP Authentication -->
+    <script language="javascript" type="text/javascript"></script>
 </head>
 <body id="commonbody">
 
@@ -15,8 +17,13 @@ PARM{include:/header.html?topheading=text-mbi-loginusingmbi?dialogheading=text-m
 
     PARM{include:/content.html}
 
-    <iframe src="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}" height=0 width=0></iframe>
+    <iframe src="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}" height=0
+            width=0></iframe>
 
-    <div id="manualstart"><a class='button' href="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}">PARM{text-rfa18}</a></div>
+    <div id="manualstart"><a class='button'
+                             href="PARM{bankid-schema}autostarttoken=PARM{autostarttoken}&redirect=PARM{redirect}">PARM{text-rfa18}</a>
+    </div>
 </div>
 PARM{include:/footer.html?topheading=text-loginusingmbi?dialogheading=text-mbi-loginusingmbi}
+</body>
+</html>
