@@ -1,0 +1,85 @@
+apply plugin: 'application'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: "maven-publish"
+
+repositories {
+    mavenLocal()
+    maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.7'
+    compile 'mysql:mysql-connector-java:5.1.32'
+    compile 'org.apache.commons:commons-dbcp2:2.0'
+    compile 'org.apache.activemq:activemq-all:5.10.0'
+    compile 'com.h2database:h2:1.4.197'
+    compile 'junit:junit:4.12'    
+}
+
+description = "Skicka intyg sent till Intygsstatistik"
+
+group = 'se.inera.intyg.tools'
+version = '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+artifacts { 
+    archives distZip 
+}
+
+uploadArchives.repositories.mavenDeployer {
+    repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
+        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+    }
+}
+
+task runScript(type: JavaExec) {
+    description 'Run Groovy script'
+
+    // Set main property to name of Groovy script class.
+    main = 'se.inera.intyg.tools.SkickaIntygSentTillIntygsstatistik'
+    mainClassName = 'se.inera.intyg.tools.SkickaIntygSentTillIntygsstatistik'
+
+    // Set classpath for running the Groovy script.
+    classpath = sourceSets.main.runtimeClasspath
+
+    if (project.hasProperty('DB_URL')) {
+        args 'db.url=' + project.getProperty('DB_URL');
+    }
+    if (project.hasProperty('DB_DRIVER')) {
+        args 'db.driver=' + project.getProperty('DB_DRIVER');
+    }
+    if (project.hasProperty('DB_USERNAME')) {
+        args 'db.username=' + project.getProperty('DB_USERNAME');
+    }
+    if (project.hasProperty('DB_PASSWORD')) {
+        args 'db.password=' + project.getProperty('DB_PASSWORD');
+    }
+    if (project.hasProperty('BROKER_URL')) {
+        args 'broker.url=' + project.getProperty('BROKER_URL');
+    }
+    if (project.hasProperty('BROKER_QUEUE')) {
+        args 'broker.queue=' + project.getProperty('BROKER_QUEUE');
+    }
+    if (project.hasProperty('BROKER_USERNAME')) {
+        args 'broker.username=' + project.getProperty('BROKER_USERNAME');
+    }
+    if (project.hasProperty('BROKER_PASSWORD')) {
+        args 'broker.password=' + project.getProperty('BROKER_PASSWORD');
+    }
+    if (project.hasProperty('DATE_FROM')) {
+        args 'date.from=' + project.getProperty('DATE_FROM')
+    }
+    if (project.hasProperty('DATE_TO')) {
+        args 'date.to=' + project.getProperty('DATE_TO')
+    }
+    if (project.hasProperty('DEBUG')) {
+        args 'debug=' + project.getProperty('DEBUG')
+    }
+
+}
+
+defaultTasks 'runScript'

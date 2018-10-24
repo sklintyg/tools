@@ -1,0 +1,5 @@
+/.gradle
+/activemq-data
+/build
+/src/main/assembly
+distribution.zip
