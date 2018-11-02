@@ -62,6 +62,7 @@ objects:
             def localCommonVersion = (env.commonVersion) ? env.commonVersion : "NA"
             def localBackingServices = (env.backingServices) ? env.backingServices : "${BACKING_SERVICES}"
             def tmpDir = "${APP_NAME}-tmp"
+            def releaseBuild = (env.release) ? env.release : false
 
             // function to run database commands
             def dbScript(cmd) {
@@ -165,6 +166,7 @@ objects:
                       openshift.withCluster() {
                         openshift.withProject() {
                           echo "Pipeline started with:"
+                          echo "release: ${releaseBuild}"
                           echo "gitUrl: ${gitUrl}, gitRef: ${gitRef}"
                           echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${localCommonVersion}"
                           echo "backingServices: ${localBackingServices}"
@@ -554,7 +556,12 @@ objects:
                         def project = openshift.project()
                         def target = "${project}/${APP_NAME}-verified"
                         echo "Promote image ${source} to is ${APP_NAME}-verified"
-                        openshift.tag("${source}:${env.buildVersion}", "${target}:${env.buildVersion}", "${target}:latest")
+                        // move latest for dev builds only
+                        if (releaseBuild) {
+                          openshift.tag("${source}:${env.buildVersion}", "${target}:${env.buildVersion}")
+                        } else { 
+                          openshift.tag("${source}:${env.buildVersion}", "${target}:${env.buildVersion}", "${target}:latest")
+                        }
                     }
                   }
                 }              
