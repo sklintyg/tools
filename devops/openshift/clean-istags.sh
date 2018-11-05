@@ -12,7 +12,7 @@ IS_NAME=$1
 MAJOR_VERSION=$2
 
 if [ ${#MAJOR_VERSION} -lt 5 ]; then
-	echo "Error: major MAJOR_version must be at least charaacters, i.e X.Y.Z"
+	echo "Error: major version must be at least charaacters, i.e X.Y.Z"
 	exit 1
 fi
 
