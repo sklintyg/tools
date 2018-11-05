@@ -4,6 +4,7 @@
 
 if [ "$#" -ne 2 ]; then
 	echo "usage: clean-istags.sh <is_name> <major_version>"
+	echo ">>> Use with caution. (If you don't know exactly what you're about to do with this script, please stay away!)"
 	exit 1
 fi
 
