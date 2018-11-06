@@ -43,10 +43,10 @@ objects:
           value: "-Xmx512M"
         resources:
           limits:
-            cpu: 1
+            cpu: 500m
             memory: 4Gi
           requests:
-            cpu: 200m
+            cpu: 100m
             memory: 2Gi
         image: ${IMAGE}
         imagePullPolicy: Always
