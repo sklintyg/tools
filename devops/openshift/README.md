@@ -165,24 +165,13 @@ For running external client test suites from a test pipeline.
 * The test script is the default entry-point of the docker image.
 * The pipeline waits until a callback HTTP call is received with a text/plan body containing `SUCCESS` upon success, otherwise it's a failure. 
 * A PVC named `test-report` exists, and is mounted to volume `/mnt/reports`.
+* Jenkins has a mount path `/var/lib/jenkins/reports` for the same `test-report` PVC.
 * Test reports (HTML files only) are copied to `/mnt/reports`.
 
 **Outputs:**
 
 * Rolls out a deployment with 1 replica (pod)
-* A service with name `${APP_NAME}`
-* A route terminating TLS (HTTPS) with name `${APP_NAME}-route`
 
-**Example:**
-
-```
-$ oc process deploytemplate-webapp \
-	-p APP_NAME=intygstjanst-test \
-	-p STAGE=test \
-	-p IMAGE=docker-registry.default.svc:5000/dintyg/intygstjanst-test-verified:latest \
-	-p DATABASE_NAME=intygstjanst_test \
-	-p HEALTH_URI=/inera-certificate | oc apply -f - 
-```
 
 #### Template Web App Test Pipeline
 
@@ -218,7 +207,8 @@ For building and testing Web App docker images.
 **Outputs:**
 
 * Upon a successful run an image reference is created in the ImageStream `${APP_NAME}-verified` and tagged with the `${buildVersion}` from trigger as well as with the `latest` tag.
-* Updated configmap (config), secret (env) and configmap-envvars for the app. 
+* Updated configmap (config), secret (env) and configmap-envvars for the app.
+* Test Reports are registered to Jenkins, requires plugin, see publishHTML.  
 
 **Example:**
 
