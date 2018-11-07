@@ -234,28 +234,18 @@ $ oc process pipelinetemplate-test-webapp \
 
 The pipeline trigger contains meta-data about the build, environment variables are passed in the `env` section as an array of name and value properties..
 
-Example trigger for building webcert from branch develop.
+Example trigger for a release build of WebCert.
+
+_***Note:*** To be able to distinguish between release and development builds a release flag is used. The main difference is that release builds never are tagged as `latest`. The release value must be a string and it's just to omit this flag for develop builds._ 
 
 ```json
 {
   "git": {
-    "uri": "https://github.com/sklintyg/webcert.git",
-    "ref": "develop",
-    "commit": "8ed96c44af556d4aee3663f142f804603bea75c9",
-    "author": {
-      "name": "Peter Larsson",
-      "email": "advptr@gmail.com"
-    },
-    "committer": {
-      "name": "Peter Larsson",
-      "email": "advptr@gmail.com"
-    },
-    "message": "noop"
-  },
+    "uri": "https://github.com/sklintyg/webcert.git"
   "env": [
     {
       "name": "gitRef",
-      "value": "develop"
+      "value": "v6.2.0.101"
     },
     {
       "name": "gitUrl",
@@ -263,7 +253,7 @@ Example trigger for building webcert from branch develop.
     },
     {
       "name": "buildVersion",
-      "value": "T1"
+      "value": "6.2.0.101"
     },
     {
       "name": "infraVersion",
@@ -272,6 +262,14 @@ Example trigger for building webcert from branch develop.
     {
       "name": "commonVersion",
       "value": "3.8.0.+"
+    },
+    {
+    	"name": "backingServices",
+    	"value": "intygstjanst-test:3.6.0.435"
+    },
+    {
+    	"name": "release",
+    	"value": "true" 
     }
   ]
 }
@@ -287,6 +285,11 @@ Trigger properties:
 | infraVersion | Yes | The infra dependency version, ex latest 3.8.0 `3.8.0.+` |
 | commonVersion | No | The common dependency version if any exists, otherwise it shall be omitted |
 | backingServices | No | Overrides `BACKING_SERVICES`, see above, for the pipeline. A comma separated list of `<name>[:<tag>]` pairs. Ex: `intygstjanst-test:3.7.0.53`. Default tag is `latest`. Typically used for release branches with dependencies to specific versions. |
+| release | No | A string value `"true"`or `"false"` indicating if this is a release build. |
+
+**CI-Jenkins Integration**
+
+Checkout files `TriggerOCBuildJenkinsfile` and `Jenkinsfile` in the root of each application. `TriggerOCBuildJenkinsfile` assembles the trigger content and the last step of the pipeline defined in `Jenkinsfile` fires the trigger with parameters.
 
 
 ## OpenShift anatomy
