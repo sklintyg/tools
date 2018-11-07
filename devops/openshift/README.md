@@ -170,7 +170,7 @@ For running external client test suites from a test pipeline.
 
 **Outputs:**
 
-* Rolls out a deployment with 1 replica (pod)
+* Runs the application artifact image and the specified tests, 1 replica (pod)
 
 
 #### Template Web App Test Pipeline
