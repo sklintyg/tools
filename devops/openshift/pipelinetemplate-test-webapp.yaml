@@ -341,7 +341,7 @@ objects:
                             "-p", "HEALTH_URI=${HEALTH_URI}",
                             "-p", "STAGE=${STAGE}")                          
                           echo "Wait for rollout (limited to 5 minutes)"
-                          timeout (5) {
+                          timeout (7) {
                             def rm = openshift.apply(deployModel).narrow("dc").rollout()
                             echo "Waiting for deployment to complete"
                             rm.status()
