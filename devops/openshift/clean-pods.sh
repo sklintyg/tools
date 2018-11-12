@@ -3,8 +3,15 @@
 # Cleanup old pods
 
 # Old is 1 day (24H)
-OLD=1d
-BEFORE=$(date -v-${OLD} +%s)
+OLD=1
+case "$(uname)" in
+    "Linux")
+        BEFORE=$(date --date "${OLD} days ago" +%s)
+        ;;
+    "Darwin")
+        BEFORE=$(date -v-${OLD}d +%s)
+        ;;
+esac
 
 function clean() {
     name=$1
