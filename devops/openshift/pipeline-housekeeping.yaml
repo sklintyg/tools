@@ -12,7 +12,7 @@ items:
     triggers:
       - generic:
           allowEnv: true
-          secret: ${SECRET}
+          secret: nosecret
         type: Generic
     strategy:
       type: JenkinsPipeline
