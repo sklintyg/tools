@@ -63,5 +63,12 @@ items:
                   }
                 }
               }
+              stage('Clean Reports') {
+                steps {
+                  script {
+                    shell("rm -rf \$(find /var/lib/jenkins/reports/dintyg/*-pipeline/ -maxdepth 1 -type d -mtime +20)")
+                  }
+                }
+              }
             }
           }
