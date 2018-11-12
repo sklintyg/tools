@@ -9,6 +9,11 @@ items:
       stage: test
     name: pipeline-housekeeping
   spec:
+    triggers:
+      - generic:
+          allowEnv: true
+          secret: ${SECRET}
+        type: Generic
     strategy:
       type: JenkinsPipeline
       jenkinsPipelineStrategy:
@@ -66,7 +71,7 @@ items:
               stage('Clean Reports') {
                 steps {
                   script {
-                    shell("rm -rf \$(find /var/lib/jenkins/reports/dintyg/*-pipeline/ -maxdepth 1 -type d -mtime +20)")
+                    shell("find /var/lib/jenkins/reports/dintyg/*-pipeline/ -maxdepth 1 -type d -mtime +20 | xargs -r rm -rf")
                   }
                 }
               }
