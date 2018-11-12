@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    generation: 1
+    labels:
+      stage: test
+    name: pipeline-housekeeping
+  spec:
+    strategy:
+      type: JenkinsPipeline
+      jenkinsPipelineStrategy:
+        jenkinsfile: |-
+          def images = [
+            'intygstjanst-test': '3.7.0',
+            'logsender-test': '6.2.0',
+            'minaintyg-test': '3.8.0',
+            'webcert-test': '6.2.0',
+            'rehabstod-test': '1.8.0',
+            'privatlakarportal-test': '1.9.0'
+          ]
+
+          def suffix = [ "", "-artifact", "-verified" ]
+
+          // run shell command, return status code
+          def shell(cmd) {
+            sh (
+              script: cmd,
+              returnStatus: true 
+            ) 
+          }
+         
+          // run shell command and signal an error on failure
+          def eshell(cmd) {
+            def rc = shell(cmd)
+            if (rc != 0) {
+              error("Error: shell command exited with error code ${rc}")
+            }
+          }
+
+          pipeline {
+            agent any
+            stages {
+              stage('Clean Pods') {
+                steps {
+                  script {
+                    eshell("curl -s https://raw.githubusercontent.com/sklintyg/tools/develop/devops/openshift/clean-pods.sh > /tmp/clean-pods.sh")
+                    shell("bash /tmp/clean-pods.sh")
+                  }
+                }
+              }
+              stage('Clean Images') {
+                steps {
+                  script {
+                    eshell("curl -s https://raw.githubusercontent.com/sklintyg/tools/develop/devops/openshift/clean-istags.sh > /tmp/clean-istags.sh")
+                    images.each { k, v ->
+                      suffix.each { s ->
+                        shell("bash /tmp/clean-istags.sh ${k}${s} ${v}")
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
