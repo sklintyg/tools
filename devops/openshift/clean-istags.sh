@@ -19,7 +19,7 @@ fi
 
 
 function clean() {
-	tags=($(echo $(oc get is $IS_NAME --template='{{range .status.tags}}{{.tag}}{{"\n"}}{{end}}' | grep ^${MAJOR_VERSION} | sort -t '.'  -n -b +3)))
+	tags=($(echo $(oc get is $IS_NAME --template='{{range .status.tags}}{{.tag}}{{"\n"}}{{end}}' | grep ^${MAJOR_VERSION} | sort -n -t . -k 4)))
 	n_tags=${#tags[@]}
 
 	if [ ${n_tags} -gt ${KEEP} ]; then
