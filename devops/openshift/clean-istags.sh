@@ -8,7 +8,7 @@ if [ "$#" -ne 2 ]; then
 	exit 1
 fi
 
-KEEP=10
+KEEP=20
 IS_NAME=$1
 MAJOR_VERSION=$2
 
