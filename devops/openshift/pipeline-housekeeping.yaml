@@ -7,7 +7,7 @@ items:
     generation: 1
     labels:
       stage: test
-    name: pipeline-housekeeping
+    name: housekeeping
   spec:
     triggers:
       - generic:
