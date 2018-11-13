@@ -17,9 +17,14 @@ if [ ${#MAJOR_VERSION} -lt 5 ]; then
 	exit 1
 fi
 
+if [ "$(uname)" = "Darwin" ]; then
+	SORT_ARGS="-t .  -n -b +3"
+else
+	SORT_ARGS="-n -t . -k 4"
+fi
 
 function clean() {
-	tags=($(echo $(oc get is $IS_NAME --template='{{range .status.tags}}{{.tag}}{{"\n"}}{{end}}' | grep ^${MAJOR_VERSION} | sort -n -t . -k 4)))
+	tags=($(echo $(oc get is $IS_NAME --template='{{range .status.tags}}{{.tag}}{{"\n"}}{{end}}' | grep ^${MAJOR_VERSION} | sort $SORT_ARGS)))
 	n_tags=${#tags[@]}
 
 	if [ ${n_tags} -gt ${KEEP} ]; then
