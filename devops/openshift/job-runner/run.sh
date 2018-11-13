@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "Run housekeeping script"
+echo "Run job script"
 echo "RUN: $SCRIPT"
 $SCRIPT
