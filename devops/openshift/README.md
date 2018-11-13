@@ -24,6 +24,7 @@ Dev pipelines for Web Apps are realized with OCP Templates and the following tem
 * deploytemplate-webapp.yaml - Web App Deployer
 * testrunnertemplate-pod.yaml - Pod Test Runner (gradle, java)
 * pipelinetemplate-test-webapp.yaml - Web App Test Pipeline. Depends the templates above
+* jobtemplate.yaml - Runs scheduled scripts. 
 
 Each template must be installed or updated in the OCP project of question:
 
@@ -280,6 +281,29 @@ Trigger properties:
 **CI-Jenkins Integration**
 
 Checkout files `TriggerOCBuildJenkinsfile` and `Jenkinsfile` in the root of each application. `TriggerOCBuildJenkinsfile` assembles the trigger content and the last step of the pipeline defined in `Jenkinsfile` fires the trigger with parameters.
+
+
+#### Template Scheduled Jobs 
+
+Typically used to trigger a pipeline like the `housekeeping` pipeline etc.
+
+**Name:** jobtemplate
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| JOB_NAME      | Yes         | The name, ex: `housekeeping-trigger` |
+| SCRIPT        | Yes         | The script to execute, currently are `bash` and `curl` available.  |        
+| SCHEDULE      |             | Cron expression default is `0 3 * * *`, i.e. 3AM each night|
+
+**Conventions:**
+
+* Runs the script as is. 
+
+**Outputs:**
+
+* Depends on the script (script content is logged).
 
 
 ## OpenShift anatomy
