@@ -18,7 +18,7 @@ if [ ${#MAJOR_VERSION} -lt 5 ]; then
 fi
 
 if [ "$(uname)" = "Darwin" ]; then
-	SORT_ARGS="-t .  -n -b +3"
+	SORT_ARGS="-t . -n -b +3"
 else
 	SORT_ARGS="-n -t . -k 4"
 fi
