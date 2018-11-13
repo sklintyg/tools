@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: jobtemplate
+parameters:
+- name: APP_NAME
+  required: true
+- name: SCRIPT
+  required: true
+- name: SCHEDULE
+  value: "0 3 * * *"
+  required: true
+objects:
+- apiVersion: batch/v1beta1
+  kind: CronJob
+  metadata:
+    name: "${APP_NAME}"
+  spec:
+    schedule: ${SCHEDULE}
+    successfulJobsHistoryLimit: 3 
+    failedJobsHistoryLimit: 3  
+    jobTemplate:             
+      spec:
+        template:
+          metadata:
+            labels:          
+              parent: "${APP_NAME}-cron"
+          spec:
+            containers:
+            - env:
+              - name: SCRIPT
+                value: ${SCRIPT}
+              name: ${APP_NAME}
+              image: docker-registry.default.svc:5000/dintyg/job-runner:latest
+              command: [ "/run.sh", "\"${SCRIPT}\"" ] 
+              imagePullPolicy: Always
+            restartPolicy: Never
