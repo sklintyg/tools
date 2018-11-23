@@ -162,6 +162,11 @@ objects:
                 stage('Prepare') {
                   steps {
                     script {
+                      if (releaseBuild) {
+                        currentBuild.displayName = "Prep. Release ${buildVersion}"
+                      } else {
+                        currentBuild.displayName = "Prep. Develop ${buildVersion}"
+                      }
                       echo "Prepare configuration and check pre-conditions"
                       openshift.withCluster() {
                         openshift.withProject() {
