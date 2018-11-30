@@ -2,9 +2,9 @@
 
 INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 
-for project in minaintyg webcert; do
+for project in minaintyg webcert rehabstod; do
     echo $project
     cd "$INTYG_HOME/$project"
-    git checkout -- *resources.zip
+    git checkout -- *resources.zip*
     echo
 done
