@@ -159,6 +159,35 @@ objects:
             pipeline {
               agent any
               stages {
+
+                stage('Release') {
+                  when {
+                    expression {
+                      return releaseBuild
+                    }                      
+                  }
+                  steps {
+                    script {
+                      echo "Build release"
+                    }
+                  }
+                }
+
+
+                stage('Latest') {
+                  when {
+                    expression {
+                      return !releaseBuild
+                    }                      
+                  }
+                  steps {
+                    script {
+                      echo "Build latest"
+                    }
+                  }
+                }
+
+
                 stage('Prepare') {
                   steps {
                     script {
@@ -194,7 +223,13 @@ objects:
                           def status = dbScript("create database ${dbName} character set utf8mb4;")
                           if (status != 0) {
                             error("Unable to create database ${dbName}")
-                          }                           
+                          }
+
+                          // cleanup app specific redis keys
+                          sh (
+                            script: "oc rsh \$(oc get pods | grep redis- | grep Running | awk \'{ print \$1 }\')  /opt/rh/rh-redis32/root/usr/bin/redis-cli -a redis  EVAL \"return redis.call(\'del\', unpack(redis.call(\'keys\', ARGV[1])))\" 0 *:${APP_NAME}:*",
+                            returnStatus: true 
+                          )
                         }
                       }
                     }
@@ -508,7 +543,15 @@ objects:
 
               /* END TESTS */
                 
-              stage('Promote Image to Nexus') {
+              // Promote Release Builds to Nexus
+              stage('Promote to Nexus') {
+                
+                when {
+                  expression {
+                    return releaseBuild
+                  }
+                }
+
                 steps {
                   script {
                     openshift.withCluster() {
