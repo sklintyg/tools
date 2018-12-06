@@ -90,6 +90,7 @@ spec:
                           def rm = openshift.selector("dc", "${k}").rollout()
                           echo "Rollout latest."
                           rm.latest()
+                          rm.status()
                         }
                       }
                     }
