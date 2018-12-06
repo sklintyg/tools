@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: nightly-deploy
+  generation: 1
+  labels:
+    stage: demo
+spec:
+  triggers:
+    - generic:
+        allowEnv: true
+        secret: nosecret
+      type: Generic
+  strategy:
+    jenkinsPipelineStrategy:
+      type: JenkinsPipeline
+      jenkinsfile: |-
+        def apps = [
+          'intygstjanst-demo': 'https://github.com/sklintyg/intygstjanst.git',
+          'webcert-demo': 'https://github.com/sklintyg/webcert.git',
+          'minaintyg-demo': 'https://github.com/sklintyg/minaintyg.git',
+          'rehabstod-demo': 'https://github.com/sklintyg/rehabstod.git',
+          'logsender-demo': 'https://github.com/sklintyg/logsender.git'
+        ]
+
+        // run shell command, return status code
+        def shell(cmd) {
+          sh (
+            script: cmd,
+            returnStatus: true 
+          ) 
+        }
+
+        // run shell command and signal an error on failure
+        def eshell(cmd) {
+          def rc = shell(cmd)
+          if (rc != 0) {
+            error("Error: shell command exited with error code ${rc}")
+          }
+        }
+
+        // function to extract openshift stage configuration only from repo. dir must not exist
+        def extractConfig(dir, url, ref, stage) {
+          eshell("rm -rf ${dir}")
+          eshell("mkdir ${dir}")
+
+          def wd = "cd ${dir}; "
+          eshell(wd + "git init")
+          eshell(wd + "git remote add origin -f ${url}")
+          eshell(wd + "git config core.sparsecheckout true")
+          eshell(wd + "echo 'devops/openshift/*' >> .git/info/sparse-checkout")
+          eshell(wd + "git checkout ${ref}")
+          eshell(wd + "[ -f devops/openshift/test/env/resources.zip ] && cp devops/openshift/test/env/resources.zip devops/openshift/${stage}/env/resources.zip || true")
+        }
+
+        // function to refresh configuration
+        def refreshConfig(appName, url) {
+          def tmpDir = "${appName}-tmp"
+          def stage = "demo"
+
+          extractConfig(tmpDir, url, "develop", stage)
+
+          shell("oc delete configmap ${appName}-config")
+          shell("oc delete secret ${appName}-env")
+          shell("oc delete configmap ${appName}-configmap-envvar")
+                    
+          def wd = "cd ${tmpDir}/devops/openshift; "
+          eshell(wd + "[ -f ${stage}/configmap-vars.yaml ] && oc create -f ${stage}/configmap-vars.yaml || true")
+          eshell(wd + "oc create configmap ${appName}-config --from-file=${stage}/config/")
+          eshell(wd + "oc create secret generic ${appName}-env --from-file=${stage}/env/ --type=Opaque")
+        }        
+
+        pipeline {
+          agent any
+          stages {
+            stage('Deploy Latest') {
+              when {
+                expression {
+                  true
+                }                      
+              }
+              steps {
+                script {
+                  openshift.withCluster() {
+                    openshift.withProject() {
+                      apps.each { k, v ->
+                        echo "Refresh: ${k} from ${v}" 
+                        refreshConfig(k, v)
+                        timeout (5) {
+                          def rm = openshift.selector("dc", "${k}").rollout()
+                          echo "Rollout latest."
+                          rm.latest()
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          post {
+            failure {
+              echo "Pipeline Failed :("
+            }
+          }
+        }
+    
+  
+
+
+
