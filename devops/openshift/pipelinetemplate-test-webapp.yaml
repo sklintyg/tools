@@ -88,6 +88,11 @@ objects:
               }
             }
 
+            //
+            def log(msg) {
+              echo "${new Date()} -- ${msg}"
+            }
+
             // function to extract openshift stage configuration only from repo. dir must not exist
             def extractConfig(dir, url, ref, stage) {
               eshell("rm -rf ${dir}")
@@ -199,7 +204,7 @@ objects:
                       echo "Prepare configuration and check pre-conditions"
                       openshift.withCluster() {
                         openshift.withProject() {
-                          echo "Pipeline started with:"
+                          log "Pipeline started with:"
                           echo "release: ${releaseBuild}"
                           echo "gitUrl: ${gitUrl}, gitRef: ${gitRef}"
                           echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${localCommonVersion}"
@@ -273,7 +278,7 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          echo "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
+                          log "Build artifact image ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}"
                           def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()                          
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
@@ -308,7 +313,7 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          echo "Build runtime image ${APP_NAME}"
+                          log "Build runtime image ${APP_NAME}"
                           def build = openshift.selector("bc", "${APP_NAME}").startBuild()
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
@@ -324,7 +329,7 @@ objects:
                             if (status != "Complete") {
                               error("Build terminated with status: ${status}")
                             }
-                            echo "Build Completed"
+                            log "Build Completed"
                           }
                         }
                       }
@@ -380,12 +385,12 @@ objects:
                             "-p", "DATABASE_NAME=${dbName}",
                             "-p", "HEALTH_URI=${HEALTH_URI}",
                             "-p", "STAGE=${STAGE}")                          
-                          echo "Wait for rollout (limited to 5 minutes)"
+                          log "Wait for rollout (limited to 5 minutes)"
                           timeout (7) {
                             def rm = openshift.apply(deployModel).narrow("dc").rollout()
-                            echo "Waiting for deployment to complete"
+                            log "Waiting for deployment to complete"
                             rm.status()
-                            echo "Deployment done."
+                            log "Deployment done."
                           }
 
                         }
@@ -447,12 +452,12 @@ objects:
                                               "-p", "DATABASE_NAME=${backDbName}",
                                               "-p", "HEALTH_URI=${healthUri}",
                                               "-p", "STAGE=test")
-                                      echo "Wait for rollout (limited to 5 minutes)"
+                                      log "Wait for rollout (limited to 5 minutes)"
                                       timeout(5) {
                                           def rm = openshift.apply(deployModel).narrow("dc").rollout()
                                           echo "Waiting for deployment to complete"
                                           rm.status()
-                                          echo "Deployment done."
+                                          log "Deployment done."
                                       }
                                   }
                               }
@@ -463,84 +468,26 @@ objects:
 
 
               /* START TESTS */
-
-              // RESTASSURED
-              stage('Run RestAssured Tests') {
+              stage('Run Tests') {
                 when {
                   expression {
-                    return "${TESTS}".contains("restAssuredTest")
+                    return !"${TESTS}".equals("-")
                   }                      
                 }
                 steps {
                   script {
                     openshift.withCluster() {
                       openshift.withProject() {
-                        performTest("restAssuredTest")
+                        "${TESTS}".split(",").each { t ->
+                          stage(t.capitalize()) {
+                            performTest(t)
+                          }
+                        }
                       }
                     }
                   }
                 }
               }
-              // END restAssuredTest
-
-
-              // PROTRACTOR
-              stage('Run Protractor Tests') {
-                when {
-                  expression {
-                    return "${TESTS}".contains("protractorTest")
-                  }
-                }
-                steps {
-                  script {
-                    openshift.withCluster() {
-                      openshift.withProject() {
-                        performTest("protractorTest")
-                      }
-                    }
-                  }
-                }
-              }
-              // END protractorTest
-
-              // FITNESSE
-              stage('Run Fitnesse Tests') {
-                when {
-                  expression {
-                    return "${TESTS}".contains("fitnesseTest")
-                  }
-                }
-                steps {
-                  script {
-                    openshift.withCluster() {
-                      openshift.withProject() {
-                        performTest("fitnesseTest")
-                      }
-                    }
-                  }
-                }
-              }
-              // END fitnesseTest
-
-              // CYPRESS
-              stage('Run Cypress Tests') {
-                when {
-                  expression {
-                    return "${TESTS}".contains("cypressTest")
-                  }
-                }
-                steps {
-                  script {
-                    openshift.withCluster() {
-                      openshift.withProject() {
-                        performTest("cypressTest")
-                      }
-                    }
-                  }
-                }
-              }
-              // END cypressTest
-
               /* END TESTS */
                 
               // Promote Release Builds to Nexus
@@ -573,7 +520,7 @@ objects:
                         openshift.apply(model)
 
                         def build = openshift.selector("bc", "${APP_NAME}-nexus").startBuild()
-                        echo "${build.name()} started"
+                        log "${build.name()} started"
                         def status = ""
                         timeout (20) {
                           build.untilEach(1) {

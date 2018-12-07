@@ -40,7 +40,7 @@ spec:
         }
 
         def log(msg) {
-          echo "${new Date()}: ${msg}"
+          echo "${new Date()} -- ${msg}"
         }
 
         // function to extract openshift stage configuration only from repo. dir must not exist
