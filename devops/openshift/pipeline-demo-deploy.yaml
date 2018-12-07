@@ -39,6 +39,10 @@ spec:
           }
         }
 
+        def log(msg) {
+          echo "${new Date()}: ${msg}"
+        }
+
         // function to extract openshift stage configuration only from repo. dir must not exist
         def extractConfig(dir, url, ref, stage) {
           eshell("rm -rf ${dir}")
@@ -84,13 +88,15 @@ spec:
                   openshift.withCluster() {
                     openshift.withProject() {
                       apps.each { k, v ->
-                        echo "Refresh: ${k} from ${v}" 
-                        refreshConfig(k, v)
-                        timeout (5) {
-                          def rm = openshift.selector("dc", "${k}").rollout()
-                          echo "Rollout latest."
-                          rm.latest()
-                          rm.status()
+                        stage(k) {
+                          log "Refresh: ${k} from ${v}" 
+                          refreshConfig(k, v)
+                          timeout (5) {
+                            def rm = openshift.selector("dc", "${k}").rollout()
+                            log "Rollout latest."
+                            rm.latest()
+                            rm.status()
+                          }
                         }
                       }
                     }
