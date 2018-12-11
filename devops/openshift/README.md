@@ -1,5 +1,6 @@
 # Intygstjänster - OpenShift Container Platform (OCP) 
-For Intygstjänster 2018 we are evaluating deployment of our applications on an OpenShift cluster. This document provides som work-in-progress thoughts and findings on the 
+
+For Intygstjänster 2018 the main objective is to run all applications on a OpenShift cluster. This document provides work-in-progress thoughts and findings on the 
 topic.
 
 ## OCP Web Apps and Dev Pipelines
@@ -15,7 +16,35 @@ topic.
   * Backing services
   * Monitoring and health-checks
 
-### OCP Templates
+### Housekeeping
+
+Build and test processes generates a lot of artifacts such as images, pods/containers, reports and logs. Therefore it's necessary to have some fundamental house keeping functions.
+
+* Builds have properties to control history limits, also see `successfulBuildsHistoryLimit` and `failedBuildsHistoryLimit`. Normally are these set to a value in the range `2..4`.
+* A dedicated housekeeping pipeline cleans:
+  * Completed pods/containers (> 1 day)
+  * Latest images from image streams (only keep a history of 20 develop builds per stream)
+  * Jenkins reports and build logs (only keep a history of 20 days) 
+
+Release images are kept forever. 
+
+Housekeeping functions are executed as a pipeline, see `pipeline-houskeeping.yaml`, nightly. Also see `jobtemplate.yaml` for how to trigger the housekeeping pipeline with a `CronJob`  running `curl`.
+
+**Note:** _For the time being all images and main versions of develop builds are defined within the pipeline definition, see `def images = [ 'image': "'X.Y.Z', ...]` list in `pipeline-houskeeping.yaml`. This means that when a new release branch is created the version numbers have to be bumnped and the housekeeping pipeline needs to be updated, accordingly._
+
+Also see scripts `clean-istags.sh` and `clean-pods.sh`.
+
+
+### Nightly Demo Deploy Pipeline
+
+In the demo OCP project a specific pipeline is used to perform nightly deploys of the latest builds. The pipeline definition, see `pipeline-demo-deploy.yaml` and the `def apps = [ 'name': 'git-url' ]` list.
+
+Prior to add an application to the `apps` list a valid deployment definition has to be created with `${APP_NAME}-secret-envvar` and `${APP_NAME}-certifikat`. All other required configuration artifacts are for each redeploy refreshed from source code and the `~/devops/openshift/demo` folder.
+
+It's assumed a demo application ends with suffix `-demo` and that it's deployment config refers to verified image streams from project `dintyg` tagged with `latest`. 
+
+
+### Web App OCP Templates
 
 Dev pipelines for Web Apps are realized with OCP Templates and the following templates exists:
 
