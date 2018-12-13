@@ -18,13 +18,14 @@ PARM{include:/header.html}
     <form method="post" action="/mg-localPARM{form-url}" name="form" accept-charset="UTF-8">
         <span><p>Ange ditt personnummer<!--PARM{text-mbi-ssn}--></p></span>
         <div class="pnrinput">
-            <input autocomplete="off" class="form-control inputfield" type="text" name="ssn" placeholder="ååååmmdd-nnnn" maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
+            <input autocomplete="off" class="form-control inputfield" type="text" name="ssn" placeholder="ååååmmdd-nnnn"
+                   maxlength="13" pattern="[0-9]{8}[-]{1}[0-9]{4}" id="numberInput" onkeyup="inputCheck(event)"
                    oninput="valueCheck()">
-            <button class="button btn btn-success" id="submitButton" type="submit" disabled>
+            <button class="button btn btn-success" id="submitButton" type="submit" onclick="showErrorTxt()" disabled>
                 <span>Fortsätt</span>
             </button>
         </div>
-        <p class="errortxt">PARM{error-message}</p>
+        <p class="errortxt" id="errorTxt">PARM{error-message}</p>
     </form>
 </div>
 
@@ -65,9 +66,18 @@ PARM{include:/header.html}
         } else {
             document.getElementById("submitButton").disabled = true;
         }
+
+        if (inputValue) {
+            document.getElementById("errorTxt").style.display = "none";
+        } else {
+            document.getElementById("errorTxt").style.display = "block";
+        }
+    }
+
+    function showErrorTxt() {
+        document.getElementById("errorTxt").style.display = "block";
     }
 </script>
-
 
 PARM{include:/footer.html}
 </body>
