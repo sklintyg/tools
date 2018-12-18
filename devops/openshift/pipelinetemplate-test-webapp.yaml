@@ -62,7 +62,7 @@ objects:
             def localCommonVersion = (env.commonVersion) ? env.commonVersion : "NA"
             def localBackingServices = (env.backingServices) ? env.backingServices : "${BACKING_SERVICES}"
             def tmpDir = "${APP_NAME}-tmp"
-            def releaseBuild = (env.release) ? env.release : false
+            def releaseBuild = (env.release) ? "true".equals(env.release) : false
 
             // function to run database commands
             def dbScript(cmd) {
