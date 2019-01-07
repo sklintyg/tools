@@ -20,7 +20,8 @@ spec:
           'webcert-demo': 'https://github.com/sklintyg/webcert.git',
           'minaintyg-demo': 'https://github.com/sklintyg/minaintyg.git',
           'rehabstod-demo': 'https://github.com/sklintyg/rehabstod.git',
-          'logsender-demo': 'https://github.com/sklintyg/logsender.git'
+          'logsender-demo': 'https://github.com/sklintyg/logsender.git',
+          'statistik-demo': 'https://github.com/sklintyg/statistik.git'
         ]
 
         // run shell command, return status code
