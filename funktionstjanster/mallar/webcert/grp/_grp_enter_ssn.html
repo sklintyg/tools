@@ -54,7 +54,7 @@ PARM{include:/header.html}
             if ((inputValue.length === 8 && key !== 8) || (inputValue.length === 9 && key !== 8 && key !== 189)){
                 document.getElementById("numberInput").value = inputValue.slice(0, 8) + '-' + inputValue.slice(8);
             }
-            if(inputValue.match(/[0-9]{12}/)) {
+            if(inputValue.match(/^[0-9]{12}/)) {
                 var pnr = inputValue.slice(0, 8) + '-' + inputValue.slice(8);
                 document.getElementById("numberInput").value = pnr;
                 inputValue = pnr;
