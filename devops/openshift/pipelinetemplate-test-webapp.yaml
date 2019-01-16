@@ -282,7 +282,7 @@ objects:
                           def build = openshift.selector("bc", "${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}").startBuild()                          
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
-                          timeout (20) {
+                          timeout (30) {
                             def status = ""
                             build.untilEach(1) {
                                 status = it.object().status.phase
@@ -317,7 +317,7 @@ objects:
                           def build = openshift.selector("bc", "${APP_NAME}").startBuild()
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
-                          timeout (5) {
+                          timeout (7) {
                             def status = ""
                             build.untilEach(1) {
                                 status = it.object().status.phase
@@ -386,7 +386,7 @@ objects:
                             "-p", "HEALTH_URI=${HEALTH_URI}",
                             "-p", "STAGE=${STAGE}")                          
                           log "Wait for rollout (limited to 5 minutes)"
-                          timeout (7) {
+                          timeout (10) {
                             def rm = openshift.apply(deployModel).narrow("dc").rollout()
                             log "Waiting for deployment to complete"
                             rm.status()

@@ -78,6 +78,23 @@ spec:
         pipeline {
           agent any
           stages {
+            stage('Prepare') {
+              when {
+                expression {
+                  true
+                }                      
+              }
+              steps {
+                script {
+                  // cleanup app specific redis keys
+                  sh (
+                    script: "oc rsh \$(oc get pods | grep redis- | grep Running | awk \'{ print \$1 }\')  /opt/rh/rh-redis32/root/usr/bin/redis-cli -a redis  flushall",
+                    returnStatus: true 
+                  )
+                }
+              }
+            }
+
             stage('Deploy Latest') {
               when {
                 expression {
@@ -92,7 +109,7 @@ spec:
                         stage(k) {
                           log "Refresh: ${k} from ${v}" 
                           refreshConfig(k, v)
-                          timeout (5) {
+                          timeout (10) {
                             def rm = openshift.selector("dc", "${k}").rollout()
                             log "Rollout latest."
                             rm.latest()
