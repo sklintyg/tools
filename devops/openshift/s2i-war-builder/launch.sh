@@ -16,7 +16,27 @@ if [ -f $RESOURCES ]; then
     (mkdir -p /tmp/resources; cd /tmp/resources; unzip $RESOURCES)    
 fi
 
+REFDATA_NEXUS="https://build-inera.nordicmedtest.se/nexus/repository/public/se/inera/intyg/refdata/refdata/maven-metadata.xml"
+if [ -z $REFDATA_URL ]; then
+    REFDATA_VERSION=$(curl -s $REFDATA_NEXUS | grep '<latest>.*</latest>' | sed 's/.*<latest>\(.*\)<\/latest>.*/\1/g')
+    REFDATA_URL="$(dirname $REFDATA_NEXUS)/$REFDATA_VERSION/refdata-${REFDATA_VERSION}.jar"
+fi
+
+REFDATA_JAR=$(basename $REFDATA_URL)
+curl -s $REFDATA_URL > $REFDATA_JAR
+if [ $? != 0 ]; then
+    echo "Error: unable to fetch refdata: $REFDATA_URL"
+    exit 1
+fi
+
+mv $REFDATA_JAR /opt/webserver/lib/
+if [ $? != 0 ]; then
+    echo "Error: unable to provision refdata: $REFDATA_JAR"
+    exit 1
+fi
+
 echo "Running $APP_NAME on $JBOSS_IMAGE_NAME image, version $JBOSS_IMAGE_VERSION"
+echo "With refdata from $REFDATA_URL"
 
 export CATALINA_OPTS="$CATALINA_OPTS $CATALINA_OPTS_APPEND"
 
