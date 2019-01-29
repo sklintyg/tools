@@ -36,7 +36,7 @@ else
 fi
 
 echo "Running $APP_NAME on $JBOSS_IMAGE_NAME image, version $JBOSS_IMAGE_VERSION"
-echo "With refdata from $REFDATA_URL"
+echo "With refdata from ${REFDATA_URL:-resources.zip}"
 
 export CATALINA_OPTS="$CATALINA_OPTS $CATALINA_OPTS_APPEND"
 
