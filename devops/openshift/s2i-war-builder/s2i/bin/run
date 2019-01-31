@@ -18,6 +18,10 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 # .gradle stuff are in /tmp
 export GRADLE_USER_HOME=/tmp/.gradle
 
+# gradle 5 update fix, gradle crashes if daemon folder already exists
+rm -rf $GRADLE_USER_HOME/daemon
+
+
 # runs one test
 function testrun() {
     ARGS="$1"
