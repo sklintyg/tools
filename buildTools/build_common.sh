@@ -12,7 +12,7 @@ _display_help() {
     echo
 }
 
-projects=(common infra intygstjanst minaintyg webcert)
+projects=(refdata common infra intygstjanst minaintyg webcert)
 command="./gradlew --parallel build install "
 flags=""
 clean=false
