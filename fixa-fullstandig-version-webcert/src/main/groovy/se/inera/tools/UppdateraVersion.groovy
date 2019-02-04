@@ -54,9 +54,13 @@ class UppdateraVersion {
                 StringBuffer result = new StringBuffer() 
                 def id = it.INTYGS_ID
                 String newVersion = getVersionFromJson(new String(it.MODEL, 'utf-8'))
-                Sql sql = new Sql(dataSource)
-                sql.execute('update INTYG set INTYG_TYPE_VERSION = :version where INTYGS_ID = :id', [version: newVersion, id: id])
-                sql.close()
+                if (newVersion == null) {
+                    println "Could not parse version for certificate_id: ${id}"
+                } else {
+                    Sql sql = new Sql(dataSource)
+                    sql.execute('update INTYG set INTYG_TYPE_VERSION = :version where INTYGS_ID = :id', [version: newVersion, id: id])
+                    sql.close()
+                }
                 int current = count.addAndGet(1)
                 if (current % 100 == 0) {
                     println current

@@ -57,9 +57,12 @@ class UppdateraVersion {
                 def original = sql.firstRow('select DOCUMENT from ORIGINAL_CERTIFICATE where CERTIFICATE_ID = :id', [id: id])
                 String xmlDoc = original?.DOCUMENT ? new String(original.DOCUMENT, 'UTF-8') : null
                 String newVersion = getVersionFromXml(xmlDoc)
-                sql.execute('update CERTIFICATE set CERTIFICATE_TYPE_VERSION = :version where ID = :id', [version: newVersion, id: id])
+                if (newVersion == null) {
+                    println "Could not parse version for certificate_id: ${id}"
+                } else {
+                    sql.execute('update CERTIFICATE set CERTIFICATE_TYPE_VERSION = :version where ID = :id', [version: newVersion, id: id])
+                }
                 sql.close()
-
                 int current = count.addAndGet(1)
                 if (current % 100 == 0) {
                     println current
