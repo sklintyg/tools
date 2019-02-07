@@ -81,29 +81,43 @@ class UppdateraVersion {
         def slurper = new XmlSlurper(false, true)
         slurper.keepIgnorableWhitespace = true
         def intyg = slurper.parseText(xml)
-        if (xml.contains('ns4:RegisterCertificate')) {
-            intyg.declareNamespace(
-                    ns4: 'urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3',
-                    ns6: 'urn:riv:clinicalprocess:healthcond:certificate:3.2',
-                    ns5: 'urn:riv:clinicalprocess:healthcond:certificate:types:3',
-                    ns3: 'urn:riv:clinicalprocess:healthcond:certificate:3')
-            return intyg.'ns4:intyg'.'ns3:version'
+        if (xml.contains('RegisterCertificate')) {
+            return intyg.'intyg'.'version'
         }
         else {
+            String version = ""
+            String utgava = ""
             if (xml.contains('RegisterTSBasResponder')) {
                 intyg.declareNamespace(
                         '': 'urn:local:se:intygstjanster:services:1',
                         ns2: 'urn:local:se:intygstjanster:services:types:1',
                         ns3: 'urn:local:se:intygstjanster:services:RegisterTSBasResponder:1')
+                version = intyg.'ns3:intyg'.'version'
+                utgava = intyg.'ns3:intyg'.'utgava'
+                try {
+                    return Integer.parseInt(version) + "." + Integer.parseInt(utgava)
+                } catch (NumberFormatException ne) {
+                    println("Failed to parse version or utgava for ${intyg.'ns3:intyg:'.'intygsId'} \n"
+                            + "XML was: ${intyg} \n"
+                            + "Stacktrace ${ne.getStackTrace()}")
+                    return "6.7"
+                }
             } else if (xml.contains('RegisterTSDiabetesResponder')) {
                 intyg.declareNamespace(
                         '': 'urn:local:se:intygstjanster:services:1',
                         ns2: 'urn:local:se:intygstjanster:services:types:1',
                         ns3: 'urn:local:se:intygstjanster:services:RegisterTSDiabetesResponder:1')
+                version = intyg.'ns3:intyg'.'version'
+                utgava = intyg.'ns3:intyg'.'utgava'
+                try {
+                    return Integer.parseInt(version) + "." + Integer.parseInt(utgava)
+                } catch (NumberFormatException ne) {
+                    println("Failed to parse version or utgava for ${intyg.'ns3:intyg:'.'intygsId'} \n"
+                            + "XML was: ${intyg} \n"
+                            + "Stacktrace ${ne.getStackTrace()}")
+                    return "2.6"
+                }
             }
-            String version = intyg.'ns3:intyg'.'version'
-            String utgava = intyg.'ns3:intyg'.'utgava'
-            return Integer.parseInt(version) + "." + Integer.parseInt(utgava)
         }
 
     }

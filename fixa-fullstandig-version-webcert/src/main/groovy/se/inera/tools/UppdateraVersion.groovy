@@ -77,7 +77,15 @@ class UppdateraVersion {
 
     static String getVersionFromJson(String s) {
         def intyg = new JsonSlurper().parseText(s)
-        return intyg.textVersion
+        def version = intyg.textVersion
+        if (version == null) {
+            if (intyg.typ == 'ts-bas') {
+                version = 6.7
+            } else if (intyg.typ == 'ts-diabetes') {
+                version = 2.6
+            }
+        }
+        return version
     }
 
 }

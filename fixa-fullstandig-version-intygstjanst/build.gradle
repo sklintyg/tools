@@ -5,7 +5,7 @@ apply plugin: 'maven'
 description = "fixa-fullstandig-version-intygstjanst"
 
 group = 'se.inera.tools'
-version = '1.1.0'
+version = '1.2.1'
 mainClassName = 'se.inera.tools.UppdateraVersion'
 
 sourceCompatibility = 1.8
