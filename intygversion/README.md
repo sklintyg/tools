@@ -56,7 +56,18 @@ Then the following environment variables needs to be set:
 There are pre-built binaries for Linux, OS X and Windows in the dist/ folder.
 
     cd dist
-    ./
+    
+##### On OS X
+
+    ./intygversion-darwin-amd64
+
+##### On Linux
+
+    ./intygversion-linux-amd64
+
+##### On Windows
+
+    intygversion-windows-amd64
 
 ### With Go SDK installed
 
@@ -64,23 +75,19 @@ Start by running either of these two:
 
     go run *.go
     
-or
-
-    make run
-    
-Start up and GET _http://localhost:8080/api/versions_ using web browser, curl or similar.
+Start up and open _http://localhost:8080/api/versions_ using web browser.
 
 Or use curl with some nice formatting:
 
     curl http://localhost:8080/api/versions | jq '.'
  
 ## Building etc
-This little util is built in Golang since I had code from other projects around for talking to the OCP REST API.
+This little util is built in Golang since I had code from other Go projects around for talking to the OCP REST API.
 
 To build the binaries or running directly from source you need Go 1.11 or later installed since the util uses "go modules" introduced in Go 1.11.
 
 For convenience, there's a Makefile to easily produce the binaries:
-
+    
     make release 
     
 ## TODOs
