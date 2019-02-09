@@ -1,0 +1,119 @@
+<div class="monitor-container">
+  <div class="row">
+    <div class="col-md-4 col-sm-12">
+      <div class="page-header">
+        <h2>Webcert</h2>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!webcert.doneLoading && webcert.fail < threshold">
+        <img src="images/ajax-loader.gif" alt="Loading..."/>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!webcert.doneLoading && webcert.fail >= threshold">
+        <div class="alert alert-danger">
+          Kunde inte kontakta Webcert. Testa ladda om sidan.
+        </div>
+      </div>
+      <div ng-if="webcert.doneLoading">
+        <chart chartname="webcert-demo"></chart>
+        <monitorservices service-name="webcert-demo" alertsize="flex-item-big"></monitorservices>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div class="page-header">
+        <h2>Mina Intyg</h2>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!minaintyg.doneLoading && minaintyg.fail < threshold">
+        <img src="images/ajax-loader.gif" alt="Loading..."/>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!minaintyg.doneLoading && minaintyg.fail >= threshold">
+        <div class="alert alert-danger">
+          Kunde inte kontakta Mina Intyg. Testa ladda om sidan.
+        </div>
+      </div>
+      <div ng-if="minaintyg.doneLoading">
+        <chart chartname="minaintyg"></chart>
+        <monitorservices service-name="minaintyg-demo" alertsize="flex-item-big"></monitorservices>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div class="page-header">
+        <h2>Rehabstöd</h2>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!rehabstod.doneLoading && rehabstod.fail < threshold">
+        <img src="images/ajax-loader.gif" alt="Loading..."/>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!rehabstod.doneLoading && rehabstod.fail >= threshold">
+        <div class="alert alert-danger">
+          Kunde inte kontakta Rehabstöd. Testa ladda om sidan.
+        </div>
+      </div>
+      <div ng-if="rehabstod.doneLoading">
+        <chart chartname="rehabstod-demo"></chart>
+        <monitorservices service-name="rehabstod-demo" alertsize="flex-item-big"></monitorservices>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 col-sm-12">
+      <div class="page-header">
+        <h2>Statistiktjänsten</h2>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!statistik.doneLoading && statistik.fail < threshold">
+        <img src="images/ajax-loader.gif" alt="Loading..."/>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!statistik.doneLoading && statistik.fail >= threshold">
+        <div class="alert alert-danger">
+          Kunde inte kontakta Statistiktjänsten. Testa ladda om sidan.
+        </div>
+      </div>
+      <div ng-if="statistik.doneLoading">
+        <chart chartname="statistik"></chart>
+        <monitorservices service-name="statistik-demo" alertsize="flex-item-big"></monitorservices>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div class="page-header">
+        <h2>Intygstjänsten</h2>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!intygstjanst.doneLoading && intygstjanst.fail < threshold">
+        <img src="images/ajax-loader.gif" alt="Loading..."/>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!intygstjanst.doneLoading && intygstjanst.fail >= threshold">
+        <div class="alert alert-danger">
+          Kunde inte kontakta Intygstjänsten. Testa ladda om sidan.
+        </div>
+      </div>
+      <div ng-if="intygstjanst.doneLoading">
+          <chart chartname="intygstjanst-demo"></chart>
+        <monitorservices service-name="intygstjanst-demo" alertsize="flex-item-big"></monitorservices>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div class="page-header">
+        <h2>Privatläkarportalen</h2>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!privatlakarportal.doneLoading && privatlakarportal.fail < threshold">
+        <img src="images/ajax-loader.gif" alt="Loading..."/>
+      </div>
+      <div style="width:100%; text-align: center;"
+           ng-if="!privatlakarportal.doneLoading && privatlakarportal.fail >= threshold">
+        <div class="alert alert-danger">
+          Kunde inte kontakta Privatläkarportalen. Testa ladda om sidan.
+        </div>
+      </div>
+      <div ng-if="privatlakarportal.doneLoading">
+        <monitorservices service-name="privatlakarportal-demo" alertsize="flex-item-big"></monitorservices>
+      </div>
+    </div>
+  </div>
+</div>

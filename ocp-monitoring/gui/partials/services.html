@@ -1,0 +1,49 @@
+<div class="status-version" >
+  <span style="float: left;">{{serviceversion || "unknown"}}</span>
+  <span style="float: right;">{{checktime || "unknown"}}</span>
+</div>
+<div class="clear">
+<hr />
+  <table class="table table-hover table-condensed" style="text-align: center;">
+    <thead style="text-align: center;">
+      <tr>
+        <th style="text-align: center;">
+          Server
+        </th>
+        <th style="text-align: center;" ng-repeat="subservice in subservices" >
+          {{subservice.serviceName | limitTo: 9}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="server in servers" ng-class="{danger: !server.reachable}">
+          <td>{{server.server}}</td>
+          <td ng-repeat="status in server.statuses">
+            <div ng-if="status.type === 'VALUE'">
+                {{status.statuscode}}
+            </div>
+            <div ng-if="status.type !== 'VALUE'">
+              <div ng-if="status.severity == 0">
+                <span class="glyphicon glyphicon-ok"
+                      aria-hidden="true"
+                      style="color: green">
+                </span>
+              </div>
+              <div ng-if="status.severity == 1">
+                <span class="glyphicon glyphicon-remove"
+                      aria-hidden="true"
+                      style="color:#c40">
+                </span>
+              </div>
+              <div ng-if="status.severity == 2">
+                <span class="glyphicon glyphicon-warning-sign"
+                      aria-hidden="true"
+                      style="color: darkorange">
+                </span>
+              </div>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+</div>

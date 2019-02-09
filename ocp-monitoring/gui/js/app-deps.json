@@ -1,0 +1,7 @@
+[
+    "/js/d3module.js",
+    "/js/controllers/alternativeMonitorController.js",
+    "/js/controllers/monitorController.js",
+    "/js/directives/chart.js",
+    "/js/directives/status.js"
+]

@@ -1,0 +1,90 @@
+.fullsize {
+  height:100%;
+  width: 100%;
+}
+
+.monitor-container {
+  margin: 10px;
+}
+
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+  stroke-width: 1px;
+}
+
+.headline {
+  font: 72px sans-serif;
+  text-align: right;
+}
+
+#webcert,
+#rehabstod,
+#minaintyg,
+#statistik {
+  text-align: center;
+}
+#webcert .area {
+  fill: lightblue;
+}
+
+#rehabstod .area {
+  fill: teal;
+}
+
+#minaintyg .area {
+  fill: steelblue;
+}
+
+.page-header {
+  text-align: center;
+}
+
+.flex-container {
+  padding: 0px;
+  margin: 5px;
+  list-style: none;
+
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  flex-grow: 0;
+}
+
+.flex-item {
+  padding: 5px;
+  margin-top: 10px;
+  height: 65px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.flex-item-small {
+  width: 200px;
+}
+
+.flex-item-big {
+  width: 290px;
+}
+
+.fill {
+    height: 100%;
+}
+.status-version {
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-weight: bold;
+}
+.clear {
+    clear: both;
+}

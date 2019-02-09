@@ -1,0 +1,25 @@
+<div class="monitor-container">
+  <div class="row">
+      <div ng-repeat="config in configs">
+          <div class="col-md-4 col-sm-12">
+              <div class="page-header">
+                  <h2>{{ config.name }}</h2>
+              </div>
+              <div style="width:100%; text-align: center;"
+                   ng-if="!config.doneLoading && config.fail < threshold">
+                  <img src="images/ajax-loader.gif" alt="Loading..."/>
+              </div>
+              <div style="width:100%; text-align: center;"
+                   ng-if="!config.doneLoading && config.fail >= threshold">
+                  <div class="alert alert-danger">
+                      Kunde inte kontakta {{ config.name }}. Testa ladda om sidan.
+                  </div>
+              </div>
+              <div ng-if="config.doneLoading">
+                  <chart chartname="{{ config.id }}"></chart>
+                  <monitorservices service-name="{{ config.id }}" alertsize="flex-item-big"></monitorservices>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
