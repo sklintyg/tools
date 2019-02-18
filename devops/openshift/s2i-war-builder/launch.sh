@@ -22,7 +22,7 @@ else
     fi
 
     REFDATA_JAR=$(basename $REFDATA_URL)
-    curl -s $REFDATA_URL > $REFDATA_JAR
+    curl -Ls $REFDATA_URL > $REFDATA_JAR
     if [ $? != 0 ]; then
         echo "Error: unable to fetch refdata: $REFDATA_URL"
         exit 1
