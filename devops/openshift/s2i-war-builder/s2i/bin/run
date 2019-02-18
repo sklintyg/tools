@@ -13,6 +13,7 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 -DbuildVersion=$BUILD_VERSION \
 -DinfraVersion=$INFRA_VERSION \
 -DcommonVersion=$COMMON_VERSION \
+-DrefDataVersion=$REF_DATA_VERSION \
 -Dfile.encoding=UTF-8"
 
 # .gradle stuff are in /tmp
