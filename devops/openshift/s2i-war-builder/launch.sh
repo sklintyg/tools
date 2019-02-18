@@ -21,7 +21,8 @@ else
         REFDATA_URL="$(dirname $REFDATA_NEXUS)/$REFDATA_VERSION/refdata-${REFDATA_VERSION}.jar"
     fi
 
-    REFDATA_JAR=$(basename $REFDATA_URL)
+    REFDATA_FILE=$(basename $REFDATA_URL)
+    REFDATA_JAR=sklintyg-${REFDATA_FILE%.*}.jar
     curl -Ls $REFDATA_URL > $REFDATA_JAR
     if [ $? != 0 ]; then
         echo "Error: unable to fetch refdata: $REFDATA_URL"
