@@ -19,7 +19,7 @@ if [ -f $RESOURCES ]; then
     (mkdir -p /tmp/resources; cd /tmp/resources; unzip $RESOURCES)    
 else
     if [ -z $REFDATA_URL ]; then
-        NEXUS_SNAPSHOT_URL="https://build-inera.nordicmedtest.se/nexus/repository/snapshots/se/inera/intyg/refdata/refdata/0-SNAPSHOT"
+        NEXUS_SNAPSHOT_URL="https://build-inera.nordicmedtest.se/nexus/repository/snapshots/se/inera/intyg/refdata/refdata/1.0-SNAPSHOT"
         REFDATA_VERSION=$(curl -Ls -m 20 ${NEXUS_SNAPSHOT_URL}/maven-metadata.xml | xmllint --xpath '//snapshotVersion/extension[.="jar"]/../value/text()' -)
         if [ $? != 0 ]; then
             echo "Error: unable to fetch refdata metadata: ${NEXUS_SNAPSHOT_URL}/maven-metadata.xml"

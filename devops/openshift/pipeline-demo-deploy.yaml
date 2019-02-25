@@ -51,7 +51,7 @@ spec:
 
           def wd = "cd ${dir}; "
           eshell(wd + "git init")
-          eshell(wd + "git remote add origin -f ${url}")
+          eshell(wd + "git remote add origin -f ${url} 2> /dev/null")
           eshell(wd + "git config core.sparsecheckout true")
           eshell(wd + "echo 'devops/openshift/*' >> .git/info/sparse-checkout")
           eshell(wd + "git checkout ${ref}")
