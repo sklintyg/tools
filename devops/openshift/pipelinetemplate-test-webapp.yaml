@@ -367,38 +367,6 @@ objects:
                   }
                 }
 
-                stage('Deploy App') {
-                  when {
-                    expression {
-                      return true
-                    }                      
-                  }
-                  steps {
-                    script {
-                      openshift.withCluster() {
-                        openshift.withProject() {
-                          def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
-                          echo "Use ImageStream: ${imageStream}"
-                          def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
-                            "-p", "APP_NAME=${APP_NAME}", 
-                            "-p", "IMAGE='$imageStream:${env.buildVersion}'",
-                            "-p", "DATABASE_NAME=${dbName}",
-                            "-p", "HEALTH_URI=${HEALTH_URI}",
-                            "-p", "STAGE=${STAGE}")                          
-                          log "Wait for rollout (limited to 5 minutes)"
-                          timeout (10) {
-                            def rm = openshift.apply(deployModel).narrow("dc").rollout()
-                            log "Waiting for deployment to complete"
-                            rm.status()
-                            log "Deployment done."
-                          }
-
-                        }
-                      }
-                    }
-                  }      
-                }
-
               stage('Deploy Intygstjänst') {
                   when {
                       expression {
@@ -488,6 +456,37 @@ objects:
                   }
               }
 
+              stage('Deploy App') {
+                when {
+                  expression {
+                    return true
+                  }                      
+                }
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
+                        echo "Use ImageStream: ${imageStream}"
+                        def deployModel = openshift.process("${DEPLOY_TEMPLATE}", 
+                          "-p", "APP_NAME=${APP_NAME}", 
+                          "-p", "IMAGE='$imageStream:${env.buildVersion}'",
+                          "-p", "DATABASE_NAME=${dbName}",
+                          "-p", "HEALTH_URI=${HEALTH_URI}",
+                          "-p", "STAGE=${STAGE}")                          
+                        log "Wait for rollout (limited to 5 minutes)"
+                        timeout (10) {
+                          def rm = openshift.apply(deployModel).narrow("dc").rollout()
+                          log "Waiting for deployment to complete"
+                          rm.status()
+                          log "Deployment done."
+                        }
+
+                      }
+                    }
+                  }
+                }      
+              }
 
               /* START TESTS */
               stage('Run Tests') {
