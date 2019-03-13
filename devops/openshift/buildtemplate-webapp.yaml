@@ -24,7 +24,7 @@ parameters:
   - name: INFRA_VERSION
     value: 3.7.0.+
   - name: REF_DATA_VERSION
-    value: 1.0.0.+
+    value: 1.0-SNAPSHOT
   - name: BUILD_VERSION
     required: true
     value: 1.0-OPENSHIFT
