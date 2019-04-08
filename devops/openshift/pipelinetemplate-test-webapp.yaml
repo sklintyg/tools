@@ -317,7 +317,7 @@ objects:
                           def build = openshift.selector("bc", "${APP_NAME}").startBuild()
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
-                          timeout (30) {
+                          timeout (45) {
                             def status = ""
                             build.untilEach(1) {
                                 status = it.object().status.phase
