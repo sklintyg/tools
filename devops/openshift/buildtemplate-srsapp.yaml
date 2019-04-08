@@ -1,0 +1,163 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: buildtemplate-srsapp
+parameters:
+  - name: APP_NAME
+    required: true
+  - name: ARTIFACT_IMAGE_SUFFIX
+    required: true
+    value: "artifact"
+  - name: GIT_URL
+    required: true
+  - name: GIT_REF
+    required: true
+    value: "develop"
+  - name: STAGE
+    required: true
+    value: "test"
+  - name: BUILDER_IMAGE
+    required: true
+    value: "s2i-war-builder:latest"
+  - name: COMMON_VERSION
+    value: 3.10.0.+
+  - name: INFRA_VERSION
+    value: 3.10.0.+
+  - name: REF_DATA_VERSION
+    value: 1.0-SNAPSHOT
+  - name: BUILD_VERSION
+    required: true
+    value: 1.0-OPENSHIFT
+  - name: CONTEXT_PATH
+    required: true
+    value: ROOT
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      completionDeadlineSeconds: 1200
+      successfulBuildsHistoryLimit: 2
+      failedBuildsHistoryLimit: 4
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
+      source:
+        git:
+          ref: ${GIT_REF}
+          uri: ${GIT_URL}
+        contextDir: /
+        type: Git
+      resources:
+        limits:
+          cpu: 1
+          memory: 4Gi
+        requests:
+          cpu: 100m
+          memory: 2Gi
+      strategy:
+        sourceStrategy:
+          env:
+          - name: APP_NAME
+            value: ${APP_NAME}
+          - name: STAGE
+            value: ${STAGE}
+          - name: COMMON_VERSION
+            value: ${COMMON_VERSION}
+          - name: INFRA_VERSION
+            value: ${INFRA_VERSION}
+          - name: REF_DATA_VERSION
+            value: ${REF_DATA_VERSION}
+          - name: BUILD_VERSION
+            value: ${BUILD_VERSION}
+          - name: BUILDER_IMAGE
+            value: ${BUILDER_IMAGE}
+          - name: JAVA_TOOL_OPTIONS
+            value: '-Xms512m -Xmx1536m'
+          from:
+            kind: "ImageStreamTag"
+            name: ${BUILDER_IMAGE}
+          forcePull: true
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${APP_NAME}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      completionDeadlineSeconds: 1200
+      successfulBuildsHistoryLimit: 4
+      failedBuildsHistoryLimit: 4
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ${APP_NAME}:${BUILD_VERSION}
+      source:
+        dockerfile: |-
+          FROM openshift/base-centos7
+          LABEL maintainer="inera.se"
+
+          ENV APP_NAME=${APP_NAME}
+          ENV R_HOME=/usr/lib64/R
+          ENV JVM_OPTS="-Djava.library.path=$R_HOME/library/rJava/jri"
+          EXPOSE 8080
+
+          USER root
+          RUN yum -y install epel-release
+          RUN yum -y install R
+          RUN yum -y install java-1.8.0-openjdk-devel
+          RUN R -e 'install.packages("rJava",,"http://www.rforge.net/")'
+          RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
+          RUN localedef -i en_US -f UTF-8 en_US.UTF-8
+          ADD ROOT.war /deployments/
+          ADD sb-launch.sh /opt/${APP_NAME}/bin/
+          ADD build.info /opt/${APP_NAME}/
+          USER nobody
+          CMD ["/opt/${APP_NAME}/bin/sb-launch.sh"]
+        images:
+          - from:
+              kind: ImageStreamTag
+              name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
+            paths:
+              - sourcePath: /tmp/artifacts/.
+                destinationDir: "."
+      strategy:
+        type: Docker
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: true
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: false
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}-verified
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: false
+        

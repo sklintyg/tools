@@ -317,7 +317,7 @@ objects:
                           def build = openshift.selector("bc", "${APP_NAME}").startBuild()
                           sleep(time: 1, unit: 'SECONDS')
                           echo "${build.name()} started" 
-                          timeout (7) {
+                          timeout (15) {
                             def status = ""
                             build.untilEach(1) {
                                 status = it.object().status.phase
@@ -443,7 +443,7 @@ objects:
                                               "-p", "HEALTH_URI=${healthUri}",
                                               "-p", "STAGE=test")
                                       log "Wait for rollout (limited to 5 minutes)"
-                                      timeout(5) {
+                                      timeout (5) {
                                           def rm = openshift.apply(deployModel).narrow("dc").rollout()
                                           echo "Waiting for deployment to complete"
                                           rm.status()

@@ -50,7 +50,7 @@ function make_writeable() {
 export GRADLE_USER_HOME=/tmp/.gradle
 
 # Start build using gradle.
-if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
+if [ -f "$S2I_SOURCE_DIR/build.gradle"  -o -f "$S2I_SOURCE_DIR/build.gradle.kts" ]; then
     echo "---> User $(id) home is $HOME"
 
     GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build -PuseMinifiedJavaScript"}
