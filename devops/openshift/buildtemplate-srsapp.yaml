@@ -79,7 +79,7 @@ objects:
           - name: BUILDER_IMAGE
             value: ${BUILDER_IMAGE}
           - name: JAVA_TOOL_OPTIONS
-            value: '-Xms512m -Xmx1536m'
+            value: '-Xmx1536m'
           from:
             kind: "ImageStreamTag"
             name: ${BUILDER_IMAGE}
