@@ -114,6 +114,7 @@ objects:
           RUN yum -y install R
           RUN yum -y install java-1.8.0-openjdk-devel
           RUN R -e 'install.packages("rJava",,"http://www.rforge.net/")'
+          RUN R -e 'install.packages("pch",,"https://cloud.r-project.org/")'
           RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
           RUN localedef -i en_US -f UTF-8 en_US.UTF-8
           ADD ROOT.war /deployments/
