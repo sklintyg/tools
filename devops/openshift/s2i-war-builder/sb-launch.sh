@@ -33,7 +33,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "With refdata from ${REFDATA_URL}"
-JVM_OPTS="$JVM_OPTS -classpath /tmp/$REFDATA_JAR"
+JVM_OPTS="$JVM_OPTS -Dloader.path=WEB-INF/lib-provided,WEB-INF/lib,WEB-INF/classes,/tmp/$REFDATA_JAR"
 
 # use legacy name for appending options
 JVM_OPTS="$JVM_OPTS $CATALINA_OPTS_APPEND"
