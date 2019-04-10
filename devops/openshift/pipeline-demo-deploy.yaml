@@ -21,7 +21,8 @@ spec:
           'minaintyg-demo': 'https://github.com/sklintyg/minaintyg.git',
           'rehabstod-demo': 'https://github.com/sklintyg/rehabstod.git',
           'logsender-demo': 'https://github.com/sklintyg/logsender.git',
-          'statistik-demo': 'https://github.com/sklintyg/statistik.git'
+          'statistik-demo': 'https://github.com/sklintyg/statistik.git',
+          'srs-demo': 'https://github.com/sklintyg/srs.git'
         ]
 
         // run shell command, return status code
