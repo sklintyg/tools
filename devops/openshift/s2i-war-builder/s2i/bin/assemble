@@ -63,8 +63,8 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle"  -o -f "$S2I_SOURCE_DIR/build.gradle.kts"
         exit $ERR
     fi
 
-    # Copy built file into tomcat webapps
-    WAR=$(find ${SOURCE_ARTIFACTS_DIR} -name \*.war)
+    # Copy built file into artifacts
+    WAR=$(ls ${SOURCE_ARTIFACTS_DIR} | egrep '\.jar$|\.war$')
     if [ -f "$WAR" ]; then
         echo "---> Move output artifact $WAR to $TARGET_WAR"
         mv $WAR $TARGET_WAR
