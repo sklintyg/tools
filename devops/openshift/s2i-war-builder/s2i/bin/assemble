@@ -64,10 +64,13 @@ if [ -f "$S2I_SOURCE_DIR/build.gradle"  -o -f "$S2I_SOURCE_DIR/build.gradle.kts"
     fi
 
     # Copy built file into artifacts
-    WAR=$(ls ${SOURCE_ARTIFACTS_DIR} | egrep '\.jar$|\.war$')
-    if [ -f "$SOURCE_ARTIFACTS_DIR/$WAR" ]; then
-        echo "---> Move output artifact $SOURCE_ARTIFACTS_DIR/$WAR to $TARGET_WAR"
-        mv $SOURCE_ARTIFACTS_DIR/$WAR $TARGET_WAR
+    WAR=$(ls ${SOURCE_ARTIFACTS_DIR}/*.war)
+    if [ $? -ne 0 ]; then
+        WAR=$(ls ${SOURCE_ARTIFACTS_DIR}/*.jar)
+    fi
+    if [ -f "$WAR" ]; then
+        echo "---> Move output artifact $WAR to $TARGET_WAR"
+        mv $WAR $TARGET_WAR
         ERR=$?
         if [ $ERR -ne 0 ]; then
             echo "Unable to move output artifact, exit code: $ERR"
