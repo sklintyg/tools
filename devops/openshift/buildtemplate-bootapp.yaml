@@ -18,7 +18,7 @@ parameters:
     value: "test"
   - name: BUILDER_IMAGE
     required: true
-    value: "s2i-war-builder:latest"
+    value: "s2i-war-builder-java11:latest"
   - name: COMMON_VERSION
     value: 3.10.0.+
   - name: INFRA_VERSION
@@ -112,7 +112,7 @@ objects:
           RUN yum -y install java-11-openjdk-devel
           RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
           RUN localedef -i en_US -f UTF-8 en_US.UTF-8
-          ADD ROOT.jar /deployments/
+          ADD ROOT.war /deployments/
           ADD sb-launch.sh /opt/${APP_NAME}/bin/
           ADD build.info /opt/${APP_NAME}/
           USER nobody

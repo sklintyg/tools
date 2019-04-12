@@ -1,0 +1,6 @@
+FROM docker-registry.default.svc:5000/dintyg/s2i-war-builder:latest
+USER root
+RUN yum -y remove java-1.8.0-openjdk-devel java-1.8.0-openjdk
+RUN yum -y install java-11-openjdk-devel
+RUN alternatives --set java java-11-openjdk.x86_64
+USER ${X_UID}
