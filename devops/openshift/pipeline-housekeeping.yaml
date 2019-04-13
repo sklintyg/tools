@@ -26,8 +26,8 @@ items:
             'rehabstod-test': '1.10.0',
             'privatlakarportal-test': '1.11.0',
             'statistik-test': '7.3.0',
-            'srs-test': '1.2',
-            'intygsbestallning-test', '0.0.1'
+            'srs-test': '1.2.0',
+            'intygsbestallning-test': '0.0.1'
           ]
 
           def suffix = [ "", "-artifact", "-verified" ]
