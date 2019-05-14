@@ -48,7 +48,7 @@ items:
               error("Error: shell command exited with error code ${rc}")
             }
           }
-
+          
           pipeline {
             agent any
             stages {
@@ -76,6 +76,16 @@ items:
                 steps {
                   script {
                     shell("find /var/lib/jenkins/reports/dintyg/*-pipeline/ -maxdepth 1 -type d -mtime +20 | xargs -r rm -rf")
+                  }
+                }
+              }
+              stage('Purge AMQ') {
+                steps {
+                  script {
+                    sh (
+                      script: "oc rsh \$(oc get pods | grep activemq-amq- | grep Running | awk \'{ print \$1 }\')  /opt/amq/bin/activemq purge",
+                      returnStatus: true
+                    )
                   }
                 }
               }

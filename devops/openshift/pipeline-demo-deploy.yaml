@@ -54,7 +54,7 @@ spec:
 
           def wd = "cd ${dir}; "
           eshell(wd + "git init")
-          eshell(wd + "git remote add origin -f ${url} 2> /dev/null")
+          eshell(wd + "git remote add origin -f ${url} 2>&1 | grep -v \'new \'")
           eshell(wd + "git config core.sparsecheckout true")
           eshell(wd + "echo 'devops/openshift/*' >> .git/info/sparse-checkout")
           eshell(wd + "git checkout ${ref}")
@@ -76,12 +76,12 @@ spec:
           eshell(wd + "[ -f ${stage}/configmap-vars.yaml ] && oc create -f ${stage}/configmap-vars.yaml || true")
           eshell(wd + "oc create configmap ${appName}-config --from-file=${stage}/config/")
           eshell(wd + "oc create secret generic ${appName}-env --from-file=${stage}/env/ --type=Opaque")
-        }        
+        }
 
         pipeline {
           agent any
           stages {
-            stage('Prepare') {
+            stage('Purge redis and amq') {
               when {
                 expression {
                   true
@@ -92,7 +92,12 @@ spec:
                   // cleanup app specific redis keys
                   sh (
                     script: "oc rsh \$(oc get pods | grep redis- | grep Running | awk \'{ print \$1 }\')  /opt/rh/rh-redis32/root/usr/bin/redis-cli -a redis  flushall",
-                    returnStatus: true 
+                    returnStatus: true
+                  )
+                  // purge AMQ quques
+                  sh (
+                    script: "oc rsh \$(oc get pods | grep activemq-amq- | grep Running | awk \'{ print \$1 }\')  /opt/amq/bin/activemq purge",
+                    returnStatus: true
                   )
                 }
               }
@@ -112,7 +117,7 @@ spec:
                         stage(k) {
                           log "Refresh: ${k} from ${v}" 
                           refreshConfig(k, v)
-                          timeout (10) {
+                          timeout (30) {
                             def rm = openshift.selector("dc", "${k}").rollout()
                             log "Rollout latest."
                             rm.latest()
