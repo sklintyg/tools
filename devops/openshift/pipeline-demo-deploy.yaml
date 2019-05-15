@@ -114,14 +114,16 @@ spec:
                   openshift.withCluster() {
                     openshift.withProject() {
                       apps.each { k, v ->
-                        stage(k) {
-                          log "Refresh: ${k} from ${v}" 
-                          refreshConfig(k, v)
-                          timeout (30) {
-                            def rm = openshift.selector("dc", "${k}").rollout()
-                            log "Rollout latest."
-                            rm.latest()
-                            rm.status()
+                        catchError {
+                          stage(k) {
+                            log "Refresh: ${k} from ${v}"
+                            refreshConfig(k, v)
+                            timeout (30) {
+                              def rm = openshift.selector("dc", "${k}").rollout()
+                              log "Rollout latest."
+                              rm.latest()
+                              rm.status()
+                            }
                           }
                         }
                       }
