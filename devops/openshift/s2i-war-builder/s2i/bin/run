@@ -9,6 +9,7 @@ export HOME=/tmp/nohome
 # Setup build nev
 export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 -DbaseUrl=$TARGET_URL \
+-DactuatorUrl=$ACTUATOR_URL \
 -Dprotractor.env=test-pipeline \
 -DbuildVersion=$BUILD_VERSION \
 -DinfraVersion=$INFRA_VERSION \

@@ -183,6 +183,7 @@ For running external client test suites from a test pipeline.
 | APP_NAME      | Yes         | The Web App name, ex: `ib-backend` |
 | STAGE         |             | The stage label, default is `test` |        
 | TARGET_URL    | Yes         | The target URL of the service to test |
+| ACTUATOR_URL  |             | The target URL of the actuator on the service to test |
 | JOB_NAME      | Yes         | The pipeline job name for traceability |
 | BUILD_VERSION | Yes         | The Web App build version |
 | CALLBACK_URL  | Yes         | The callback URL to post wither `SUCCESS` or `FAILURE` when all tests have finished |
