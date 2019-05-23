@@ -107,6 +107,7 @@ objects:
           ENV APP_NAME=${APP_NAME}
           ENV JVM_OPTS="-Dfile.encoding=UTF-8"
           EXPOSE 8080
+          EXPOSE 8081
 
           USER root
           RUN yum -y install java-11-openjdk-devel

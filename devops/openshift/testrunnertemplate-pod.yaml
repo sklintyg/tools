@@ -10,6 +10,8 @@ parameters:
   value: "test"
 - name: TARGET_URL
   required: true
+- name: ACTUATOR_URL
+  required: false
 - name: JOB_NAME
   required: true
 - name: BUILD_VERSION
@@ -35,6 +37,8 @@ objects:
       - env:
         - name: TARGET_URL
           value: ${TARGET_URL}
+        - name: ACTUATOR_URL
+          value: ${ACTUATOR_URL}
         - name: CALLBACK_URL
           value: ${CALLBACK_URL}
         - name: REPORT_DIR

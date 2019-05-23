@@ -63,6 +63,8 @@ objects:
             ports:
               - containerPort: 8080
                 protocol: TCP
+              - containerPort: 8081
+                protocol: TCP
             readinessProbe:
               failureThreshold: 3
               httpGet:
@@ -125,6 +127,10 @@ objects:
         port: 8080
         protocol: TCP
         targetPort: 8080
+      - name: 8081-tcp
+        port: 8081
+        protocol: TCP
+        targetPort: 8081
       selector:
         deploymentconfig: ${APP_NAME}
       sessionAffinity: None

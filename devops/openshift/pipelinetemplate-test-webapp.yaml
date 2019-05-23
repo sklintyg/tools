@@ -114,7 +114,8 @@ objects:
               def hook = registerWebhook()
 
               // Just use name
-              def targetUrl = "http://${APP_NAME}:8080"                         
+              def targetUrl = "http://${APP_NAME}:8080"
+              def actuatorUrl = "http://${APP_NAME}:8081"                         
 
               def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
               echo "Use ImageStream: ${imageStream}"
@@ -128,6 +129,7 @@ objects:
                 "-p", "IMAGE='${imageStream}-${ARTIFACT_IMAGE_SUFFIX}:${env.buildVersion}'", 
                 "-p", "STAGE=${STAGE}",                          
                 "-p", "TARGET_URL='${targetUrl}'",
+                "-p", "ACTUATOR_URL='${actuatorUrl}'",
                 "-p", "BUILD_VERSION=${env.buildVersion}", 
                 "-p", "JOB_NAME=${JOB_NAME}",
                 "-p", "CALLBACK_URL='${hook.getURL()}'",
