@@ -19,16 +19,16 @@ items:
       jenkinsPipelineStrategy:
         jenkinsfile: |-
           def images = [
-            'intygstjanst-test': '3.9.0',
-            'logsender-test': '6.4.0',
-            'minaintyg-test': '3.10.0',
-            'webcert-test': '6.4.0',
-            'rehabstod-test': '1.10.0',
-            'privatlakarportal-test': '1.11.0',
-            'statistik-test': '7.3.0',
-            'srs-test': '1.2.0',
-            'intygsbestallning-test': '0.0.1',
-            'intygsadmin-test': '0.0.1'
+            'intygstjanst-test': '3.10.0',
+            'logsender-test': '6.5.0',
+            'minaintyg-test': '3.11.0',
+            'webcert-test': '6.5.0',
+            'rehabstod-test': '1.11.0',
+            'privatlakarportal-test': '1.12.0',
+            'statistik-test': '7.4.0',
+            'srs-test': '1.3.0',
+            'intygsbestallning-test': '1.1.0',
+            'intygsadmin-test': '1.1.0'
           ]
 
           def suffix = [ "", "-artifact", "-verified" ]
