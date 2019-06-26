@@ -7,10 +7,10 @@
 import jenkins.model.*
 
 // Pattern to search for. Regular expression.
-def jobPattern = "intyg-common|intyg-infra\$|intyg-intygstjanst|intyg-minaintyg|intyg-webcert|intyg-rehabstod|intyg-logsender|intyg-privatlakarportal|intyg-statistik|intyg-refdata"
+def jobPattern = "intyg-common|intyg-infra|intyg-infra-spring5|intyg-intygstjanst|intyg-minaintyg|intyg-webcert|intyg-rehabstod|intyg-logsender|intyg-privatlakarportal|intyg-statistik|intyg-refdata|intyg-intygsbestallning|intyg-intygsadmin"
 
 // Should we be disabling or enabling jobs? "disable" or "enable", case-insensitive.
-def disableOrEnable = "enable"
+def disableOrEnable = "disable"
 
 def lcFlag = disableOrEnable.toLowerCase()
 
