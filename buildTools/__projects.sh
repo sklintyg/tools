@@ -7,12 +7,10 @@ intygsbestallning \
 intygstjanst \
 logsender \
 minaintyg \
-monitoring \
 privatlakarportal \
 refdata \
 rehabstod \
 schemas \
-srs \
 statistik \
 webcert"
 
