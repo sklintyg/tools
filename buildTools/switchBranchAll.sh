@@ -1,5 +1,20 @@
 #!/bin/bash
 
+_display_help() {
+    echo "Usage: $0 [BRANCH]"
+    echo "Switches to branch [BRANCH] in all projects."
+    echo "The 'develop' branch is assumed if omitted."
+    echo
+    echo "   -h, --help              shows this message"
+    echo
+}
+
+for arg; do
+    case $arg in
+        -h|--help) _display_help && exit 0 ;;
+    esac
+done
+
 # Get project names
 . __projects.sh
 
