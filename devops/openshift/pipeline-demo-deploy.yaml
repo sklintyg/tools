@@ -96,7 +96,7 @@ spec:
                   )
                   // purge AMQ quques
                   sh (
-                    script: "oc rsh \$(oc get pods | grep activemq-amq- | grep Running | awk \'{ print \$1 }\')  /opt/amq/bin/activemq purge",
+                    script: "oc rsh \$(oc get pods | grep broker-amq- | grep Running | awk \'{ print \$1 }\')  /opt/amq/bin/activemq purge",
                     returnStatus: true
                   )
                 }
