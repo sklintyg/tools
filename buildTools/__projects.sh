@@ -1,24 +1,18 @@
 #!/bin/bash
 
-ALL_PROJECTS="common \
-infra \
-intygsadmin \
-intygsbestallning \
-intygstjanst \
-logsender \
-minaintyg \
-privatlakarportal \
-refdata \
-rehabstod \
+WC_PROJECTS="refdata \
 schemas \
-statistik \
+common \
+infra \
+intygstjanst \
+minaintyg \
 webcert"
 
-WC_PROJECTS="common \
-infra \
-intygstjanst \
-minaintyg \
-refdata \
-schemas \
-webcert"
+ALL_PROJECTS="${WC_PROJECTS} \
+intygsadmin \
+intygsbestallning \
+logsender \
+privatlakarportal \
+rehabstod \
+statistik"
 

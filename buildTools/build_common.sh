@@ -1,4 +1,7 @@
 #!/bin/bash
+scriptdir=$(cd $( dirname "${BASH_SOURCE[0]}") &&  pwd)
+# Get project names
+. ${scriptdir}/__projects.sh
 
 _display_help() {
     echo "Usage: $0 [OPTION...]"
@@ -12,7 +15,6 @@ _display_help() {
     echo
 }
 
-projects=(refdata common infra intygstjanst minaintyg webcert)
 command="./gradlew --parallel build install "
 flags=""
 clean=false
@@ -34,13 +36,13 @@ start_time=$(date +%s)
 
 # Building with --parallel does not guarantee that 'clean' is run in the correct order. We therefore run 'clean' in its own loop.
 if [[ $clean == true ]]; then
-    for project in ${projects[@]}; do
+    for project in $WC_PROJECTS; do
         cd "$INTYG_HOME/$project"
         ./gradlew clean
     done
 fi
 
-for project in ${projects[@]}; do
+for project in $WC_PROJECTS; do
     cd "$INTYG_HOME/$project"
     $command $flags || exit 1
 done
