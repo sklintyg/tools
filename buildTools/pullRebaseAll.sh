@@ -1,7 +1,7 @@
 #!/bin/bash
-
+scriptdir=$(cd $( dirname "${BASH_SOURCE[0]}") &&  pwd)
 # Get project names
-. __projects.sh
+. ${scriptdir}/__projects.sh
 
 INTYG_HOME="${INTYG_HOME:-$( cd $(dirname "${BASH_SOURCE[0]}")/../.. && pwd )}"
 
