@@ -79,9 +79,14 @@ items:
                   }
                 }
               }
-              stage('Purge AMQ') {
+              stage('Purge Redis & AMQ') {
                 steps {
                   script {
+                    // cleanup app specific redis keys
+                    sh (
+                      script: "oc rsh \$(oc get pods | grep redis- | grep Running | awk \'{ print \$1 }\')  /opt/rh/rh-redis32/root/usr/bin/redis-cli -a redis  flushall",
+                      returnStatus: true
+                    )
                     sh (
                       script: "oc rsh \$(oc get pods | grep broker-amq- | grep Running | awk \'{ print \$1 }\')  /opt/amq/bin/activemq purge",
                       returnStatus: true
