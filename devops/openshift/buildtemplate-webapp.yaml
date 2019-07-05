@@ -56,10 +56,10 @@ objects:
         type: Git
       resources:
         limits:
-          cpu: 1
+          cpu: 2
           memory: 4Gi
         requests:
-          cpu: 100m
+          cpu: 200m
           memory: 2Gi
       strategy:
         sourceStrategy:
@@ -101,25 +101,10 @@ objects:
           name: ${APP_NAME}:${BUILD_VERSION}
       source:
         dockerfile: |-
-          FROM registry.access.redhat.com/jboss-webserver-5/webserver50-tomcat9-openshift:1.2
-          LABEL maintainer="inera.se"
+          FROM docker-registry.default.svc:5000/dintyg/tomcat-base:latest
           ENV APP_NAME=${APP_NAME}
-
-          RUN rm -rf $JWS_HOME/webapps/* $JWS_HOME/lib/mysql-connector-java.jar
-          
-          ADD http://repo1.maven.org/maven2/javax/servlet/jsp/jstl/javax.servlet.jsp.jstl-api/1.2.1/javax.servlet.jsp.jstl-api-1.2.1.jar $JWS_HOME/lib
-          ADD http://repo1.maven.org/maven2/org/glassfish/web/javax.servlet.jsp.jstl/1.2.1/javax.servlet.jsp.jstl-1.2.1.jar  $JWS_HOME/lib  
-
-          USER root
-          RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
-          RUN localedef -i en_US -f UTF-8 en_US.UTF-8
-          RUN chown jboss $JWS_HOME/lib/*
-          RUN chmod 644 $JWS_HOME/lib/*
-          USER jboss
-          
           ADD ROOT.war $JWS_HOME/webapps/${CONTEXT_PATH}.war
           ADD build.info $JWS_HOME/
-          ADD launch.sh $JWS_HOME/bin/
         images:
           - from:
               kind: ImageStreamTag
