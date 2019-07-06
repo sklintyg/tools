@@ -22,10 +22,6 @@ ENV X_UID=${X_UID}
 # Add custom S2I scripts
 ADD s2i/bin/ /usr/libexec/s2i/
 
-# Add launch scripts
-ADD launch.sh /tmp/artifacts/
-ADD sb-launch.sh /tmp/artifacts/
-
 # S2I runs as user default, but when invoked by the testrunner pod another user (uid) is active (depends on openshift project settings)
 # Setup permissions to enable an unknown user to access different locations used by gradle, npm, bower, chrome, ...
 ARG X_DIRS="/tmp/artifacts /tmp/src /tmp/nohome"

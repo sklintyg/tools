@@ -56,10 +56,10 @@ objects:
         type: Git
       resources:
         limits:
-          cpu: 1
+          cpu: 2
           memory: 4Gi
         requests:
-          cpu: 100m
+          cpu: 200m
           memory: 2Gi
       strategy:
         sourceStrategy:
@@ -101,23 +101,9 @@ objects:
           name: ${APP_NAME}:${BUILD_VERSION}
       source:
         dockerfile: |-
-          FROM centos:7
-          LABEL maintainer="inera.se"
-
+          FROM docker-registry.default.svc:5000/dintyg/springboot-base:latest
           ENV APP_NAME=${APP_NAME}
-          ENV JVM_OPTS="-Dfile.encoding=UTF-8"
-          EXPOSE 8080
-          EXPOSE 8081
-
-          USER root
-          RUN yum -y install java-11-openjdk-devel
-          RUN ln -snf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
-          RUN localedef -i en_US -f UTF-8 en_US.UTF-8
-          ADD ROOT.war /deployments/
-          ADD sb-launch.sh /opt/${APP_NAME}/bin/
-          ADD build.info /opt/${APP_NAME}/
-          USER nobody
-          CMD ["/opt/${APP_NAME}/bin/sb-launch.sh"]
+          ADD ROOT.war build.info /deployments/
         images:
           - from:
               kind: ImageStreamTag
