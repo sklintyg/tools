@@ -16,3 +16,4 @@ RUN chmod 644 $JWS_HOME/lib/*
 USER jboss
 
 ADD launch.sh $JWS_HOME/bin/
+ADD conf/server.xml $JWS_HOME/conf/
