@@ -28,6 +28,9 @@ parameters:
   - name: BACKING_SERVICES
     value: "-"
     required: true
+  - name: TEST_PORT
+    value: "8080"
+    required: true
   - name: CONTEXT_PATH
     required: true
     value: ROOT
@@ -114,7 +117,7 @@ objects:
               def hook = registerWebhook()
 
               // Just use name
-              def targetUrl = "http://${APP_NAME}:8080"
+              def targetUrl = "http://${APP_NAME}:${TEST_PORT}"
               def actuatorUrl = "http://${APP_NAME}:8081"                         
 
               def imageStream = openshift.selector("is", "${APP_NAME}").object().status.dockerImageRepository
