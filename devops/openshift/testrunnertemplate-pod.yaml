@@ -63,5 +63,5 @@ objects:
     volumes:
       - name: rep-vol
         persistentVolumeClaim:
-          claimName: "test-reports"
+          claimName: "jenkins-reports"
 
