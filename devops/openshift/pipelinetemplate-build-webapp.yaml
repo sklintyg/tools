@@ -75,6 +75,8 @@ objects:
             def artifactFolder = "target"
             def applicationZip = "${artifactFolder}/${APP_NAME}-${BUILD_NUMBER}.tar.gz"
             def versionFlags = ""
+            def buildArgs = "clean build"
+            def uploadArchives = false
 
             // function to run database commands
             def dbScript(cmd) {
@@ -209,7 +211,7 @@ objects:
                   steps {
                     script {
                       git url: "${gitUrl}", branch: gitRef
-                      def info = readJSON file: 'version-info.json'
+                      def info = readJSON file: 'build-info.json'
                       echo "${info}"
                       buildVersion = "${info.appVersion}.${BUILD_NUMBER}"
                       if (info.commonVersion) {
@@ -220,6 +222,12 @@ objects:
                       }
                       if (info.backingServices) {
                         backingServices = info.backingServices
+                      }
+                      if (info.buildArgs) {
+                        buildArgs = info.buildArgs
+                      }
+                      if (info.uploadArchives) {
+                        uploadArchives = info.uploadArchives
                       }
                       versionFlags = "-DbuildVersion=${buildVersion} -DcommonVersion=${commonVersion} -DinfraVersion=${infraVersion}"
                     }
@@ -282,7 +290,7 @@ objects:
                         eshell("mkdir -p ${artifactFolder}")
                       }
                       try {
-                        shgradle "--refresh-dependencies clean build testReport sonarqube -PcodeQuality -DgruntColors=false ${versionFlags}"
+                        shgradle "${buildArgs} ${versionFlags}"
                       } finally {
                         publishHTML([
                           allowMissing: true,
@@ -624,7 +632,7 @@ objects:
               stage('Publish Artifacts to Nexus') {
                 when {
                   expression {
-                    return releaseBuild
+                    return releaseBuild && uploadArchives
                   }
                 }
                 steps {
