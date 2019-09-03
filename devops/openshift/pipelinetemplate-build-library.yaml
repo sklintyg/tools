@@ -7,7 +7,7 @@ parameters:
     required: true
   - name: STAGE
     required: true
-    value: "test"
+    value: "build"
   - name: GIT_URL
     required: true
   - name: CONTEXT_DIR
@@ -28,7 +28,7 @@ objects:
           type: GitHub
       source:
         git:
-          uri: "${GIT_URL}"
+          uri: "$GIT_URL"
           ref: "$GIT_BRANCH"
         contextDir: "${CONTEXT_DIR}"      
       strategy:
@@ -37,3 +37,5 @@ objects:
           env:
             - name: "GIT_BRANCH"
               value: "develop"
+            - name: "GIT_URL"
+              value: "${GIT_URL}"

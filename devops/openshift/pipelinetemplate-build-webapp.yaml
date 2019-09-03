@@ -20,8 +20,6 @@ parameters:
   - name: ARTIFACT_IMAGE_SUFFIX
     required: true
     value: "artifact"
-  - name: SECRET
-    required: true
   - name: GIT_URL
     required: true
   - name: TESTS
@@ -57,16 +55,16 @@ objects:
       source:
         git:
           uri: "${GIT_URL}"
-          ref: "$gitBranch"      
+          ref: "$GIT_BRANCH"      
       strategy:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
           env:
-            - name: "gitBranch"
+            - name: "GIT_BRANCH"
               value: "develop"
           jenkinsfile: |-
             // The following variables are expected to exist:
-            // [ gitBranch ]
+            // [ GIT_BRANCH ]
             //
             // Build and Deploy temaples must previously have been installed
             //
@@ -77,7 +75,7 @@ objects:
             def buildVersion = "${APP_NAME}-${BUILD_NUMBER}"
             def commonVersion = "NA"
             def infraVersion = "NA"
-            def releaseBuild = gitBranch.startsWith("release")
+            def releaseBuild = GIT_BRANCH.startsWith("release")
             def backingServices = "${BACKING_SERVICES}"
             def artifactFolder = "target"
             def applicationZip = "${artifactFolder}/${APP_NAME}-${BUILD_NUMBER}.tar.gz"
@@ -217,7 +215,7 @@ objects:
                 stage('Checkout Source') {
                   steps {
                     script {
-                      git url: "${gitUrl}", branch: gitBranch
+                      git url: "${gitUrl}", branch: GIT_BRANCH
                       def info = readJSON file: 'build-info.json'
                       echo "${info}"
                       buildVersion = "${info.appVersion}.${BUILD_NUMBER}"
@@ -254,12 +252,12 @@ objects:
                         openshift.withProject() {
                           log "Pipeline started with:"
                           echo "release: ${releaseBuild}"
-                          echo "gitUrl: ${gitUrl}, gitBranch: ${gitBranch}"
+                          echo "gitUrl: ${gitUrl}, gitBranch: ${GIT_BRANCH}"
                           echo "buildVersion: ${buildVersion}, infraVersion: ${infraVersion}, commonVersion: ${commonVersion}"
                           echo "backingServices: ${backingServices}"
 
                           // check envrionment
-                          [ gitUrl, gitBranch, buildVersion ].each {
+                          [ gitUrl, GIT_BRANCH, buildVersion ].each {
                             if (!it) {
                               error("No such required context variable in environment.")
                             }
