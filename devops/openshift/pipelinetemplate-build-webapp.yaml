@@ -50,10 +50,14 @@ objects:
         stage: ${STAGE}
     spec:
       triggers:
-        - type: GitHub
-          github:
+        - github:
             secretReference:
               name: git-webhook-secret
+          type: GitHub
+      source:
+        git:
+          uri: "${GIT_URL}"
+          ref: "$gitBranch"      
       strategy:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
@@ -393,8 +397,6 @@ objects:
                     script {
                       openshift.withCluster() {
                         openshift.withProject() {
-                          extractConfig(tmpDir, gitUrl, gitBranch, "${STAGE}")
-
                           shell("oc delete configmap ${APP_NAME}-config")
                           shell("oc delete secret ${APP_NAME}-env")
                           shell("oc delete configmap ${APP_NAME}-configmap-envvar")
@@ -402,7 +404,7 @@ objects:
                           // TODO: Finalize handling of secret vars
                           // shell("[ -f ${STAGE}/secret-vars.yaml ] && oc delete secret ${APP_NAME}-secret-envvar || true")
                           
-                          def wd = "cd ${tmpDir}/devops/openshift; "
+                          def wd = "cd devops/openshift; "
                           eshell(wd + "[ -f ${STAGE}/configmap-vars.yaml ] && oc create -f ${STAGE}/configmap-vars.yaml || true")
                           // eshell(wd + "[ -f ${STAGE}/secret-vars.yaml ] && oc create -f ${STAGE}/secret-vars.yaml || true")
                           eshell(wd + "oc create configmap ${APP_NAME}-config --from-file=${STAGE}/config/")
