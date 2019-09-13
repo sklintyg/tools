@@ -10,7 +10,6 @@ webcert"
 
 ALL_PROJECTS="${WC_PROJECTS} \
 intygsadmin \
-intygsbestallning \
 logsender \
 privatlakarportal \
 rehabstod \
