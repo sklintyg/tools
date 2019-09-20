@@ -28,8 +28,8 @@ objects:
           type: GitHub
       source:
         git:
-          uri: "$GIT_URL"
-          ref: "$GIT_BRANCH"
+          uri: "${GIT_URL}"
+          ref: "refs/heads/develop"
         contextDir: "${CONTEXT_DIR}"      
       strategy:
         jenkinsPipelineStrategy:

@@ -43,6 +43,23 @@ Prior to add an application to the `apps` list a valid deployment definition has
 
 It's assumed a demo application ends with suffix `-demo` and that it's deployment config refers to verified image streams from project `dintyg` tagged with `latest`. 
 
+### Webhook Proxy for GitHub
+
+To be able to accept webhooks from GitHub and trigger builds a proxy is needed.
+ 
+The proxy is [gitwebhookproxy](https://github.com/stakater/GitWebhookProxy) with the image from docker hub [https://hub.docker.com/r/stakater/gitwebhookproxy/](https://hub.docker.com/r/stakater/gitwebhookproxy/).
+
+A deployment config, service and route has to be configured, and the following environment variables are set in the deployment config:
+
+| Name | Value |
+| ---- | ----- |
+| LISTEN | :8080 |
+| UPSTREAMURL | https://portal-test1.ind-ocp.sth.basefarm.net |
+| ALLOWEDPATHS | |
+| PROVIDER | github |
+| SECRET | _from git-webhook-secret with key WebhookSecretKey_ |
+
+_Note: ALLOWEDPATHS shall be empty, and the SECRET value is from a secret with name git-webhook-secret and the key WebhookSecretKey_
 
 ### Web App OCP Templates
 
