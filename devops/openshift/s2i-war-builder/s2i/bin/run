@@ -17,8 +17,8 @@ export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 -DrefDataVersion=$REF_DATA_VERSION \
 -Dfile.encoding=UTF-8"
 
-# .gradle stuff are in /tmp
-export GRADLE_USER_HOME=/tmp/.gradle
+# .gradle stuff
+export GRADLE_USER_HOME=$S2I_SOURCE_DIR/.gradle
 
 # gradle 5 update fix, gradle crashes if daemon folder already exists
 rm -rf $GRADLE_USER_HOME/daemon

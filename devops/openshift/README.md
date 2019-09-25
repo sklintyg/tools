@@ -66,10 +66,11 @@ _Note: ALLOWEDPATHS shall be empty, and the SECRET value is from a secret with n
 Dev pipelines for Web Apps are realized with OCP Templates and the following templates exists:
 
 * buildtemplate-image.yaml - Docker Image Builder
-* buildtemplate-webapp.yaml - Web App Builder (gradle, java, tomcat)
+* buildtemplate-webapp-binary.yaml - Web App Builder (gradle, java, tomcat)
+* buildtemplate-bootapp-binary.yaml - Spring App Builder (gradle, java 8 and 11)
 * deploytemplate-webapp.yaml - Web App Deployer
 * testrunnertemplate-pod.yaml - Pod Test Runner (gradle, java)
-* pipelinetemplate-test-webapp.yaml - Web App Test Pipeline. Depends the templates above
+* pipelinetemplate-build-webapp.yaml - Web App Test Pipeline. Depends the templates above
 * jobtemplate.yaml - Runs scheduled scripts. 
 
 Each template must be installed or updated in the OCP project of question:
@@ -77,6 +78,21 @@ Each template must be installed or updated in the OCP project of question:
 ```
 $ oc [ create | replace ] -f <template-file>
 ```
+ 
+#### Base images
+
+Base images for artifact builds, tomcat apps, spring boot and a special for srs exists. These are uploaded to BaseFarm nexus server `docker.drift.inera.se/intyg` due to stability problems with OpenShift image streams.
+
+They are created with `make` and the uploaded to BaseFarm nexus with the buildtemplate-image, see dintyg and build configs such as:
+
+* springboot-base-nexus
+* tomcat-base-nexus
+* srs-base-nexus
+* s2i-war-builder-nexus
+* s2i-war-builder-java11-nexus
+
+The tags indicates main version and currently are 8 and 11 used to indicate java versions and 9 for tomcat version. Tagging is done manually in OpenShift `oc tag <is>:latest <is>:8` before pushing to BaseFarm nexus. 
+
  
 #### Template Docker Image Builder 
 
@@ -104,7 +120,9 @@ $ oc process buildtemplate-image -p NAME=s2i-war-builder \
 	-p SOURCE="$(cat Dockerfile)" | oc apply -f -
 ```
 
-#### Template Web App Builder 
+#### Deprecated: Template Web App Builder
+
+_Replaced by Template Web App Binary Builder_ 
 
 For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step process first building a WAR artifact and then a tomcat docker image running the WAR.
 
@@ -141,6 +159,50 @@ For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step p
 
 ```
 $ oc process buildtemplate-webapp -p APP_NAME=ib-backend-dev  \
+	-p GIT_URL=https://github.com/sklintyg/ib-backend.git \
+	-p STAGE=dev | oc apply -f -
+```
+
+#### Deprecated: Template Web App Binary Builder
+
+
+For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step docker build process first building a WAR artifact and then a tomcat docker image running the WAR.
+
+**Name:** buildtemplate-webapp-binary
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| APP_NAME  | Yes         | The Web App name, ex: `ib-backend` |
+| STAGE     |             | The stage label, default is `test` |        
+| ARTIFACT\_IMAGE\_SUFFIX | | The suffix of the artifact ImageStream, default is `artifact` |
+| GIT_URL   | Yes         | URL to the git repository to clone |
+| GIT_REF   |             | The ref to build, default is branch `develop` |
+| COMMON_VERSION |        | The common-version to use, default is `3.7.0.+` | 
+| INFRA_VERSION |         | The infra-version to use, default is `3.7.0.+` | 
+| BUILD_VERSION |         | The build version for the Web App, default is `1.0-OPENSHIFT` |
+| GRADLE_USER_HOME |      | Gradle stuff (.gradle locatiomn), default is `/tmp/src` |
+| E_UID |                 | Effective user id of build process, default is `1000130000` |
+| CONTEXT_PATH |          | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
+
+
+**Conventions:**
+
+* gradle wrapper (gradlew) is used to build the Web App
+* build output WAR placed shall be placed in sub-folder `web/build/libs`
+* Binary input from compiled and unit tested source `--from-archive=...`
+
+**Outputs:**
+
+* S2I docker image (artifact ImageStream) containing the checked out source and built WAR file, scripts to run tests. 
+* Web App runtime image (runtime ImageStream) with tomcat and the build WAR file.
+* Verified Web App ImageStream, used by the pipeline if a runtime image passes all tests.
+
+**Example:**
+
+```
+$ oc process buildtemplate-webapp-binary -p APP_NAME=ib-backend  \
 	-p GIT_URL=https://github.com/sklintyg/ib-backend.git \
 	-p STAGE=dev | oc apply -f -
 ```
@@ -221,7 +283,9 @@ For running external client test suites from a test pipeline.
 * Runs the application artifact image and the specified tests, 1 replica (pod)
 
 
-#### Template Web App Test Pipeline
+#### Deprecated: Template Web App Test Pipeline
+
+_This pipeline has been replaced by an end-to-end Build Pipeline, se below._
 
 For building and testing Web App docker images.
 
@@ -329,6 +393,75 @@ Trigger properties:
 
 Checkout files `TriggerOCBuildJenkinsfile` and `Jenkinsfile` in the root of each application. `TriggerOCBuildJenkinsfile` assembles the trigger content and the last step of the pipeline defined in `Jenkinsfile` fires the trigger with parameters.
 
+#### Template Web App Build Pipeline
+
+For end-to-end building and testing Web App docker images.
+
+**Name:** pipelinetemplate-build-webapp
+
+**Parameters:** 
+
+| Parameter | Required | Description |
+| --------- | -------- | ----------- |
+| APP_NAME                | Yes         | The Web App name, ex: `ib-backend` |
+| GIT_URL                 | Yes         | URL to git repository | 
+| STAGE                   |             | The stage label, default is `test` |        
+| BUILD_TEMPLATE          |             | Name of the build template, default is: `buildtemplate-webapp` |
+| DEPLOY_TEMPLATE         |             | Name of the deploy template, default is: `deploytemplate-webapp` |
+| TESTRUNNER_TEMPLATE     |             | Name of the testrunner template, default is: `testrunnertemplate-pod` |
+| ARTIFACT\_IMAGE\_SUFFIX |             | The suffix of the artifact ImageStream, default is `artifact` |
+| CONTEXT_PATH            |             | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
+| HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
+| BUILD_TOOL              |             | The tool to build binaries with default is `shgradle` |
+| TEST_PORT               |             | Test TCP port to use. Default is `8081` | 
+
+**Conventions:**
+
+* Required backing services such as mysql, activemq and redis are up and running, and mysql is expected to run in the same OCP project.
+* Web App configuration with config map and secret must exist prior to run the pipeline.
+* Application database users must exists and have admin privileges in the actual database.
+* A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable. 
+* The file `build-info.json` with versions, build arguments, tests etc is required in the source root folder 
+* Secret for envvars and certifikat are expected to already exist in environment as well as configuration settings for any backing services.
+
+**Outputs:**
+
+* Upon a successful run an image reference is created in the ImageStream `${APP_NAME}-verified` and tagged with the `${buildVersion}` from trigger as well as with the `latest` tag.
+* Updated configmap (config), secret (env) and configmap-envvars for the app.
+* Test Reports are registered to Jenkins, requires plugin, see publishHTML.
+* The source is tagged with version and build-number.
+* Release images and additionally artifacts are uploaded to nexus.
+
+**Example:**
+
+```
+$  oc process pipelinetemplate-build-webapp -p APP_NAME=logsender-test \
+   -p GIT_URL=https://github.com/sklintyg/logsender.git | oc apply  -f -
+```
+
+**Trigger**
+
+Connect GitHub Webhook to pipeline. See more about gitwebhookproxy above. 
+
+**CI-Jenkins Integration**
+
+Checkout the file `build-info.json` in the root of each application. 
+
+Example:
+
+```
+{
+  "appVersion": "6.4.1",
+  "commonVersion": "3.10.1.+",
+  "infraVersion": "3.10.1.+",
+  "buildArgs": "--refresh-dependencies clean build camelTest testReport sonarqube -PcodeQuality -PcodeCoverage -DgruntColors=false",
+  "tests": [ "restAssuredTest", "protractorTest" ],
+  "uploadArchives": true,
+  "backingService": "intygstjanst-test:3.9.1.+"
+}
+```
+
+_A build-number substituted with a plus-sign (+) indicates the latest build_
 
 #### Template Scheduled Jobs 
 

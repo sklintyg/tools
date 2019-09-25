@@ -23,8 +23,10 @@ parameters:
   - name: GIT_URL
     required: true
   - name: TEST_PORT
-    value: "8080"
+    value: "8081"
     required: true
+  - name: BUILD_TOOL
+    value: "shgradle"
   - name: CONTEXT_PATH
     required: true
     value: ROOT
@@ -192,6 +194,11 @@ objects:
 
             pipeline {
               agent any
+              
+              environment {
+                JAVA_TOOL_OPTIONS = '-Dfile.encoding=UTF-8'
+              }
+
               stages {
 
                 stage('Release') {
@@ -306,7 +313,7 @@ objects:
                         eshell("mkdir -p ${artifactFolder}")
                       }
                       try {
-                        shgradle "${buildArgs} ${versionFlags}"
+                        ${BUILD_TOOL} "${buildArgs} ${versionFlags}"
                       } finally {
                         publishHTML([
                           allowMissing: true,
@@ -317,7 +324,7 @@ objects:
                           reportName: 'JUnitTests',
                           ])
                       }
-                      eshell("tar --exclude ${artifactFolder} --exclude ${tmpDir} --exclude .git -czf ${applicationZip} ${applicationDir}")
+                      eshell("tar --exclude ${artifactFolder} --exclude ${tmpDir} --exclude .git -chzf ${applicationZip} ${applicationDir}")
                       archiveArtifacts artifacts: "${applicationZip}", excludes: null, onlyIfSuccessful: true
                     }
                   }

@@ -1,7 +1,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: buildtemplate-webapp-binary
+  name: buildtemplate-bootapp-binary
 parameters:
   - name: APP_NAME
     required: true
@@ -12,11 +12,11 @@ parameters:
     required: true
     value: "test"
   - name: COMMON_VERSION
-    value: 3.11.0.+
+    value: "NA"
   - name: INFRA_VERSION
-    value: 3.11.0.+
+    value: "NA"
   - name: REF_DATA_VERSION
-    value: 1.0-SNAPSHOT
+    value: "NA"
   - name: BUILD_VERSION
     required: true
     value: 1.0-OPENSHIFT
@@ -56,7 +56,7 @@ objects:
       source:
         type: Binary
         dockerfile: |-
-          FROM docker.drift.inera.se/intyg/s2i-war-builder:8
+          FROM docker.drift.inera.se/intyg/s2i-war-builder:11
           USER root
           ENV APP_NAME=${APP_NAME} \
               BUILD_VERSION=${BUILD_VERSION} \
@@ -66,7 +66,7 @@ objects:
               GRADLE_USER_HOME=${GRADLE_USER_HOME} \
               HOME=/tmp/nohome \
               JAVA_TOOL_OPTIONS="-DbuildVersion=${BUILD_VERSION} -DinfraVersion=${INFRA_VERSION} -DcommonVersion=${COMMON_VERSION} -DrefDataVersion=${REF_DATA_VERSION} -Dfile.encoding=UTF-8"
-          ADD web/build/libs/*-${BUILD_VERSION}.war /tmp/artifacts/ROOT.war
+          ADD web/build/libs/*-${BUILD_VERSION}.jar /tmp/artifacts/ROOT.war
           COPY . /tmp/src/
           RUN chown -R ${E_UID} /tmp/src
           USER ${E_UID}
@@ -93,9 +93,9 @@ objects:
           name: ${APP_NAME}:${BUILD_VERSION}
       source:
         dockerfile: |-
-          FROM docker.drift.inera.se/intyg/tomcat-base:9
+          FROM docker.drift.inera.se/intyg/springboot-base:11
           ENV APP_NAME=${APP_NAME}
-          ADD ROOT.war $JWS_HOME/webapps/${CONTEXT_PATH}.war
+          ADD ROOT.war /deployments/
         images:
           - from:
               kind: ImageStreamTag
