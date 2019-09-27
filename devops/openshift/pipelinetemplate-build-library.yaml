@@ -1,0 +1,41 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: pipelinetemplate-build-library
+parameters:
+  - name: LIBRARY_NAME
+    required: true
+  - name: STAGE
+    required: true
+    value: "build"
+  - name: GIT_URL
+    required: true
+  - name: CONTEXT_DIR
+    value: "."
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${LIBRARY_NAME}-pipeline
+      generation: 1
+      labels:
+        stage: ${STAGE}
+    spec:
+      triggers:
+        - github:
+            secretReference:
+              name: git-webhook-secret
+          type: GitHub
+      source:
+        git:
+          uri: "${GIT_URL}"
+          ref: "refs/heads/develop"
+        contextDir: "${CONTEXT_DIR}"      
+      strategy:
+        jenkinsPipelineStrategy:
+          type: JenkinsPipeline
+          env:
+            - name: "GIT_BRANCH"
+              value: "develop"
+            - name: "GIT_URL"
+              value: "${GIT_URL}"

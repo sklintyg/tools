@@ -1,0 +1,140 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: buildtemplate-webapp-binary
+parameters:
+  - name: APP_NAME
+    required: true
+  - name: ARTIFACT_IMAGE_SUFFIX
+    required: true
+    value: "artifact"
+  - name: STAGE
+    required: true
+    value: "test"
+  - name: COMMON_VERSION
+    value: 3.11.0.+
+  - name: INFRA_VERSION
+    value: 3.11.0.+
+  - name: REF_DATA_VERSION
+    value: 1.0-SNAPSHOT
+  - name: BUILD_VERSION
+    required: true
+    value: 1.0-OPENSHIFT
+  - name: GRADLE_USER_HOME
+    value: "/tmp/src/.gradle"
+    required: true
+  - name: E_UID
+    value: "1000130000"
+    required: true
+  - name: CONTEXT_PATH
+    required: true
+    value: ROOT
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      creationTimestamp: null
+      name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      completionDeadlineSeconds: 1200
+      successfulBuildsHistoryLimit: 2
+      failedBuildsHistoryLimit: 4
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
+      resources:
+        limits:
+          cpu: 2
+          memory: 4Gi
+        requests:
+          cpu: 200m
+          memory: 2Gi     
+      source:
+        type: Binary
+        dockerfile: |-
+          FROM docker.drift.inera.se/intyg/s2i-war-builder:8
+          USER root
+          ENV APP_NAME=${APP_NAME} \
+              BUILD_VERSION=${BUILD_VERSION} \
+              INFRA_VERSION=${INFRA_VERSION} \
+              COMMON_VERSION=${COMMON_VERSION} \
+              REF_DATA_VERSION=${REF_DATA_VERSION} \
+              GRADLE_USER_HOME=${GRADLE_USER_HOME} \
+              HOME=/tmp/nohome \
+              JAVA_TOOL_OPTIONS="-DbuildVersion=${BUILD_VERSION} -DinfraVersion=${INFRA_VERSION} -DcommonVersion=${COMMON_VERSION} -DrefDataVersion=${REF_DATA_VERSION} -Dfile.encoding=UTF-8"
+          ADD web/build/libs/*-${BUILD_VERSION}.war /tmp/artifacts/ROOT.war
+          COPY . /tmp/src/
+          RUN chown -R ${E_UID} /tmp/src
+          USER ${E_UID}
+          RUN cd /tmp/src && git init && ./gradlew --stacktrace testClasses
+      strategy:
+        type: Docker
+        dockerStrategy:
+          pullSecret:
+            name: "nexus-registry"              
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${APP_NAME}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      completionDeadlineSeconds: 600
+      successfulBuildsHistoryLimit: 4
+      failedBuildsHistoryLimit: 4
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ${APP_NAME}:${BUILD_VERSION}
+      source:
+        dockerfile: |-
+          FROM docker.drift.inera.se/intyg/tomcat-base:9
+          ENV APP_NAME=${APP_NAME}
+          ADD ROOT.war $JWS_HOME/webapps/${CONTEXT_PATH}.war
+        images:
+          - from:
+              kind: ImageStreamTag
+              name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}:${BUILD_VERSION}
+            paths:
+              - sourcePath: /tmp/artifacts/.
+                destinationDir: "."
+      strategy:
+        type: Docker
+        dockerStrategy:
+          pullSecret:
+            name: "nexus-registry"       
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}-${ARTIFACT_IMAGE_SUFFIX}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: true
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: false
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      name: ${APP_NAME}-verified
+      labels:
+        app: ${APP_NAME}
+        stage: ${STAGE}
+    spec:
+      lookupPolicy:
+        local: false

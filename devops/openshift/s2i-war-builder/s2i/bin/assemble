@@ -46,8 +46,8 @@ function make_writeable() {
     done
 }
 
-# place .gradle stuff in /tmp
-export GRADLE_USER_HOME=/tmp/.gradle
+# gradle stuff
+export GRADLE_USER_HOME=$S2I_SOURCE_DIR/.gradle
 
 # Start build using gradle.
 if [ -f "$S2I_SOURCE_DIR/build.gradle"  -o -f "$S2I_SOURCE_DIR/build.gradle.kts" ]; then
