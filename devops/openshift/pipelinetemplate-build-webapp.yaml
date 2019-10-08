@@ -73,6 +73,7 @@ objects:
             def infraVersion = "NA"
             def releaseBuild = GIT_BRANCH.startsWith("release")
             def backingService = ""
+            def propagateTo = []
             def artifactFolder = "target"
             def applicationZip = "${artifactFolder}/${APP_NAME}-${BUILD_NUMBER}.tar.gz"
             def versionFlags = ""
@@ -242,6 +243,9 @@ objects:
                       }
                       if (info.backingService) {
                         backingService = info.backingService
+                      }
+                      if (info.propagate) {
+                        propagateTo = info.propagate
                       }
                       if (info.buildArgs) {
                         buildArgs = info.buildArgs
@@ -649,6 +653,24 @@ objects:
                 steps {
                   script {
                     shgradle "uploadArchives ${versionFlags}"
+                  }
+                }
+              }
+
+              stage('Propagate') {
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        propagateTo.each { t ->
+                          try {
+                              build job: "dintyg-${t}-test-pipeline", parameters: [string(name: 'GIT_BRANCH', value: GIT_BRANCH)]
+                          } catch (e) {
+                              echo "Trigger build error (ignored): ${e.message}"
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
