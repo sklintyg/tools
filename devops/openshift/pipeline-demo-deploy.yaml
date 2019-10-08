@@ -24,7 +24,8 @@ spec:
           'statistik-demo': 'https://github.com/sklintyg/statistik.git',
           'srs-demo': 'https://github.com/sklintyg/srs.git',
           'intygsbestallning-demo': 'https://github.com/sklintyg/intygsbestallning.git',
-          'intygsadmin-demo': 'https://github.com/sklintyg/intygsadmin.git'
+          'intygsadmin-demo': 'https://github.com/sklintyg/intygsadmin.git',
+          'privatlakarportal-demo': 'https://github.com/sklintyg/privatlakarportal.git'
         ]
 
         // run shell command, return status code
