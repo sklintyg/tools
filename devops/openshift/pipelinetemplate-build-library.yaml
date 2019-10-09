@@ -21,6 +21,7 @@ objects:
       labels:
         stage: ${STAGE}
     spec:
+      runPolicy: "SerialLatestOnly"
       triggers:
         - github:
             secretReference:
