@@ -30,7 +30,7 @@ objects:
       source:
         git:
           uri: "${GIT_URL}"
-          ref: "refs/heads/develop"
+          ref: "*/$GIT_BRANCH"
         contextDir: "${CONTEXT_DIR}"      
       strategy:
         jenkinsPipelineStrategy:
