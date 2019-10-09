@@ -43,6 +43,7 @@ objects:
         app: ${APP_NAME}
         stage: ${STAGE}
     spec:
+      runPolicy: "SerialLatestOnly"
       triggers:
         - github:
             secretReference:
@@ -51,7 +52,7 @@ objects:
       source:
         git:
           uri: "${GIT_URL}"
-          ref: "refs/heads/develop"      
+          ref: "*/$GIT_BRANCH"      
       strategy:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
