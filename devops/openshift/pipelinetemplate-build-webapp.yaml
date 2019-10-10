@@ -52,7 +52,7 @@ objects:
       source:
         git:
           uri: "${GIT_URL}"
-          ref: "*/$GIT_BRANCH"      
+          ref: "refs/heads/develop"
       strategy:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
