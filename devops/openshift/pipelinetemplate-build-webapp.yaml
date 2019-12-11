@@ -52,16 +52,18 @@ objects:
       source:
         git:
           uri: "${GIT_URL}"
-          ref: "refs/heads/develop"
+          ref: "*/$GIT_BRANCH"
       strategy:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
           env:
             - name: "GIT_BRANCH"
-              value: "develop"
+              value: "release/2020-1"
+            - name: "RELEASE"
+              value: "false"
           jenkinsfile: |-
             // The following variables are expected to exist:
-            // [ GIT_BRANCH ]
+            // [ GIT_BRANCH, RELEASE ]
             //
             // Build and Deploy temaples must previously have been installed
             //
@@ -72,7 +74,7 @@ objects:
             def buildVersion = "${APP_NAME}-${BUILD_NUMBER}"
             def commonVersion = "NA"
             def infraVersion = "NA"
-            def releaseBuild = GIT_BRANCH.startsWith("release")
+            def releaseBuild = RELEASE == "true"
             def backingService = ""
             def propagateTo = []
             def artifactFolder = "target"
@@ -741,6 +743,3 @@ objects:
             }
         
       
-
-
-
