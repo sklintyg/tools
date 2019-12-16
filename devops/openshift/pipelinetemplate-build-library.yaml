@@ -10,8 +10,12 @@ parameters:
     value: "build"
   - name: GIT_URL
     required: true
+  - name: GIT_CI_BRANCH
+    required: true
   - name: CONTEXT_DIR
     value: "."
+  - name: RELEASE
+    value: "false"
 objects:
   - apiVersion: v1
     kind: BuildConfig
@@ -30,13 +34,15 @@ objects:
       source:
         git:
           uri: "${GIT_URL}"
-          ref: "*/$GIT_BRANCH"
+          ref: "refs/heads/${GIT_CI_BRANCH}"
         contextDir: "${CONTEXT_DIR}"      
       strategy:
         jenkinsPipelineStrategy:
           type: JenkinsPipeline
           env:
             - name: "GIT_BRANCH"
-              value: "develop"
+              value: "${GIT_CI_BRANCH}"
             - name: "GIT_URL"
               value: "${GIT_URL}"
+            - name: "RELEASE"
+              value: "${RELEASE}"
