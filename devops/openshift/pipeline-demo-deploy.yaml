@@ -67,7 +67,7 @@ spec:
           def tmpDir = "${appName}-tmp"
           def stage = "demo"
 
-          extractConfig(tmpDir, url, "develop", stage)
+          extractConfig(tmpDir, url, "release/2020-1", stage)
 
           shell("oc delete configmap ${appName}-config")
           shell("oc delete secret ${appName}-env")
@@ -143,6 +143,3 @@ spec:
         }
     
   
-
-
-

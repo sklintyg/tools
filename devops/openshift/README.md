@@ -34,6 +34,11 @@ Housekeeping functions are executed as a pipeline, see `pipeline-houskeeping.yam
 
 Also see scripts `clean-istags.sh` and `clean-pods.sh`.
 
+The build configuration (housekeeping) must be installed or updated in the OCP project of question:
+
+```
+$ oc [ create | replace ] -f pipeline-houskeeping.yaml
+```
 
 ### Nightly Demo Deploy Pipeline
 
@@ -42,6 +47,12 @@ In the demo OCP project a specific pipeline is used to perform nightly deploys o
 Prior to add an application to the `apps` list a valid deployment definition has to be created with `${APP_NAME}-secret-envvar` and `${APP_NAME}-certifikat`. All other required configuration artifacts are for each redeploy refreshed from source code and the `~/devops/openshift/demo` folder.
 
 It's assumed a demo application ends with suffix `-demo` and that it's deployment config refers to verified image streams from project `dintyg` tagged with `latest`. 
+
+The build configuration (nightly-deploy) must be installed or updated in the OCP project of question:
+
+```
+$ oc [ create | replace ] -f pipeline-demo-deploy.yaml
+```
 
 ### Webhook Proxy for GitHub
 
@@ -405,6 +416,7 @@ For end-to-end building and testing Web App docker images.
 | --------- | -------- | ----------- |
 | APP_NAME                | Yes         | The Web App name, ex: `ib-backend` |
 | GIT_URL                 | Yes         | URL to git repository | 
+| GIT_CI_BRANCH           | Yes         | Branch in git repository | 
 | STAGE                   |             | The stage label, default is `test` |        
 | BUILD_TEMPLATE          |             | Name of the build template, default is: `buildtemplate-webapp` |
 | DEPLOY_TEMPLATE         |             | Name of the deploy template, default is: `deploytemplate-webapp` |
@@ -414,6 +426,7 @@ For end-to-end building and testing Web App docker images.
 | HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
 | BUILD_TOOL              |             | The tool to build binaries with default is `shgradle` |
 | TEST_PORT               |             | Test TCP port to use. Default is `8081` | 
+| RELEASE                 |             | Defines if this i a release build. Default is `false` | 
 
 **Conventions:**
 
@@ -432,11 +445,22 @@ For end-to-end building and testing Web App docker images.
 * The source is tagged with version and build-number.
 * Release images and additionally artifacts are uploaded to nexus.
 
-**Example:**
+**For all applications except Intygstjanst and Intygsadmin this example can be used to process the template:**
 
 ```
-$  oc process pipelinetemplate-build-webapp -p APP_NAME=logsender-test \
-   -p GIT_URL=https://github.com/sklintyg/logsender.git | oc apply  -f -
+$  oc process pipelinetemplate-build-webapp -p APP_NAME=logsender-test -p GIT_URL=https://github.com/sklintyg/logsender.git -p GIT_CI_BRANCH=release/2020-1 | oc apply  -f -
+```
+
+**Intygstjanst:**
+
+```
+$  oc process pipelinetemplate-build-webapp -p APP_NAME=intygstjanst-test -p GIT_URL=https://github.com/sklintyg/intygstjanst.git -p GIT_CI_BRANCH=<branch> -p CONTEXT_PATH="inera-certificate" -p HEALTH_URI="/inera-certificate/services" | oc apply  -f -
+```
+
+**Intygsadmin:**
+
+```
+$  oc process pipelinetemplate-build-webapp -p APP_NAME=intygsadmin-test -p GIT_URL=https://github.com/sklintyg/intygsadmin.git -p GIT_CI_BRANCH=<branch> -p BUILD_TEMPLATE=buildtemplate-bootapp-binary -p BUILD_TOOL=shgradle11 -p HEALTH_URI=/version.html -p TEST_PORT=8080 | oc apply  -f -
 ```
 
 **Trigger**
