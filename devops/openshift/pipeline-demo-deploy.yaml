@@ -22,8 +22,6 @@ spec:
           'rehabstod-demo': 'https://github.com/sklintyg/rehabstod.git',
           'logsender-demo': 'https://github.com/sklintyg/logsender.git',
           'statistik-demo': 'https://github.com/sklintyg/statistik.git',
-          'srs-demo': 'https://github.com/sklintyg/srs.git',
-          'intygsbestallning-demo': 'https://github.com/sklintyg/intygsbestallning.git',
           'intygsadmin-demo': 'https://github.com/sklintyg/intygsadmin.git',
           'privatlakarportal-demo': 'https://github.com/sklintyg/privatlakarportal.git'
         ]
