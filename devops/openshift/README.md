@@ -1,6 +1,8 @@
-# Intygstjänster - OpenShift Container Platform (OCP) 
+# Intygstjänster - OpenShift Container Platform (OCP)
 
-For Intygstjänster 2018 the main objective is to run all applications on a OpenShift cluster. This document provides work-in-progress thoughts and findings on the 
+**Note:** This is the legacy repository for this information. The current repository is located at: [sklintyg/devops](https://github.com/sklintyg/devops)
+
+For Intygstjänster 2018 the main objective is to run all applications on a OpenShift cluster. This document provides work-in-progress thoughts and findings on the
 topic.
 
 ## OCP Web Apps and Dev Pipelines
@@ -24,9 +26,9 @@ Build and test processes generates a lot of artifacts such as images, pods/conta
 * A dedicated housekeeping pipeline cleans:
   * Completed pods/containers (> 1 day)
   * Latest images from image streams (only keep a history of 20 develop builds per stream)
-  * Jenkins reports and build logs (only keep a history of 20 days) 
+  * Jenkins reports and build logs (only keep a history of 20 days)
 
-Release images are kept forever. 
+Release images are kept forever.
 
 Housekeeping functions are executed as a pipeline, see `pipeline-houskeeping.yaml`, nightly. Also see `jobtemplate.yaml` for how to trigger the housekeeping pipeline with a `CronJob`  running `curl`.
 
@@ -46,7 +48,7 @@ In the demo OCP project a specific pipeline is used to perform nightly deploys o
 
 Prior to add an application to the `apps` list a valid deployment definition has to be created with `${APP_NAME}-secret-envvar` and `${APP_NAME}-certifikat`. All other required configuration artifacts are for each redeploy refreshed from source code and the `~/devops/openshift/demo` folder.
 
-It's assumed a demo application ends with suffix `-demo` and that it's deployment config refers to verified image streams from project `dintyg` tagged with `latest`. 
+It's assumed a demo application ends with suffix `-demo` and that it's deployment config refers to verified image streams from project `dintyg` tagged with `latest`.
 
 The build configuration (nightly-deploy) must be installed or updated in the OCP project of question:
 
@@ -57,7 +59,7 @@ $ oc [ create | replace ] -f pipeline-demo-deploy.yaml
 ### Webhook Proxy for GitHub
 
 To be able to accept webhooks from GitHub and trigger builds a proxy is needed.
- 
+
 The proxy is [gitwebhookproxy](https://github.com/stakater/GitWebhookProxy) with the image from docker hub [https://hub.docker.com/r/stakater/gitwebhookproxy/](https://hub.docker.com/r/stakater/gitwebhookproxy/).
 
 A deployment config, service and route has to be configured, and the following environment variables are set in the deployment config:
@@ -82,14 +84,14 @@ Dev pipelines for Web Apps are realized with OCP Templates and the following tem
 * deploytemplate-webapp.yaml - Web App Deployer
 * testrunnertemplate-pod.yaml - Pod Test Runner (gradle, java)
 * pipelinetemplate-build-webapp.yaml - Web App Test Pipeline. Depends the templates above
-* jobtemplate.yaml - Runs scheduled scripts. 
+* jobtemplate.yaml - Runs scheduled scripts.
 
 Each template must be installed or updated in the OCP project of question:
 
 ```
 $ oc [ create | replace ] -f <template-file>
 ```
- 
+
 #### Base images
 
 Base images for artifact builds, tomcat apps, spring boot and a special for srs exists. These are uploaded to BaseFarm nexus server `docker.drift.inera.se/intyg` due to stability problems with OpenShift image streams.
@@ -102,16 +104,16 @@ They are created with `make` and the uploaded to BaseFarm nexus with the buildte
 * s2i-war-builder-nexus
 * s2i-war-builder-java11-nexus
 
-The tags indicates main version and currently are 8 and 11 used to indicate java versions and 9 for tomcat version. Tagging is done manually in OpenShift `oc tag <is>:latest <is>:8` before pushing to BaseFarm nexus. 
+The tags indicates main version and currently are 8 and 11 used to indicate java versions and 9 for tomcat version. Tagging is done manually in OpenShift `oc tag <is>:latest <is>:8` before pushing to BaseFarm nexus.
 
- 
-#### Template Docker Image Builder 
+
+#### Template Docker Image Builder
 
 For creating docker images (ImageStream) using plain Dockerfiles. Normally the docker layer of the OCP cluster is unreachable for a developer.
 
 **Name:** buildtemplate-image  
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -133,13 +135,13 @@ $ oc process buildtemplate-image -p NAME=s2i-war-builder \
 
 #### Deprecated: Template Web App Builder
 
-_Replaced by Template Web App Binary Builder_ 
+_Replaced by Template Web App Binary Builder_
 
 For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step process first building a WAR artifact and then a tomcat docker image running the WAR.
 
 **Name:** buildtemplate-webapp  
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -149,8 +151,8 @@ For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step p
 | GIT_URL   | Yes         | URL to the git repository to clone |
 | GIT_REF   |             | The ref to build, default is branch `develop` |
 | BUILDER_IMAGE |         | The builder image and tag to use, default is `s2i-war-builder:latest` |
-| COMMON_VERSION |        | The common-version to use, default is `3.7.0.+` | 
-| INFRA_VERSION |         | The infra-version to use, default is `3.7.0.+` | 
+| COMMON_VERSION |        | The common-version to use, default is `3.7.0.+` |
+| INFRA_VERSION |         | The infra-version to use, default is `3.7.0.+` |
 | BUILD_VERSION |         | The build version for the Web App, default is `1.0-OPENSHIFT` |
 | CONTEXT_PATH |          | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
 
@@ -162,7 +164,7 @@ For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step p
 
 **Outputs:**
 
-* S2I docker image (artifact ImageStream) containing the checked out source and built WAR file, scripts to run tests and a build information file named `build.info`. 
+* S2I docker image (artifact ImageStream) containing the checked out source and built WAR file, scripts to run tests and a build information file named `build.info`.
 * Web App runtime image (runtime ImageStream) with tomcat and the build WAR file.
 * Verified Web App ImageStream, used by the pipeline if a runtime image passes all tests.
 
@@ -181,7 +183,7 @@ For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step d
 
 **Name:** buildtemplate-webapp-binary
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -190,8 +192,8 @@ For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step d
 | ARTIFACT\_IMAGE\_SUFFIX | | The suffix of the artifact ImageStream, default is `artifact` |
 | GIT_URL   | Yes         | URL to the git repository to clone |
 | GIT_REF   |             | The ref to build, default is branch `develop` |
-| COMMON_VERSION |        | The common-version to use, default is `3.7.0.+` | 
-| INFRA_VERSION |         | The infra-version to use, default is `3.7.0.+` | 
+| COMMON_VERSION |        | The common-version to use, default is `3.7.0.+` |
+| INFRA_VERSION |         | The infra-version to use, default is `3.7.0.+` |
 | BUILD_VERSION |         | The build version for the Web App, default is `1.0-OPENSHIFT` |
 | GRADLE_USER_HOME |      | Gradle stuff (.gradle locatiomn), default is `/tmp/src` |
 | E_UID |                 | Effective user id of build process, default is `1000130000` |
@@ -206,7 +208,7 @@ For building Web Apps (WAR) with OCP S2I and gradle-wrapper (java). A two-step d
 
 **Outputs:**
 
-* S2I docker image (artifact ImageStream) containing the checked out source and built WAR file, scripts to run tests. 
+* S2I docker image (artifact ImageStream) containing the checked out source and built WAR file, scripts to run tests.
 * Web App runtime image (runtime ImageStream) with tomcat and the build WAR file.
 * Verified Web App ImageStream, used by the pipeline if a runtime image passes all tests.
 
@@ -218,13 +220,13 @@ $ oc process buildtemplate-webapp-binary -p APP_NAME=ib-backend  \
 	-p STAGE=dev | oc apply -f -
 ```
 
-#### Template Web App Deployer 
+#### Template Web App Deployer
 
 For deploying Web Apps with service and route endpoints.
 
 **Name:** deploytemplate-webapp  
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -241,7 +243,7 @@ For deploying Web Apps with service and route endpoints.
 * A secret exists with name `${APP_NAME}-env` and will mounted to `/opt/${APP_NAME}/env`
 * Web App listens on HTTP port `8080`
 * The health probe uses HTTP `GET` to access the health check service
-* JVM Memory settings and credentials has to be fine-tuned for each unique deployment 
+* JVM Memory settings and credentials has to be fine-tuned for each unique deployment
 
 **Outputs:**
 
@@ -257,16 +259,16 @@ $ oc process deploytemplate-webapp \
 	-p STAGE=test \
 	-p IMAGE=docker-registry.default.svc:5000/dintyg/intygstjanst-test-verified:latest \
 	-p DATABASE_NAME=intygstjanst_test \
-	-p HEALTH_URI=/inera-certificate | oc apply -f - 
+	-p HEALTH_URI=/inera-certificate | oc apply -f -
 ```
 
-#### Template Pod Test Runner 
+#### Template Pod Test Runner
 
 For running external client test suites from a test pipeline.
 
 **Name:** testrunnertemplate-pod
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -284,7 +286,7 @@ For running external client test suites from a test pipeline.
 **Conventions:**
 
 * The test script is the default entry-point of the docker image.
-* The pipeline waits until a callback HTTP call is received with a text/plan body containing `SUCCESS` upon success, otherwise it's a failure. 
+* The pipeline waits until a callback HTTP call is received with a text/plan body containing `SUCCESS` upon success, otherwise it's a failure.
 * A PVC named `test-report` exists, and is mounted to volume `/mnt/reports`.
 * Jenkins has a mount path `/var/lib/jenkins/reports` for the same `test-report` PVC.
 * Test reports (HTML files only) are copied to `/mnt/reports`.
@@ -302,7 +304,7 @@ For building and testing Web App docker images.
 
 **Name:** pipelinetemplate-test-webapp
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -315,7 +317,7 @@ For building and testing Web App docker images.
 | SECRET                  | Yes         | The secret for triggering the pipeline |
 | CONTEXT_PATH            |             | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
 | HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
-| BACKING_SERVICES        |             | A comma separated list of backing services to start (each needs to have a verified image and working config (secret, configmap). Ex: `BACKING_SERVICES="intygstjanst-test,minaintyg-test"` | 
+| BACKING_SERVICES        |             | A comma separated list of backing services to start (each needs to have a verified image and working config (secret, configmap). Ex: `BACKING_SERVICES="intygstjanst-test,minaintyg-test"` |
 | TESTS                   | Yes         | A comma separated list of  test to run `restAssuredTest`, `protractorTest` and `fitnesseTest`. For no tests shall a dash `-` be specified. |
 
 **Conventions:**
@@ -323,7 +325,7 @@ For building and testing Web App docker images.
 * Required backing services such as mysql, activemq and redis are up and running, and mysql is expected to run in the same OCP project.
 * Web App configuration with config map and secret must exist prior to run the pipeline.
 * Application database users must exists and have admin privileges in the actual database.
-* A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable. 
+* A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable.
 * The web hook trigger must contain the following environment variables `gitRef`, `gitUrl`, `buildVersion` and `infraVersion`. And may also specify `commonVersion` and `backingServices` (overriding `BACKING_SERVCIES`), also see below.
 * Secret for envvars and certifikat are expected to already exist in environment as well as configuration settings for any backing services.    
 
@@ -349,7 +351,7 @@ The pipeline trigger contains meta-data about the build, environment variables a
 
 Example trigger for a release build of WebCert.
 
-_***Note:*** To be able to distinguish between release and development builds a release flag is used. The main difference is that release builds never are tagged as `latest`. The release value must be a string and it's just to omit this flag for develop builds._ 
+_***Note:*** To be able to distinguish between release and development builds a release flag is used. The main difference is that release builds never are tagged as `latest`. The release value must be a string and it's just to omit this flag for develop builds._
 
 ```json
 {
@@ -382,7 +384,7 @@ _***Note:*** To be able to distinguish between release and development builds a 
     },
     {
     	"name": "release",
-    	"value": "true" 
+    	"value": "true"
     }
   ]
 }
@@ -410,13 +412,13 @@ For end-to-end building and testing Web App docker images.
 
 **Name:** pipelinetemplate-build-webapp
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
 | APP_NAME                | Yes         | The Web App name, ex: `ib-backend` |
-| GIT_URL                 | Yes         | URL to git repository | 
-| GIT_CI_BRANCH           | Yes         | Branch in git repository | 
+| GIT_URL                 | Yes         | URL to git repository |
+| GIT_CI_BRANCH           | Yes         | Branch in git repository |
 | STAGE                   |             | The stage label, default is `test` |        
 | BUILD_TEMPLATE          |             | Name of the build template, default is: `buildtemplate-webapp` |
 | DEPLOY_TEMPLATE         |             | Name of the deploy template, default is: `deploytemplate-webapp` |
@@ -425,16 +427,16 @@ For end-to-end building and testing Web App docker images.
 | CONTEXT_PATH            |             | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
 | HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
 | BUILD_TOOL              |             | The tool to build binaries with default is `shgradle` |
-| TEST_PORT               |             | Test TCP port to use. Default is `8081` | 
-| RELEASE                 |             | Defines if this i a release build. Default is `false` | 
+| TEST_PORT               |             | Test TCP port to use. Default is `8081` |
+| RELEASE                 |             | Defines if this i a release build. Default is `false` |
 
 **Conventions:**
 
 * Required backing services such as mysql, activemq and redis are up and running, and mysql is expected to run in the same OCP project.
 * Web App configuration with config map and secret must exist prior to run the pipeline.
 * Application database users must exists and have admin privileges in the actual database.
-* A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable. 
-* The file `build-info.json` with versions, build arguments, tests etc is required in the source root folder 
+* A randomly named database is created for each test run, i.e. the application must honor the `DATABASE_NAME` environment variable.
+* The file `build-info.json` with versions, build arguments, tests etc is required in the source root folder
 * Secret for envvars and certifikat are expected to already exist in environment as well as configuration settings for any backing services.
 
 **Outputs:**
@@ -465,11 +467,11 @@ $  oc process pipelinetemplate-build-webapp -p APP_NAME=intygsadmin-test -p GIT_
 
 **Trigger**
 
-Connect GitHub Webhook to pipeline. See more about gitwebhookproxy above. 
+Connect GitHub Webhook to pipeline. See more about gitwebhookproxy above.
 
 **CI-Jenkins Integration**
 
-Checkout the file `build-info.json` in the root of each application. 
+Checkout the file `build-info.json` in the root of each application.
 
 Example:
 
@@ -487,13 +489,13 @@ Example:
 
 _A build-number substituted with a plus-sign (+) indicates the latest build_
 
-#### Template Scheduled Jobs 
+#### Template Scheduled Jobs
 
 Typically used to trigger a pipeline like the `housekeeping` pipeline etc.
 
 **Name:** jobtemplate
 
-**Parameters:** 
+**Parameters:**
 
 | Parameter | Required | Description |
 | --------- | -------- | ----------- |
@@ -503,7 +505,7 @@ Typically used to trigger a pipeline like the `housekeeping` pipeline etc.
 
 **Conventions:**
 
-* Runs the script as is. 
+* Runs the script as is.
 
 **Outputs:**
 
@@ -512,7 +514,7 @@ Typically used to trigger a pipeline like the `housekeeping` pipeline etc.
 
 ## OpenShift anatomy
 Openshift is a PaaS (Platform as a Service) built on top of the CaaS (Container orchestration as a Service) Kubernetes (K8S). OpenShift and K8S introduces a number of abstractions on top of traditional containers to provide orchestration, routing, resilience, configuration etc.
- 
+
 ![img2](docs/openshift-hierarchy.png)
 
 - A cluster is backed by one or more **nodes**. A _node_ is a physical or virtualized OS running a OpenShift master or worker. As developers, we should _never_ have to concern ourselves with actual nodes, this is something NMT or BF will provide and configure for us.
@@ -532,7 +534,7 @@ Openshift is a PaaS (Platform as a Service) built on top of the CaaS (Container 
 You may need to open egress for accessing github or similar. If your user has the correct authorization:
 
     oc edit egressnetworkpolicy
-    
+
 
 ## Minishift on Mac instructions
 This folder contains some work-in-progress instructions and notes on how to get OpenShift Origin running using "minishift" on a local virtualbox virtual machine.
@@ -547,7 +549,7 @@ Also includes some YAML files for setting up ActiveMQ and MySQL for intyg use.
 ##### 2. Update using homebrew
 
     $ brew cask install --force minishift
-  
+
 ##### 3. Start with virtualbox:
 
     $ minishift start --disk-size=40G --vm-driver=virtualbox
@@ -558,17 +560,17 @@ Also includes some YAML files for setting up ActiveMQ and MySQL for intyg use.
        Disk size: 40 GB
      ........
      OpenShift server started.
-     
+
      The server is accessible via web console at:
          https://192.168.99.100:8443
-     
+
      You are logged in as:
          User:     developer
          Password: <any value>
-     
+
      To login as administrator:
          oc login -u system:admin
-         
+
 ##### 4. Setup first project
 
 1.) Open web browser at https://192.168.99.100:8443/console/ _(you may need to change your IP)_
@@ -579,17 +581,17 @@ Also includes some YAML files for setting up ActiveMQ and MySQL for intyg use.
 
 Name it _intygstjanster-test_
 
-         
+
 ##### 5. Fix oc command
 Back to the command-line       
-         
+
     $ minishift oc-env
     export PATH="/Users/yourusername/.minishift/cache/oc/v3.6.0:$PATH"
-    
+
     OR
-    
+
     > eval $(minishift oc-env)
-    
+
 Run that export:
 
     > export PATH="/Users/yourusername/.minishift/cache/oc/v3.6.0:$PATH"
@@ -599,7 +601,7 @@ Run that export:
     $ oc login -u system:admin
     Logged into "https://192.168.99.100:8443" as "system:admin" using existing credentials.
     Using project "myproject".
- 
+
 ##### 7. Change project and grant root so we can run stuff like mysql and activemq    
     $ oc project intygstjanster-test
     $ oc adm policy add-scc-to-user anyuid -z default
@@ -613,7 +615,7 @@ It's very convenient to use the minishift's docker engine for building images lo
 Why would you want to do that? Well, just in case:
 
     $ minishift stop
-         
+
 ### A note on supporting services
 Please note that running MySQL and ActiveMQ as containers with mounted storage is _not_ suitable for production usages. Most users of container orchestrators runs their Database and Messaging backends on dedicated hardware outside the cluster - just like BF does for us currently.
 
@@ -651,7 +653,7 @@ Make sure the image builder template has been installed.
 	$  oc create -f tools/devops/openshift/buildtemplate-image.yaml
 
 Go to the `tools/devops/openshift/s2i-war-builder` folder and build the builder image.
-	
+
 	$ make build
 
 ...or with plain oc
@@ -662,10 +664,10 @@ Go to the `tools/devops/openshift/s2i-war-builder` folder and build the builder 
 Use the GUI to confirm that the image was successfully imported.
 
 	{project_name} => Builds => Images
-	
+
 Make sure that the generic build template has been installed:
-	
-	$ oc create -c tools/devops/openshift/buildtemplate-war.yaml 
+
+	$ oc create -c tools/devops/openshift/buildtemplate-war.yaml
 
 #### Building
 
@@ -675,16 +677,16 @@ Make sure that the generic build template has been installed:
 		-p APP_NAME=intygsbestallning-pl \
 		-p GIT_URL=https://github.com/sklintyg/ib-backend.git \
 		-p GIT_BRANCH=develop | oc apply -f -
-	
+
 
 **Build**
-	
+
 	# build artifact
 	$ oc start-build {app_name}-artifact
-	
+
 	# build runtime
 	$ oc start-build {app_name}
-	
+
 
 Goto the UI to watch the build process
 
@@ -699,11 +701,11 @@ Create secret for certificates, credentials, resources, etc.
     $ oc create secret generic {app_name}-env --from-file {config-directory} --type=Opaque
 
 Create config map with text files:
-	
+
 	$ oc create configmap {app_name}-config --from-file {config-directory}
-	
+
 This last command might not be applicable to all application. It depends if tha application uses a database and/or message broker or any other external resource.
- 
+
 #### Deploying
 
 	$ oc process deploytemplate-webapp -p APP_NAME="{app_name}" -p IMAGE="{image}:{build_version}" -p STAGE={stage} | oc apply -f -
@@ -711,7 +713,7 @@ This last command might not be applicable to all application. It depends if tha 
 Goto the UI and watch the deploy process
 
 	{project_name} => Applications => Pods => {app_name-N-xyz12}
-	
+
 
 ## Running all .yaml files in directory
 
@@ -736,7 +738,7 @@ Run all `.yaml` files in a given directory:
 
 ## Using script webapp-tool.sh to C(R)UD an application
 
-The `webapp-tool.sh` is a generic script to bootstrap an application from openshift templates. It's designed to be executed from the source tree of the application to deploy, 
+The `webapp-tool.sh` is a generic script to bootstrap an application from openshift templates. It's designed to be executed from the source tree of the application to deploy,
 and assigns default values for:
 
 * APP_NAME - from git repository name
@@ -759,9 +761,9 @@ Usage:
 		  -r: remove config, build or deploy  (in combination with other flags)
 		  -s <stage>: stage name (default is test)
 		  -t <git_ref>: build from git ref (default is current)
-	
 
-## 2-Step Source to Image (S2I) Build Strategy 
+
+## 2-Step Source to Image (S2I) Build Strategy
 
 To isolate images for building the application from images to run the application a two-step build process is applied. The first step is a normal S2I _Source_ type build resulting in an image with built artifacts and the second step extracts the artifacts from the first step and performs a _Docker_ type build.
 
@@ -771,33 +773,33 @@ To isolate images for building the application from images to run the applicatio
 The build image for step one is based on a plain `openshift/base-centos7` with Java 8 and custom s2i scripts added, and the runtime image is currently based on a Red Hat JBoss Tomcat Server  `registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift`.
 
 ###### build assemble script (step 1)
-	
+
 	#!/bin/bash
-	
+
 	# Global S2I variable setup
 	# Use openshift env vars
 	#source $(dirname "$0")/s2i-setup
-	
+
 	# Source code provided to directory
-	S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"} <-- Note: S2I downloads code to /tmp/src 
-	
+	S2I_SOURCE_DIR=${S2I_SOURCE_DIR-"/tmp/src"} <-- Note: S2I downloads code to /tmp/src
+
 	# Resulting WAR files will be copied to this location
 	S2I_ARTIFACTS_DIR=${S2I_ARTIFACTS_DIR-"/tmp/artifacts"}
 	mkdir -p $S2I_ARTIFACTS_DIR
-	
+
 	# Source artifact
 	SOURCE_ARTIFACTS_DIR=$S2I_SOURCE_DIR/web/build/libs <-- Note: Gradle is expected to output the WAR file at this location
-	
+
 	# Target artifact WAR
 	TARGET_WAR=$S2I_ARTIFACTS_DIR/ROOT.war
-	
+
 	# Setup build nev
 	export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS \
 	-DbuildVersion=$BUILD_VERSION  \
 	-DinfraVersion=$INFRA_VERSION \
 	-DcommonVersion=$COMMON_VERSION \
 	-Dfile.encoding=UTF-8"
-	
+
 	# create build info
 	create_build_info() {  <-- Note: Used to save build info to a file
 	    SHA256=$(sha256sum $S2I_ARTIFACTS_DIR/ROOT.war | awk '{ print $1 }')
@@ -815,11 +817,11 @@ The build image for step one is based on a plain `openshift/base-centos7` with J
 	BUILDER_IMAGE=${BUILDER_IMAGE}
 	EOF
 	}
-	
+
 	# Start build using gradle.
 	if [ -f "$S2I_SOURCE_DIR/build.gradle" ]; then
 	    GRADLE_ARGS=${GRADLE_ARGS:-"--no-daemon build"}
-	
+
 	    echo "---> Building application from source with gradle wrapper GRADLE_ARGS=$GRADLE_ARGS"
 	    (cd $S2I_SOURCE_DIR; ./gradlew $GRADLE_ARGS)
 	    ERR=$?
@@ -827,7 +829,7 @@ The build image for step one is based on a plain `openshift/base-centos7` with J
 	        echo "Aborting due to error code $ERR from gradle build"
 	        exit $ERR
 	    fi
-	
+
 	    # Copy built file into tomcat webapps
 	    WAR=$(find ${SOURCE_ARTIFACTS_DIR} -name \*.war)
 	    if [ -f "$WAR" ]; then
@@ -842,18 +844,18 @@ The build image for step one is based on a plain `openshift/base-centos7` with J
 	        echo "---> Output WAR file $WAR could not be found in directory $SOURCE_ARTIFACTS_DIR"
 	        exit 1
 	    fi
-	
+
 	    echo "---> Create build info"
 	    create_build_info
 	else
 	    echo "---> No such gradle.build file in directory $S2I_SOURCE_DIR"
 	    exit 1
 	fi
-	
+
 	# cleanup
 	echo "---> Cleaning up"
 	rm -rf $S2I_SOURCE_DIR $HOME/.gradle $HOME/.m2
-	
+
 	echo "build done."
 
 
@@ -873,18 +875,18 @@ The build template name is `buildtemplate-war` and the definition file is `templ
 Example of use to generate or update build configurations for the application `intygsbestallning`:
 
 	# apply for application
-	$ oc process buildtemplate-war -p APP_NAME=intygsbestallning -p GIT_URL=https://github.com/sklintyg/ib-backend.git | oc apply -f - 
+	$ oc process buildtemplate-war -p APP_NAME=intygsbestallning -p GIT_URL=https://github.com/sklintyg/ib-backend.git | oc apply -f -
 
 Now we have a build configuration and can trigger a build by starting step 1 (intygsbestallning-artifact).
 
 	# build images for intygsbestallning
 	$ oc start-build intygsbestallning-artifact
-	
+
 _Step 2 is automatically started on a successful completion of step 1_
-	
+
 
 The `APP_NAME` and `GIT_URL` parameters are mandatory, the following parameters might be used to customize the configuration:
-	
+
 	* APP_NAME - name of application, mandatory
 	* STAGE - stage environment default is dev
 	* ARTIFACT_IMAGE_SUFFIX - suffix of artifact container default value is artifact
@@ -894,16 +896,16 @@ The `APP_NAME` and `GIT_URL` parameters are mandatory, the following parameters 
 	* BUILDER_IMAGE - S2I image to build, default is s2i-war-builder:latest
 	* COMMON_VERSION - version of common to use
 	* INFRA_VERSION - version of infra to use
-	* BUILD_VERSION - build version label 
+	* BUILD_VERSION - build version label
 
 ## Creating the S2I image
 
 Go to the `tools/devops/openshift/s2i-war-builder` folder.
 A Makefile exists to simplify creation of image and openshift image stream. You are expected to be logged in to openshift.
- 
+
  	# create image stream, requires the `buildtemplate-image` to be installed
  	$ make build
- 	
+
 If you would like to dive into details, please checkout:
 
 * S2I - [https://github.com/openshift/source-to-image/releases/tag/v1.1.8](https://github.com/openshift/source-to-image/releases/tag/v1.1.8)
@@ -918,8 +920,8 @@ Sometimes its necessary to troubleshoot stuff in a running container. Luckily, o
 
 ##### 1. Prepend the JVM args for debugging to our APP_JVM_ENV environment variable.
 
-    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -D..... -D...... 
-  
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -D..... -D......
+
 
 ##### 2. Add debug port to service
 Make sure the service of the container we want to debug has a service that exposes port 5005 or similar.
@@ -940,7 +942,7 @@ Note that the service must be deleted and then recreated. Mina Intyg as example.
 
     $ oc replace -f deploymentconfig-minaintyg.yaml
     $ oc delete -f service-minaintyg.yaml
-    $ oc create -f service-minaintyg.yaml 
+    $ oc create -f service-minaintyg.yaml
 
 ##### 4. Run oc pods to get pod name
 We need to know the name of the pod to port-forward to
@@ -952,7 +954,7 @@ We need to know the name of the pod to port-forward to
 
 ##### 5. Set up port-forwarding
  Use _oc port-forward [podnamn] [lokal port]:[remote port]_, e.g:
-  
+
     $ oc port-forward minaintyg-12-vbs3m 5005:5005
     Forwarding from 127.0.0.1:5005 -> 5005
     Forwarding from [::1]:5005 -> 5005
@@ -974,10 +976,10 @@ We currently use version 3.7.23. Always make sure your client is up to date with
 
 Download and unpack somewhere, the tar.gz is unpacked into the pure oc binary.
 
-To login to the sandbox, 
+To login to the sandbox,
 
     $ oc login https://portal-ocpsbx1-ind.ocp.osl.basefarm.net
-    
+
 Use your BF username/password
 
     $ oc project intyg
@@ -986,7 +988,7 @@ Use your BF username/password
 ##### VPN URL
 
     vpn.osl.basefarm.net
-    
+
 ##### GUI
 
     https://portal-ocpsbx1-ind.ocp.osl.basefarm.net/console/project/intyg/overview
