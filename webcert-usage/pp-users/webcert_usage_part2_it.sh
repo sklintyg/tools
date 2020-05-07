@@ -1,10 +1,10 @@
 #!/bin/bash
 ####################
-# Detta script körs på maskinen som har mysqldatabasen för Intygsjansten.
+# Detta script körs på maskinen som har mysqldatabasen för Intygstjänsten.
 #
-# Usage: ./webcert_usage_part1_it.sh <database_user> <database_password> <it_database_name>
+# Usage: ./webcert_usage_part2_it.sh <database_user> <database_password> <it_database_name>
 #
-# Två textfiler med databasdumpar från privatläkarportalen läses in, wc_usage_query_result.txt och pp_allavardgivare_dump.txt
+# Två textfiler med databasdumpar från privatläkarportalen läses in, wc_pp_usage_query_result.txt och pp_allavardgivare_dump.txt
 # Dessa måste ligga i working directory vid körning. Efter att scriptet körs så läggs resultatet i wc_pp_usage_query_result.txt i working directory.
 ####################
 
