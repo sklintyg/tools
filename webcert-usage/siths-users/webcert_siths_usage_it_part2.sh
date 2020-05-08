@@ -24,18 +24,13 @@ QUERY2="SELECT\
     a.CARE_UNIT_ID,\
     a.latest_included,\
     a.oldest_included,\
-    a.active_months,\
     a.total_nr,\
-    CASE\
-        WHEN active_months = 0 THEN a.total_nr\
-        ELSE a.total_nr / active_months\
-    END intyg_per_month\
+    a.total_nr / 3 as intyg_per_month\
  FROM\
     (SELECT\
         c.CARE_UNIT_ID,\
 		MAX(c.SIGNED_DATE) AS latest_included,\
 		MIN(c.SIGNED_DATE) AS oldest_included,\
-		TIMESTAMPDIFF(MONTH, MIN(c.SIGNED_DATE), MAX(c.SIGNED_DATE)) AS active_months,\
 		COUNT(c.ID) AS total_nr\
     FROM\
         CERTIFICATE c\

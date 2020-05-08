@@ -47,6 +47,6 @@ CLEANED_AUGMENT_DATA="$(echo "${INTYGSTJANST_QUERY_RESULT}" | grep -F "${VARDGIV
 echo "$CLEANED_MAIN_DATA" > partial_result_1.txt
 echo "$CLEANED_AUGMENT_DATA" > partial_result_2.txt
 
-echo -e "VARDGIVARE_ID\tPERSONID\tVARDGIVARE_NAMN\tEPOST\tTELEFONNUMMER\tantal_intyg\tantal_intyg_per_manad\tforsta_intyg_i_urval\tsenaste_intyg_i_urval" > pp_gdpr_dump_result.txt
+echo -e "VARDGIVARE_ID\tPERSONID\tVARDGIVARE_NAMN\tEPOST\tTELEFONNUMMER\tantal_intyg\tantal_intyg_per_manad\tforsta_intyg_i_urval\tsenaste_intyg_i_urval" > wc_pp_usage_query_result.txt
 #outer left join, on VARDGIVARE_ID
 echo "$(join -t $'\t' -a 1 -1 1 -2 1 partial_result_1.txt partial_result_2.txt)" >> wc_pp_usage_query_result.txt
