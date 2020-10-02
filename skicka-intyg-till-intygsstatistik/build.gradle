@@ -5,7 +5,7 @@ apply plugin: "maven-publish"
 
 repositories {
     mavenLocal()
-    maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
+    maven { url "https://nexus.drift.inera.se/repository/maven-releases/" }
     maven { url "http://repo.maven.apache.org/maven2" }
 }
 
@@ -31,8 +31,8 @@ artifacts {
 }
 
 uploadArchives.repositories.mavenDeployer {
-    repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
-        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+    repository(url: "https://nexus.drift.inera.se/repository/maven-releases/") {
+        authentication(userName: System.properties['ineraNexusUsername'], password: System.properties['ineraNexusPassword'])
     }
 }
 

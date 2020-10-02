@@ -426,7 +426,7 @@ For end-to-end building and testing Web App docker images.
 | ARTIFACT\_IMAGE\_SUFFIX |             | The suffix of the artifact ImageStream, default is `artifact` |
 | CONTEXT_PATH            |             | The Web App context path, default is `ROOT`. _Please note: this setting is translated to the base-name of the Web App WAR file and not a path as such._ |
 | HEALTH_URI              |             | The path (URI) to the health check service, default is `/`|
-| BUILD_TOOL              |             | The tool to build binaries with default is `shgradle` |
+| BUILD_TOOL              |             | The tool to build binaries with default is `shgradle11` |
 | TEST_PORT               |             | Test TCP port to use. Default is `8081` |
 | RELEASE                 |             | Defines if this i a release build. Default is `false` |
 

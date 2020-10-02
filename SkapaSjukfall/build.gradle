@@ -5,7 +5,7 @@ group = 'se.inera.intyg.tools'
 mainClassName = 'se.inera.intyg.tools.sjukfall.SkapaSjukfall'
 
 repositories {
-  maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
+  maven { url "https://nexus.drift.inera.se/repository/maven-releases/" }
   maven { url "http://repo.maven.apache.org/maven2" }
 }
 

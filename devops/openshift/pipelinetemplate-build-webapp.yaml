@@ -28,7 +28,7 @@ parameters:
     value: "8081"
     required: true
   - name: BUILD_TOOL
-    value: "shgradle"
+    value: "shgradle11"
   - name: CONTEXT_PATH
     required: true
     value: ROOT

@@ -23,7 +23,7 @@ Det finns ett shell-skript som kan också kan användas för att starta applikat
 För att publicera till Nexus körs:
 > $ ./gradlew uploadArchives
 
-> Observera att miljö-variablerna *nexusUsername* och *nexusPassword* måste sättas för autentisering mot Nexus.
+> Observera att miljö-variablerna *ineraNexusUsername* och *ineraNexusPassword* måste sättas för autentisering mot Nexus.
 
 ### Konfigurering:
 Applikationen har en default-konfigurering som är satt i filen _'app.properties'_. Den konfigureringen är uppsatt för att köra mot Intygstjänstens in-memory databas och mot virtuella köer och används bara vid utveckling.

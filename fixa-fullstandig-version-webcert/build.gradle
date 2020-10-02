@@ -18,8 +18,8 @@ ext {
 uploadArchives {
   repositories {
     mavenDeployer {
-      repository(url: "https://build-inera.nordicmedtest.se/nexus/repository/releases/") {
-        authentication(userName: System.properties['nexusUsername'], password: System.properties['nexusPassword'])
+      repository(url: "https://nexus.drift.inera.se/repository/maven-releases/") {
+        authentication(userName: System.properties['ineraNexusUsername'], password: System.properties['ineraNexusPassword'])
       }
     }
   }
@@ -34,10 +34,10 @@ dependencies {
 }
 
 repositories {
-  maven { url "https://build-inera.nordicmedtest.se/nexus/repository/releases/" }
-  maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/nightly/" }
-  maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/snapshots/" }
-  maven { url "https://build-inera.nordicmedtest.se/nexus/content/repositories/thirdparty/" }
+  maven { url "https://nexus.drift.inera.se/repository/maven-releases/" }
+  maven { url "https://nexus.drift.inera.se/content/repositories/nightly/" }
+  maven { url "https://nexus.drift.inera.se/content/repositories/snapshots/" }
+  maven { url "https://nexus.drift.inera.se/content/repositories/thirdparty/" }
   maven { url "http://repo.maven.apache.org/maven2" }
 }
 
